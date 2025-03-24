@@ -1,0 +1,114 @@
+﻿@using MES.Client.Pages.Account
+@using MES.Shared.Entities;
+@using static MES.Client.Pages.LoginVC;
+
+@inject NavigationManager NavManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@inherits BaseAuthentication
+
+<MudNavMenu Class="mud-width-full custom-navmenu">
+
+    <MudText Typo="Typo.body2" Class="custom-navlink">Kent Manufacturing Execution System</MudText>
+    <MudDivider Class="my-2" />
+
+    @if (BaseAuthentication.IsAuthenticated == false)
+    {
+        <MudNavLink Href="/aep"></MudNavLink>
+    }
+    else if (UserData != null)
+    {
+        foreach (var route in UserData.Router)
+        {
+            if (route != "/adduser")
+            @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
+            {
+                var icon = GetIconForRoute(route);
+                var displayName = GetDisplayNameForRoute(route);
+
+                <MudNavLink Href="@route" Icon="@icon" IconColor="Color.Primary" Class="custom-navlink">@displayName</MudNavLink>
+            }
+        }
+
+        if (UserData.Router.Contains("/adduser"))
+        @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
+        {
+            @if (UserData.Router.Contains("/adduser"))
+            {
+                <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
+            }
+
+
+        }
+    }
+</MudNavMenu>
+
+<style>
+    .custom-navmenu {
+        overflow-y: auto;
+        padding-top: 0rem;
+    }
+
+    .custom-navlink {
+        font-size: 1rem; /* Default font size */
+        --mud-icon-size: 24px; /* Default icon size */
+    }
+
+</style>
+
+@code {
+    public UserPagesAndRouter? UserData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+
+        // await localStorage.RemoveItemAsync("UserData");
+    }
+
+    private string GetIconForRoute(string route)
+    {
+        switch (route)
+        {
+
+            case "/index":
+                return Icons.Material.Outlined.AssignmentReturned;
+            case "/pump":
+                return Icons.Material.Filled.Image;
+            case "/sa":
+                return @Icons.Material.Filled.Info;
+
+            case "/adduser":
+                return Icons.Material.Filled.WorkspacePremium;
+
+
+
+            default:
+                return "";
+        }
+    }
+
+    private string GetDisplayNameForRoute(string route)
+    {
+        switch (route)
+        {
+
+            case "/record":
+                return "Rotor/Feed rolls  Service";
+
+            case "/addinfo":
+                return "System Assembly ";
+
+            case "/index":
+                return "Receiving";
+
+            case "/adduser":
+                return "Pump Repair";
+
+
+            default:
+                return "";
+        }
+    }
+}
+

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35716.79 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Server", "Server\MES.Server.csproj", "{A12BABA0-282C-40EA-991A-F2A775639CB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Client", "Client\MES.Client.csproj", "{9F01E28C-CD09-48BB-90CE-7ACA8BE1015B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MES.Shared", "Shared\MES.Shared.csproj", "{8354DFB6-06F3-4E68-91BD-FE952396DABE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A12BABA0-282C-40EA-991A-F2A775639CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12BABA0-282C-40EA-991A-F2A775639CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12BABA0-282C-40EA-991A-F2A775639CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12BABA0-282C-40EA-991A-F2A775639CB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F01E28C-CD09-48BB-90CE-7ACA8BE1015B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F01E28C-CD09-48BB-90CE-7ACA8BE1015B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F01E28C-CD09-48BB-90CE-7ACA8BE1015B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F01E28C-CD09-48BB-90CE-7ACA8BE1015B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8354DFB6-06F3-4E68-91BD-FE952396DABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8354DFB6-06F3-4E68-91BD-FE952396DABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8354DFB6-06F3-4E68-91BD-FE952396DABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8354DFB6-06F3-4E68-91BD-FE952396DABE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63F42991-9ACB-40DB-8205-43C8975C90B9}
+	EndGlobalSection
+EndGlobal

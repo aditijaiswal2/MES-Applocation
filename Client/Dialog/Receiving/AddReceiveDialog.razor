@@ -1,0 +1,90 @@
+﻿@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared;
+
+@using System.Text
+@using MES.Shared.DTOs
+@using MES.Shared.Entities
+@using System.Net
+@using System.ComponentModel.DataAnnotations;
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+
+<MudContainer>
+    <MudCard>
+        <MudCardContent>
+            <MudGrid>
+               
+                <MudItem xs="12" Class="mb-2">
+                    <MudSelect T="string" Label="select" Variant="Variant.Outlined" @bind-Value="SelectedOption">
+                        @foreach (var selecttab in selectedTab)
+                        {
+                            <MudSelectItem Value="@selecttab">@selecttab</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton OnClick="SubmitForm" Color="Color.Primary">Submit</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    [Parameter] public string Date { get; set; }
+    [Parameter] public string SerialNumber { get; set; }
+    private string SelectedOption { get; set; } = "";
+
+
+    private List<string> selectedTab = new List<string>
+    {
+        "Rotor/Feed rolls  Service",
+        "Pump Repair",
+        "System Assembly",
+        "Pelletizer Assembly",
+        "Pulverizer Assembly",
+        "Ettlinger  Assembly"
+    };
+    protected override void OnInitialized()
+    {
+        // Optional: Ensure default values are set if parameters are missing
+        Date ??= DateTime.Today.ToString("yyyy-MM-dd");
+        SerialNumber ??= "MES00001";
+    
+    }
+
+    private async Task SubmitForm()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        var data = new Receiving
+            {
+                Date = DateTime.Parse(Date),
+                SerialNumber = SerialNumber,
+                SelectedOption = SelectedOption
+            };
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7172/api/ReceivingData/addrd", data);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Data submitted successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Error submitting data.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}
