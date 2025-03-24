@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250320124225_Initial")]
-    partial class Initial
+    [Migration("20250324100737_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -226,6 +226,32 @@ namespace MES.Server.Migrations
                     b.ToTable("WorkCenters");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Image", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageFilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShipmentImageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ShipmentImageId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.LoginUserDetails", b =>
                 {
                     b.Property<int>("Id")
@@ -296,6 +322,26 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Receivings");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SerialNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShipmentImage");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -405,6 +451,17 @@ namespace MES.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Image", b =>
+                {
+                    b.HasOne("MES.Shared.Models.ShipmentImage", "ShipmentImage")
+                        .WithMany("Images")
+                        .HasForeignKey("ShipmentImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShipmentImage");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("MES.Shared.Entities.AppRole", null)
@@ -449,6 +506,11 @@ namespace MES.Server.Migrations
             modelBuilder.Entity("MES.Shared.Entities.AppUser", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

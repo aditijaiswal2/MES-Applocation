@@ -27,6 +27,7 @@
                 var displayName = GetDisplayNameForRoute(route);
 
                 <MudNavLink Href="@route" Icon="@icon" IconColor="Color.Primary" Class="custom-navlink">@displayName</MudNavLink>
+                <MudNavLink Href="/ship" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">ShipMent</MudNavLink>
             }
         }
 
@@ -81,6 +82,9 @@
             case "/adduser":
                 return Icons.Material.Filled.WorkspacePremium;
 
+            case "/ship":
+                return Icons.Material.Filled.LocalShipping;
+
 
 
             default:
@@ -104,6 +108,8 @@
 
             case "/adduser":
                 return "Pump Repair";
+            case "/ship":
+                return "ShipMent";
 
 
             default:
