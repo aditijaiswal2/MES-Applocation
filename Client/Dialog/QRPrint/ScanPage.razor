@@ -1,0 +1,29 @@
+﻿@page "/scan"
+@using MES.Shared.DTOs
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(Navigation.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        var scannedData = queryParams["data"];
+
+        if (!string.IsNullOrEmpty(scannedData))
+        {
+            await OpenDialog(scannedData);
+        }
+    }
+
+    private async Task OpenDialog(string scannedData)
+    {
+        var parameters = new DialogParameters
+        {
+            { "LocQR", new QrDTO { QRData = Convert.FromBase64String(scannedData) } }
+        };
+
+        var options = new DialogOptions { FullWidth = false };
+        await DialogService.ShowAsync<QRCodeDialog>("Scanned QR Code", parameters, options);
+    }
+}

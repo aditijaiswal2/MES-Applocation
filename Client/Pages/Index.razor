@@ -5,6 +5,12 @@
 @using MES.Shared.DTOs
 @using MES.Shared.Models
 
+@using ReactorBlazorQRCodeScanner;
+@using Microsoft.JSInterop;
+@using MudBlazor;
+
+@inject IJSRuntime JS;
+
 @using System.Text.Json;
 @using System.Text;
 
@@ -13,62 +19,95 @@
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
 
- <MudContainer Class="pa-2" >
-        <MudGrid Class="d-flex justify-content-around">
-           @*  <MudItem md="12" sm="12" xs="12" class="mt-4 ml-2">
-                <MudText Typo="Typo.h6" Style="font-size: 16px;">USERS</MudText>
-            </MudItem> *@
-             <MudItem md="12" sm="12" xs="12" class="mb-2 ml-2" Style="margin-top:-10px">
-            
-                <MudItem md="11" sm="12" xs="12">
-                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
-                               Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
-                        ADD
-                    </MudButton>
-                </MudItem>
+<MudContainer Class="pa-2">
+    <MudGrid Class="d-flex justify-content-around">
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-between align-center mb-2">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
+                       Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
+                ADD
+            </MudButton>
+        </MudItem>
 
-                <br />
-            <MudItem md="12" sm="12" xs="12">
-                <div style="max-height: 500px; max-width:100%;">
-
-                    <MudTable Items="@receiveModule" Class="table table-bordered table-striped mt-2">
-                        <HeaderContent>
-                            <MudTh Style="text-align:center;width:150px">Serial Number</MudTh>
-                            <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
-                            <MudTh Style="text-align:center;width:150px">Module</MudTh>
-                            <MudTh Style="text-align:center;width:150px">Action</MudTh>
-
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%;">
+                <MudTable Items="@receiveModule" Class="table table-bordered table-striped mt-2">
+                    <HeaderContent>
+                        <MudTh Style="text-align:center;width:150px">Serial Number</MudTh>
+                        <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
+                        <MudTh Style="text-align:center;width:150px">Module</MudTh>
+                        <MudTh Style="text-align:center;width:200px">Action</MudTh>
                     </HeaderContent>
-                        <RowTemplate Context="appUsers">
-                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SerialNumber</MudTd>
-                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.Date</MudTd>
-                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SelectedOption</MudTd>
 
+                    <RowTemplate Context="appUsers">
+                        <MudTd Style="text-align:center;width:150px">@appUsers.SerialNumber</MudTd>
+                        <MudTd Style="text-align:center;width:150px">@appUsers.Date</MudTd>
+                        <MudTd Style="text-align:center;width:150px">@appUsers.SelectedOption</MudTd>
 
-                        <MudTd Style="text-align:center">
-                            <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
-                            <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
-                            <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
+                        <MudTd Style="text-align:center;width:200px">
+                            <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary"
+                                       OnClick="@(() => GenerateQR(appUsers))" />
+                            <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary"
+                                       OnClick="@(() => DeleteLocation(appUsers))" />
+                            <MudButton StartIcon="@Icons.Material.Filled.QrCodeScanner" Color="Color.Primary"
+                                       OnClick="StartScanning" />
                         </MudTd>
-                        </RowTemplate>
+                    </RowTemplate>
 
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 5, 10, 50, 100, int.MaxValue }" />
+                    </PagerContent>
+                </MudTable>
+            </div>
+        </MudItem>
 
-                        <PagerContent>
-                            <MudTablePager PageSizeOptions="new int[] { 5, 10, 50, 100, int.MaxValue }" />
-                        </PagerContent>
-                    </MudTable>
+        @* QR Scanner Section (Placed outside table for better UI) *@
+        @if (isScanning)
+        {
+            <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center mt-4">
+                <div style="width: 350px; height: 350px;">
+                    <QRCodeScanner LoadingMessage="" />
                 </div>
+            </MudItem>
+        }
 
-                </MudItem>
-
-              </MudItem>
-        </MudGrid>
+        @if (!string.IsNullOrEmpty(qrCodeData) || cameraError)
+        {
+            <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center mt-3">
+                <div class="border border-primary p-3">
+                    @if (!string.IsNullOrEmpty(qrCodeData))
+                    {
+                        <MudText Class="d-flex justify-center align-center mb-2">Scanned QR Code Data:</MudText>
+                        @foreach (var item in qrCodeData.Split(','))
+                        {
+                            <p style="margin: 1rem; font-size: 16px;">@item.Trim()</p>
+                        }
+                    }
+                    else if (cameraError)
+                    {
+                        <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+                    }
+                </div>
+            </MudItem>
+        }
+    </MudGrid>
 </MudContainer>
+
                 
 
 @code {
 
     private IEnumerable<Receiving> receiveModule = new List<Receiving>();
+
+    private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
+    private Action<string>? _onQrCodeScanAction;
+    private Action<string>? _onCameraPermissionFailedAction;
+    private QRCodeScanner qrCodeScanner;
+
+    private string qrCodeData;
+
+    private bool isScanning;
+    private bool isCancel = false;
+    private bool cameraError = false;
 
     //private IEnumerable<ITSLocation> iTSLocations = new List<ITSLocation>();
 
@@ -121,22 +160,56 @@
             var dialog = await DialogService.ShowAsync<AddReceiveDialog>("Add New Receive", parameters, dialogOptions);
         }
     
-
-    private async Task EditLocation(Receiving receive)
-    {
-        var parameters = new DialogParameters
+        private async Task StartScanning()
         {
-            { "SerialNumber", receive.SerialNumber },
-            { "Date", receive.Date },
-            { "SelectedOption", receive.SelectedOption }
-        };
+            try
+            {
+                isScanning = true;
+                qrCodeData = null;
+                cameraError = false;
 
-        var dialogOptions = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<EditReceiveDialog>("Edit Receive Data", parameters, dialogOptions);
+                _onQrCodeScanAction = (code) => OnQrCodeScan(code);
+                _onCameraPermissionFailedAction = (error) => OnCameraPermissionFailed(error);
 
-        var result = await dialog.Result;
-     
-    }
+                _qrCodeScannerJsInterop = new QRCodeScannerJsInterop(JS);
+                await _qrCodeScannerJsInterop.Init(_onQrCodeScanAction, _onCameraPermissionFailedAction);
+
+                isCancel = true;
+            }
+            catch (Exception ex)
+            {
+                // Handle any unexpected errors
+                cameraError = true;
+            }
+
+            StateHasChanged(); // Update the UI to show the camera or error message
+        }
+
+        private void StopScanning()
+        {
+            isScanning = false;
+            isCancel = false;
+            _qrCodeScannerJsInterop?.StopRecording();
+            StateHasChanged();
+        }
+
+        private void OnQrCodeScan(string code)
+        {
+            qrCodeData = code;
+            isScanning = false;
+            isCancel = false;
+            _qrCodeScannerJsInterop.StopRecording(); // Stop scanning
+            StateHasChanged();
+        }
+
+        private void OnCameraPermissionFailed(string error)
+        {
+            cameraError = true;
+            isScanning = false;
+            isCancel = false;
+            StateHasChanged();
+        }
+
 
     private async Task DeleteLocation(Receiving receive)
     {
