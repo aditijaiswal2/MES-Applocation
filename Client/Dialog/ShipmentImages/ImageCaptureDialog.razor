@@ -1,0 +1,150 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Newtonsoft.Json
+@using System.Text
+@using MudBlazor
+
+@inject IJSRuntime JSR
+@inject HttpClient HttpClient
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<div>
+    <MudDialog Style="overflow: hidden;">
+        <DialogContent>
+            <MudCard Class="pa-2">
+                <MudCardContent>
+                    <div id="loadingSpinner" style="display:none;">
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <video id="videoFeed" width="600" height="300"></video>
+                    </div>
+                    <canvas class="d-none" id="currentFrame" width="800" height="600"></canvas>
+
+                    <div style="display: flex; justify-content: center; margin-top: 16px;">
+                        <MudIconButton Icon="@Icons.Material.Filled.CameraAlt" Color="Color.Primary" Size="Size.Large" OnClick="@Save" />
+                        <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Cancel" Size="Size.Large" OnClick="@Cancel" />
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    #loadingSpinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        padding: 10px;
+        border-radius: 50%;
+    }
+</style>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string ImageUri { get; set; }
+
+    private DotNetObjectReference<ImageCaptureDialog> oCounter;
+    private string frameUri;
+    private bool isVideoStarted = false;
+    private double imageSizeInKB;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await ShowSpinnerAndStartVideo();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Camera access is denied. Please allow access to the camera.", Severity.Error);
+        }
+    }
+
+    private async Task ShowSpinnerAndStartVideo()
+    {
+        try
+        {
+            // Show the spinner
+            await JSR.InvokeVoidAsync("showLoadingSpinner");
+
+            // Start the video feed
+            await JSR.InvokeVoidAsync("startVideo", "videoFeed");
+            isVideoStarted = true;
+
+            // Hide the spinner once video is started
+            await JSR.InvokeVoidAsync("hideLoadingSpinner");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to start the video: {ex.Message}", Severity.Error);
+            await JSR.InvokeVoidAsync("hideLoadingSpinner");
+            MudDialog.Cancel();
+        }
+    }
+
+    private async Task Save()
+    {
+        if (!isVideoStarted)
+        {
+            Snackbar.Add("Camera access is denied. Please allow access to the camera.", Severity.Error);
+            MudDialog.Cancel();
+            return;
+        }
+
+        if (oCounter == null)
+            oCounter = DotNetObjectReference.Create(this);
+
+        try
+        {
+            await JSR.InvokeAsync<string>("getFrame", "videoFeed", "currentFrame", oCounter);
+            await JSR.InvokeVoidAsync("stopVideo", "videoFeed");
+            isVideoStarted = false;
+            MudDialog.Close(DialogResult.Ok(frameUri));
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message.Contains("Camera stream is not available or already stopped"))
+            {
+                Snackbar.Add("The camera stream is unavailable. Please make sure the camera is connected and try again.", Severity.Error);
+            }
+            else if (ex.Message.Contains("Cannot read properties of null (reading 'getTracks')"))
+            {
+                Snackbar.Add("Camera access is denied. Please give camera permission in the browser settings.", Severity.Error);
+            }
+            else
+            {
+                Snackbar.Add($"An error occurred while capturing the image. Please try again. Error details: {ex.Message}", Severity.Error);
+            }
+            MudDialog.Cancel();
+        }
+    }
+
+    [JSInvokable]
+    public async Task ProcessImage(string base64Image, int imageSizeInBytes)
+    {
+        frameUri = base64Image;
+        imageSizeInKB = Math.Round(imageSizeInBytes / 1024.0, 2); // Convert bytes to KB
+        StateHasChanged();
+    }
+
+    private async Task Cancel()
+    {
+        if (isVideoStarted)
+        {
+            try
+            {
+                await JSR.InvokeVoidAsync("stopVideo", "videoFeed");
+                isVideoStarted = false;
+                MudDialog.Cancel();
+            }
+            catch (Exception ex)
+            {
+                MudDialog.Cancel();
+            }
+        }
+    }
+}

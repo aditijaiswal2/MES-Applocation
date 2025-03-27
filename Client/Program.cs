@@ -1,27 +1,25 @@
+using Blazored.LocalStorage;
+using MES.Client;
+using MES.Client.Utitlity;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MES.Client;
 using MudBlazor.Services;
-using Blazored.LocalStorage;
-using MES.Shared.Models;
-using MES.Client.Utitlity;
 
-namespace MES.Client;
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-public class Program
-{
-    public static async Task Main(string[] args)
-    {
-        var builder = WebAssemblyHostBuilder.CreateDefault(args);
-        builder.RootComponents.Add<App>("#app");
-        builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddHttpClient("MES.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// Supply HttpClient instances that include access tokens when making requests to the server project
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("MES.ServerAPI"));
 
-        builder.Services.AddMudServices();
-        builder.Services.AddSingleton<IDialogCompletionService, CompletionService>();
-        builder.Services.AddBlazoredLocalStorage();
-        builder.Services.AddScoped<Receiving>();
-        await builder.Build().RunAsync();
-    }
-}
+builder.Services.AddSingleton<IDialogCompletionService, CompletionService>();
+
+builder.Services.AddBlazoredLocalStorage();
+
+#region UI Service
+builder.Services.AddMudServices();
+#endregion UI Service
+
+await builder.Build().RunAsync();

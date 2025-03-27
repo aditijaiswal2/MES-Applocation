@@ -1,6 +1,57 @@
 ﻿@page "/ship"
-<h3>ShipmentVC</h3>
+
+@using MES.Client.Dialog.QRPrint
+@using MES.Client.Dialog.Receiving
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+@using MES.Client.Dialog.ShipmentImages
+@using System.Text.Json;
+@using System.Text;
+
+@using Newtonsoft.Json;
+@inject IDialogService DialogService
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+
+<MudContainer Class="pa-2">
+    <MudGrid Class="d-flex justify-content-around">
+        <MudItem md="12" sm="12" xs="12" class="mb-2 ml-2" Style="margin-top:-10px">
+            
+                <MudItem md="11" sm="12" xs="12">
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
+                               Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
+                        ADD IMAGES
+                    </MudButton>
+                </MudItem>
+                </MudItem>
+            
+    </MudGrid>
+</MudContainer>
+
 
 @code {
+
+    
+
+    
+
+    private async Task NewReceive()
+    {      
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+        var dialog = await DialogService.ShowAsync<AddShipImageDialog>("Add Images", dialogOptions);
+    }
+
+
+   
+
+  
+
+
+
+
+
+
 
 }

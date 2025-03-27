@@ -255,52 +255,36 @@ namespace MES.Server.Controllers
 
 
         /**
-    * Updates the user details
-    *
-    * @param UserAddDto updateDto
-    * @return string
-    **/
+             * Updates the user details
+             *
+             * @param UserAddDto updateDto
+             * @return string
+             **/
         //[Authorize(Roles = "Admin")]
         [HttpPut("Ur")]
         public async Task<ActionResult> UpdateUser(UserAddDto updateDto)
         {
-            if (updateDto == null || string.IsNullOrEmpty(updateDto.Email))
-            {
-                return BadRequest("Invalid user data.");
-            }
-
+            //var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var user = await _userManager.Users
-      .Include(r => r.UserRoles)
-      .ThenInclude(r => r.Role)
-      .SingleOrDefaultAsync(u => u.Email.ToLower() == updateDto.Email.ToLower());
+                .Include(r => r.UserRoles)
+                .ThenInclude(r => r.Role)
+                .SingleOrDefaultAsync(u => u.UserName == updateDto.username.ToLower());
 
-
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Update user properties
-            user.UserName = updateDto.Name;
+            user.Name = updateDto.Name;
             user.Email = updateDto.Email;
-           
             user.UserCode = updateDto.Usercode;
             user.PageNames = updateDto.PageNames;
             user.Routes = updateDto.Routes;
 
-            // Get the User Roles and then remove them and add the new roles back in
-            var roles = user.UserRoles?.Select(r => r.Role.Name).ToList() ?? new List<string>();
-
+            //Get the User Roles and then remove them and add the new roles back in
+            var roles = user.UserRoles.Select(r => r.Role.Name).ToList();
             await _userManager.RemoveFromRolesAsync(user, roles);
             await _userManager.AddToRoleAsync(user, updateDto.Role);
 
             _context.Entry(user).State = EntityState.Modified;
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                return Ok(updateDto.Email + " updated successfully");
-            }
+            if (await _context.SaveChangesAsync() > 0) return Ok(updateDto.username + " updated sucessfully");
 
-            return BadRequest("Failed to update user.");
+            return BadRequest("Failed to Update User");
         }
 
 

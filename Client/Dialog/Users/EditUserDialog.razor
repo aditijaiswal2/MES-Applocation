@@ -1,0 +1,144 @@
+﻿@using MES.Client.Utitlity
+@using MES.Shared.Entities
+@using MES.Shared.Models
+@using System.ComponentModel.DataAnnotations;
+@using Newtonsoft.Json
+@using System.Text
+@using MES.Shared.DTOs
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+ @inject IHttpClientFactory _httpClient
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.PersonAdd" Class="mr-3 mb-n1" />
+                Update User
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                Label="User Name" @bind-Value="@appUsers.UserName" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                 Label="Name " @bind-Value="@appUsers.Name" Variant="Variant.Outlined" Class="mb-4" />
+            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                 Label="User Code" @bind-Value="@appUsers.UserCode" Variant="Variant.Outlined" Class="mb-4" />
+            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Email " @bind-Value="@appUsers.Email" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Assigned Page Privileges " @bind-Value="@appUsers.PageNames" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+             <div class="mb-4">
+                 <MudSelect Variant="Variant.Outlined" @bind-Value="@appUsers.PageNames" Label="Update Page Privileges" MultiSelection="true">
+
+                     @foreach (var pr in pages)
+                    {
+
+                        <MudSelectItem Value="@pr">@pr</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+             @*  <div class="mb-4">
+                 <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRole" Label="Role">
+                     @foreach (var role in AppRoles)
+                    {
+                        <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </div> *@
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">Save</MudButton>
+            @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+        </DialogActions>
+    </MudDialog>
+
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public AppUser appUsers { get; set; } = new AppUser();
+    [Parameter] public string SelectedRole { get; set; }
+    [Parameter] public IEnumerable<AppRole> AppRoles { get; set; }
+
+    private IEnumerable<AppRole> appRoles = new List<AppRole>();
+    public UserAddDto user = new UserAddDto();
+    public Dictionary<string, string> pagePrevlgs = new Dictionary<string, string>
+     {
+          { "Job Image Capture", "/index" },
+          { "Records", "/record" },
+         { "Manage User", "/adduser" },
+
+     };
+
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
+            yield return "Max 250 characters";
+    }
+
+    private string[] pages =
+    {
+      /*  "Dashboard", */ "Job Image Capture","Records","Manage User",
+    };
+
+    
+
+    protected override void OnInitialized()
+    {
+        user.Role = SelectedRole; 
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+            appUsers.Routes = string.Join(", ", appUsers.PageNames.Split(',').Select(page => pagePrevlgs[page.Trim()]));
+
+            var userUpdateDto = new UserAddDto
+                {
+                    username = appUsers.UserName,
+                    Name = appUsers.Name,
+                    Usercode = appUsers.UserCode,
+                    Email = appUsers.Email,
+                    Role = "User",
+                    PageNames = appUsers.PageNames,
+                    Routes = appUsers.Routes
+
+                };
+
+            var jsonPart = JsonConvert.SerializeObject(userUpdateDto);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+            //var response = await HttpClient.PutAsync("https://localhost:7006/api/Users/Ur", content);
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PutAsync(ApiConstants.SaveUser, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("User edited successfully.", Severity.Success);
+                MudDialog?.Close(DialogResult.Ok(true));
+                CompletionService.IsCompleted = true;
+            }
+            else
+            {
+                Snackbar.Add($"Failed to edit User. Status code: {response.StatusCode}", Severity.Error);
+                CompletionService.IsCompleted = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error occurred: {ex.Message}", Severity.Warning);
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+}

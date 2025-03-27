@@ -9,8 +9,8 @@ namespace MES.Shared.DTOs
 {
     public class UserAddDto
     {
-        //[Required]
-       // public string username { get; set; }
+        [Required]
+       public string username { get; set; }
        
         [Required]
         public string Name { get; set; }

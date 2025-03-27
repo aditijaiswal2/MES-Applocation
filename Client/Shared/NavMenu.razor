@@ -27,7 +27,7 @@
                 var displayName = GetDisplayNameForRoute(route);
 
                 <MudNavLink Href="@route" Icon="@icon" IconColor="Color.Primary" Class="custom-navlink">@displayName</MudNavLink>
-                <MudNavLink Href="/ship" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">ShipMent</MudNavLink>
+               
             }
         }
 
@@ -36,7 +36,18 @@
         {
             @if (UserData.Router.Contains("/adduser"))
             {
+
+                <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink>
+                <MudNavLink Href="/pumpR" Icon="@Icons.Material.Filled.HeatPump" IconColor="Color.Primary" Class="custom-navlink">Pump Repair</MudNavLink>
+                <MudNavLink Href="/sasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">System Assembly</MudNavLink>
+                <MudNavLink Href="/pasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Pelletizer Assembly</MudNavLink>
+                <MudNavLink Href="/plasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Pulverizer Assembly</MudNavLink>
+                <MudNavLink Href="/easm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Ettlinger Assembly</MudNavLink>
+
+                <MudNavLink Href="/ship" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">ShipMent</MudNavLink>
+               
                 <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
+                
             }
 
 
@@ -82,10 +93,11 @@
             case "/adduser":
                 return Icons.Material.Filled.WorkspacePremium;
 
-            case "/ship":
-                return Icons.Material.Filled.LocalShipping;
+            // case "/ship":
+            //     return Icons.Material.Filled.LocalShipping;
 
-
+            // case "/roter":
+            //     return Icons.Material.Filled.Feed;
 
             default:
                 return "";
@@ -97,8 +109,8 @@
         switch (route)
         {
 
-            case "/record":
-                return "Rotor/Feed rolls  Service";
+            // case "/record":
+            //     return "Rotor/Feed rolls  Service";
 
             case "/addinfo":
                 return "System Assembly ";
@@ -106,8 +118,27 @@
             case "/index":
                 return "Receiving";
 
+            case "/roter":
+                return "Rotor/Feed Rolls Service";
+
+            case "/pumpR":
+                return "Pump Repair";
+
+            case "/sasm":
+                return "System Assembly";
+
+            case "/pasm":
+                return "Pelletizer Assembly";
+
+            case "/plasm":
+                return "Pulverizer Assembly";
+
+            case "/easm":
+                return "Ettlinger Assembly";
+
             case "/adduser":
                 return "Pump Repair";
+
             case "/ship":
                 return "ShipMent";
 
