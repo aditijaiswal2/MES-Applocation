@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250324100737_InitialCreate")]
+    [Migration("20250328055654_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -298,6 +298,27 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Logindetails");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.MESWorkcenters", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Workcenters")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MESWorkcenters");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Receiving", b =>

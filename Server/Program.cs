@@ -44,6 +44,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddTransient<IReceivingDataRepository, ReceivingDataRepository>();
 builder.Services.AddTransient<ReceivingDataRepository>();
+builder.Services.AddTransient<IMESWorkCentersRepository, MESWorkCentersRepository>();
+builder.Services.AddTransient<MESWorkCentersRepository>();
+
 
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>

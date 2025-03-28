@@ -92,6 +92,20 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MESWorkcenters",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Workcenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MESWorkcenters", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Params",
                 columns: table => new
                 {
@@ -356,6 +370,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoginUserDetails");
+
+            migrationBuilder.DropTable(
+                name: "MESWorkcenters");
 
             migrationBuilder.DropTable(
                 name: "Params");

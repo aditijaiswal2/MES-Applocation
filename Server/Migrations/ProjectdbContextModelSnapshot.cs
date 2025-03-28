@@ -297,6 +297,27 @@ namespace MES.Server.Migrations
                     b.ToTable("Logindetails");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.MESWorkcenters", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Workcenters")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MESWorkcenters");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Receiving", b =>
                 {
                     b.Property<int>("Id")

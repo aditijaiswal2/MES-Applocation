@@ -30,14 +30,26 @@
                
             }
         }
+        <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
+            @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
+            <MudNavLink Href="/rii" Icon="@Icons.Material.Filled.BrandingWatermark" IconColor="Color.Primary" Class="custom-navlink">Incoming Inspection</MudNavLink>
+            <MudNavLink Href="/rsales" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
+            <MudNavLink Href="/rps" Icon="@Icons.Material.Filled.ProductionQuantityLimits" IconColor="Color.Primary" Class="custom-navlink">Production Scheduling</MudNavLink>
+            <MudNavLink Href="/rg" Icon="@Icons.Material.Filled.GridOn" IconColor="Color.Primary" Class="custom-navlink">Grinding</MudNavLink>
+            <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
+            <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
 
-        if (UserData.Router.Contains("/adduser"))
+             </MudNavGroup>
+        
+
+
+    if (UserData.Router.Contains("/adduser"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
             @if (UserData.Router.Contains("/adduser"))
             {
 
-                <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink>
+               
                 <MudNavLink Href="/pumpR" Icon="@Icons.Material.Filled.HeatPump" IconColor="Color.Primary" Class="custom-navlink">Pump Repair</MudNavLink>
                 <MudNavLink Href="/sasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">System Assembly</MudNavLink>
                 <MudNavLink Href="/pasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Pelletizer Assembly</MudNavLink>
@@ -46,12 +58,18 @@
 
                 <MudNavLink Href="/ship" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">ShipMent</MudNavLink>
                
-                <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
+               
                 
             }
 
 
+
         }
+
+         <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
+            <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
+            <MudNavLink Href="/wc" Icon="@Icons.Material.Filled.BusinessCenter" IconColor="Color.Primary" Class="custom-navlink">Manage Workcenters </MudNavLink>
+             </MudNavGroup>
     }
 </MudNavMenu>
 
@@ -118,8 +136,8 @@
             case "/index":
                 return "Receiving";
 
-            case "/roter":
-                return "Rotor/Feed Rolls Service";
+            // case "/roter":
+            //     return "Rotor/Feed Rolls Service";
 
             case "/pumpR":
                 return "Pump Repair";
@@ -142,10 +160,33 @@
             case "/ship":
                 return "ShipMent";
 
+            case "/wc":
+                return "Manage Workcenters";
+
+            case "/rii":
+                return "Incoming Inspection";
+
+            case "/rsales":
+                return "Sales";
+
+            case "/rps":
+                return "Production Scheduling";
+
+            case "/rg":
+                return "Grinding";
+
+            case "/rfi":
+                return "Final Inspection";
+
+            case "/rwsc":
+                return "Waiting For Sales Clearance";
+
 
             default:
                 return "";
         }
     }
 }
+
+                
 

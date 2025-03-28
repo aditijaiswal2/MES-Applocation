@@ -1,0 +1,92 @@
+﻿@using MES.Client.Utitlity;
+@using MES.Shared.Models
+@using System.ComponentModel.DataAnnotations;
+@using Newtonsoft.Json
+@using System.Text
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.EditLocation" Class="mr-2 mb-n1" />
+                Update WorkCenters
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="WorkCenters" @bind-Value="@workcenters.Workcenters" Variant="Variant.Outlined" Class="mb-6" />
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="WorkCenters Description" @bind-Value="@workcenters.Description" Variant="Variant.Outlined" Class="mb-4" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">Save</MudButton>
+            @* <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public MESWorkcenters workcenters { get; set; } = new MESWorkcenters();
+
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
+            yield return "Max 250 characters";
+    }
+
+    private async Task Save()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(workcenters);
+
+        if (!Validator.TryValidateObject(workcenters, validationContext, validationResults, true))
+        {
+            foreach (var validationResult in validationResults)
+            {
+                Snackbar.Add(validationResult.ErrorMessage, Severity.Error);
+            }
+            return;
+        }
+        try
+        {
+            var jsonPart = JsonConvert.SerializeObject(workcenters);
+
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+            //var response = await HttpClient.PutAsync("https://localhost:7006/api/ITSLocation/editloc", content);
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PutAsync(ApiConstants.EditLocation, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Workcenter edited successfully.", Severity.Success);
+                CompletionService.IsCompleted = true;
+            }
+            else
+            {
+                Snackbar.Add($"Failed to edit Workcenter,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                CompletionService.IsCompleted = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+
+        MudDialog?.Close();
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+}

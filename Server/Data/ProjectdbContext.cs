@@ -21,7 +21,7 @@ namespace MES.Server.Data
         }
         public DbSet<LoginUserDetails> LoginUserDetails { get; set; }
         public DbSet<Logindetail> Logindetails { get; set; }
-      
+        public DbSet<MESWorkcenters> MESWorkcenters { get; set; }
         public DbSet<WcList> WorkCenters { get; set; }
         public DbSet<Params> Params { get; set; }
         public DbSet<Receiving> Receivings { get; set; }
