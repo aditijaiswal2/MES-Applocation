@@ -1,0 +1,98 @@
+﻿@using MES.Client.Dialog.ShipmentImages
+@using MES.Client.Utitlity
+
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                Add Grinding Department
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+           
+
+            <MudTextField T="string" Label="Barcode"  Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+
+            <MudItem md="12" sm="12" xs="12">
+                <MudDatePicker @bind-Date="fromDate" Variant="Variant.Outlined" Label="From Date" />
+            </MudItem>
+            <MudItem md="12" sm="12" xs="12">
+                <MudDatePicker @bind-Date="toDate" Variant="Variant.Outlined" Label="To Date" />
+            </MudItem>
+
+            <MudItem md="12" sm="12" xs="12" class="center mt-3 mb-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="addImage">
+                    Image Capture
+                </MudButton>
+            </MudItem>
+
+            <MudTextField T="string" Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" Class="mb-4" />
+
+            <MudGrid Class="d-flex Justify-arround">
+
+                <MudItem md="12" sm="12" xs="12">
+                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedPriority" AnchorOrigin="Origin.BottomCenter" Label="Customer Priority" OpenIcon="@Icons.Material.Filled.PriorityHigh" AdornmentColor="Color.Primary">
+                        @foreach (var cup in CustomerPriorityStatus)
+                        {
+                            <MudSelectItem Value="@cup">@cup</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+            </MudGrid>
+            <MudForm>
+                <MudRadioGroup @bind-Value="SelectedOption">
+                    <MudRadio Value="@("OK")" Color="Color.Success">OK</MudRadio>
+                    <MudRadio Value="@("Issue/Delay")" Color="Color.Error"> Issue/delay</MudRadio>
+                    
+                </MudRadioGroup>
+            </MudForm>
+
+           
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
+    }
+
+</style>
+
+@code {
+
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private DateTime? fromDate;
+    private DateTime? toDate;
+    private string? DelayReasonTracking { get; set; }
+    private string? SelectedPriority { get; set; }   
+    private List<string> CustomerPriorityStatus = new List<string>();
+    public string SelectedOption { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+       
+
+        CustomerPriorityStatus.Add("High");
+        CustomerPriorityStatus.Add("Medium");
+        CustomerPriorityStatus.Add("Low");
+
+
+    }
+
+    private async Task addImage()
+    {
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+        var dialog = await DialogService.ShowAsync<AddShipImageDialog>("Add Images", dialogOptions);
+    }
+
+}

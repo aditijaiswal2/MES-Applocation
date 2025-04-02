@@ -24,7 +24,7 @@
         public const string AddUser = $"{BaseUrl}/users/adduser";
 
         // Manaage WorkCenters : MES WorkCenter
-        public const string GetLocations = $"{BaseUrl}/MESWorkCenters/getwc";
+        public const string GetMESWorkcenters = $"{BaseUrl}/MESWorkCenters/getwc";
         public const string LocationQR = $"{BaseUrl}/MESWorkCenters/wcQR";
         public const string AddLocation = $"{BaseUrl}/MESWorkCenters/addwc";
         public const string EditLocation = $"{BaseUrl}/MESWorkCenters/editwc";

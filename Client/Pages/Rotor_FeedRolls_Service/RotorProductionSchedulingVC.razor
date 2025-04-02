@@ -1,7 +1,129 @@
 ﻿@page "/rps"
+@using MES.Client.Dialog
+@using MES.Client.Utitlity
+@using MES.Shared.Models
 
-<h3>RotorProductionSchedulingVC</h3>
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+
+<MudContainer Style="height: 100%;width: 100%;overflow-y:hidden;overflow-x:hidden">
+
+    <MudGrid Class="d-flex Justify-arround">
+
+        <MudItem md="4" sm="12" xs="12">
+            <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedProductionPlanning" AnchorOrigin="Origin.BottomCenter" Label="Production Planning" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
+                @foreach (var ps in ProductionPlanningStatus)
+                {
+                    <MudSelectItem Value="@ps">@ps</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>      
+
+    </MudGrid>
+
+    @if (SelectedProductionPlanning == "New" || SelectedProductionPlanning == "Simple")
+    {
+        <MudContainer Class="d-flex justify-start mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenGrindingDepartment">
+                Grinding Department
+            </MudButton>
+        </MudContainer>
+
+        <MudContainer Class="d-flex justify-start mt-4">
+            <MudItem md="4" sm="12" xs="12">
+                <MudSelect Variant="Variant.Outlined" @bind-Value="Selectedworkcenters"
+                AnchorOrigin="Origin.BottomCenter" Label="WorkCenters"
+                OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
+                    @if (MESWorkcenters != null)
+                    {
+                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                        {
+                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+        </MudContainer>
+    }
+    @if (SelectedProductionPlanning == "Advanced Sharping")
+    {
+        <MudGrid Class="d-flex Justify-arround">
+
+            <MudItem md="4" sm="12" xs="12">
+                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedAdvancedSharping" AnchorOrigin="Origin.BottomCenter" Label="Advanced Sharping" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
+                    @foreach (var ads in AdvancedSharpingStatus)
+                    {
+                        <MudSelectItem Value="@ads">@ads</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+        </MudGrid>
+
+    }
+
+
+</MudContainer>
 
 @code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private string? SelectedProductionPlanning { get; set; }
+    private List<string> ProductionPlanningStatus = new List<string>();
+    private string? Selectedworkcenters { get; set; }
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    private string? SelectedAdvancedSharping { get; set; }
+    private List<string> AdvancedSharpingStatus = new List<string>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        ProductionPlanningStatus.Add("New");
+        ProductionPlanningStatus.Add("Simple");
+        ProductionPlanningStatus.Add("Advanced Sharping");
+
+        AdvancedSharpingStatus.Add("Welding");
+        AdvancedSharpingStatus.Add("Chroming");
+        AdvancedSharpingStatus.Add("Other Operations");
+
+
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+            if (workcenterResponse.IsSuccessStatusCode)
+            {
+                var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+                if (locationResult != null)
+                {
+                    MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                }
+            }
+            else
+            {
+                Snackbar.Add($"Failed to fetch Workcenters: {workcenterResponse.ReasonPhrase}", Severity.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occurred: {ex.Message}", Severity.Warning);
+        }
+    }
+
+    private async Task OpenGrindingDepartment()
+    {
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+        await DialogService.ShowAsync<GrindingDepartmentDialog>("Add Grinding Department", dialogOptions);
+    }
+   
 }

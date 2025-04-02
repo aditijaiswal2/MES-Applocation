@@ -20,7 +20,7 @@
             
                 <MudItem md="11" sm="12" xs="12">
                     <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
-                               Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
+                           Size="Size.Small" Color="Color.Primary" OnClick="@addImage">
                         ADD IMAGES
                     </MudButton>
                 </MudItem>
@@ -36,7 +36,7 @@
 
     
 
-    private async Task NewReceive()
+    private async Task addImage()
     {      
 
         var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;

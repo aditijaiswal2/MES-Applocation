@@ -83,7 +83,7 @@
         {
             //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetLocations);
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
             if (locationsResponse.IsSuccessStatusCode)
             {
                 var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<MESWorkcenters>>();
@@ -189,7 +189,7 @@
         {
             //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetLocations);
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
             if (locationsResponse.IsSuccessStatusCode)
             {
                 var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<MESWorkcenters>>();
