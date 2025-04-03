@@ -46,7 +46,8 @@ builder.Services.AddTransient<IReceivingDataRepository, ReceivingDataRepository>
 builder.Services.AddTransient<ReceivingDataRepository>();
 builder.Services.AddTransient<IMESWorkCentersRepository, MESWorkCentersRepository>();
 builder.Services.AddTransient<MESWorkCentersRepository>();
-
+builder.Services.AddTransient<IIncomingInspection, IncomingInspectionRepository>();
+builder.Services.AddTransient<IncomingInspectionRepository>();
 
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>

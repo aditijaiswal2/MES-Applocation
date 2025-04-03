@@ -5,6 +5,7 @@ using MES.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MES.Shared.Models.Rotors;
 
 
 namespace MES.Server.Data
@@ -26,6 +27,8 @@ namespace MES.Server.Data
         public DbSet<Params> Params { get; set; }
         public DbSet<Receiving> Receivings { get; set; }
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
+        public DbSet<IncomingInspection> IncomingInspections { get; set; }
+
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
