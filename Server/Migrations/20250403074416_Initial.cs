@@ -107,7 +107,11 @@ namespace MES.Server.Migrations
                     AddQty = table.Column<int>(type: "int", nullable: false),
                     TirLeftJournal = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TirRightJournal = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SaddlePartNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    SaddlePartNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Module = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Users = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

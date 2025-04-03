@@ -40,11 +40,11 @@
             @if (!string.IsNullOrEmpty(qrCodeData))
             {
                 <div>
-                    <MudText Class="d-flex justify-center align-center">Incoming Inspection</MudText>
-                    <div class="border border-primary p-10 mt-2">
+                    @*  <MudText Class="d-flex justify-center align-center">Incoming Inspection</MudText>
+                    *@ <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
                         @foreach (var item in qrCodeData.Split(','))
                         {
-                            <p style="margin: 1.5rem; font-size: 16px;">@item.Trim()</p>
+                            <p class="qr-item">@item.Trim()</p>
                         }
                     </div>
 
@@ -375,7 +375,6 @@
     </MudGrid>
 </MudContainer>
 
-
 <style>
     .bordered-container {
     width: 100%;
@@ -387,14 +386,20 @@
     box-sizing: border-box;
     }
 
+
+    .qr-item {
+    margin: 1.5rem;
+    font-size: 16px;
+    white-space: nowrap; /* Ensures text stays in one line */
+    }
+
+
     .full-width-grid {
     width: 100%;
     margin: 0;
     }
 
 </style>
-
-
 
 @code {
     private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
@@ -417,7 +422,6 @@
     };
 
     private string selectedType { get; set; } = "";
-
 
     private List<string> RotorStyle = new()
     {
@@ -504,8 +508,6 @@
     };
 
     private string selectedMaterial { get; set; } = "";
-
-
 
     protected override void OnInitialized()
     {
@@ -627,59 +629,110 @@
         selectedbt = value;
     }
 
-    private async void SubmitForm()
+private async void SubmitForm()
+{
+    try
     {
-        try
+        // Assign scanned QR Code data if available
+        if (!string.IsNullOrEmpty(qrCodeData))
         {
-            // Update the existing inspection object instead of creating a new one
-            inspection.Materials = selectedMaterial;
-            inspection.RotorStyle = selectedRotorStyle;
-            inspection.Type = selectedType;
-            inspection.BearingRemoved = selectedberrem;
-            inspection.Bearing = selectedBearings;
-            inspection.BearingSeals = selectedBearSeals;
-            inspection.CeramicSeals = selectedCerSeals;
-            inspection.Right = selectedRL;
-            inspection.Left = selectedRL;
-            inspection.BasicSharpening = selectedberrem;
-            inspection.WedgelockAlignmentMarks = selectedberrem;
-            inspection.CenterGrinding = selectedberrem;
-            inspection.Aligned = selectedberrem;
-            inspection.PlasticSleaves = selectedberrem;
-            inspection.Welding = selectedberrem;
-            inspection.BedKnife = selectedberrem;
-            inspection.Bottom=selectedbt;
-            inspection.Top=selectedbt;
-            inspection.SandBlasting = selectedbt;
-            inspection.ReProfile = selectedbt;
+            var qrDetails = qrCodeData.Split(',');
 
-            // Ensure required fields are selected
-            if (string.IsNullOrEmpty(selectedMaterial) || string.IsNullOrEmpty(selectedType) || string.IsNullOrEmpty(selectedRotorStyle))
+            if (qrDetails.Length >= 3) // Ensure QR Code has expected fields
             {
-                Snackbar.Add("Please fill in all required fields before submitting.", Severity.Warning);
-                return;
-            }
-
-         
-
-            var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/IncomingInspection/PostIncomingdata", inspection);
-            if (response.IsSuccessStatusCode)
-            {
-                Snackbar.Add("Form submitted successfully!", Severity.Success);
+                    inspection.SerialNumber = ExtractValue(qrDetails[0]);
+                    inspection.Module = ExtractValue(qrDetails[1]);
+                    inspection.Users = ExtractValue(qrDetails[2]);
             }
             else
             {
-                Snackbar.Add("Error submitting form.", Severity.Error);
+                Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
+                return;
             }
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
+            return;
+        }
+
+        // Update other fields
+        inspection.Materials = selectedMaterial;
+        inspection.RotorStyle = selectedRotorStyle;
+        inspection.Type = selectedType;
+        inspection.BearingRemoved = selectedberrem;
+        inspection.Bearing = selectedBearings;
+        inspection.BearingSeals = selectedBearSeals;
+        inspection.CeramicSeals = selectedCerSeals;
+        inspection.Right = selectedRL;
+        inspection.Left = selectedRL;
+        inspection.BasicSharpening = selectedberrem;
+        inspection.WedgelockAlignmentMarks = selectedberrem;
+        inspection.CenterGrinding = selectedberrem;
+        inspection.Aligned = selectedberrem;
+        inspection.PlasticSleaves = selectedberrem;
+        inspection.Welding = selectedberrem;
+        inspection.BedKnife = selectedberrem;
+        inspection.Bottom = selectedbt;
+        inspection.Top = selectedbt;
+        inspection.SandBlasting = selectedbt;
+        inspection.ReProfile = selectedbt;
+
+        // Ensure required fields are filled
+        if (string.IsNullOrEmpty(selectedMaterial) || string.IsNullOrEmpty(selectedType) || string.IsNullOrEmpty(selectedRotorStyle))
+        {
+            Snackbar.Add("Please fill in all required fields before submitting.", Severity.Warning);
+            return;
+        }
+
+        inspection.DateTime = DateTime.Today;
+
+        var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/IncomingInspection/PostIncomingdata", inspection);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Form submitted successfully!", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("Error submitting form.", Severity.Error);
         }
     }
+    catch (Exception ex)
+    {
+        Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+    }
+}
 
+
+    private void OnQrCodeScan(string code)
+    {
+        qrCodeData = code;
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop.StopRecording();
+
+        var qrDetails = qrCodeData.Split(',');
+
+        if (qrDetails.Length >= 3) // Ensure the QR code has at least 3 fields
+        {
+            inspection.Module = qrDetails[0].Trim();
+            inspection.Users = qrDetails[1].Trim();
+            inspection.SerialNumber = qrDetails[2].Trim();
+        }
+
+        showScanDetails = false; // Keep fields hidden initially
+        StateHasChanged();
+    }
+
+
+
+    // Helper function to remove labels and extract only values
+    private string ExtractValue(string data)
+    {
+        var parts = data.Split(':'); // Check if the data has a label like "SerialNumber: 12345"
+        return parts.Length > 1 ? parts[1].Trim() : parts[0].Trim(); // Return value without label
+    }
     private string qrCodeData;
-
     private bool isScanning;
     private bool isCancel = false;
     private bool cameraError = false;
@@ -717,16 +770,18 @@
         StateHasChanged();
     }
 
-    private void OnQrCodeScan(string code)
-    {
-        qrCodeData = code;
-        isScanning = false;
-        isCancel = false;
-        _qrCodeScannerJsInterop.StopRecording();
-        StateHasChanged();
-    }
+    // private void OnQrCodeScan(string code)
+    // {
+    //     qrCodeData = code;
+    //     isScanning = false;
+    //     isCancel = false;
+    //     _qrCodeScannerJsInterop.StopRecording();
+    //     StateHasChanged();
+    // }
+    private bool showScanDetails = false;
 
 
+  
 
 
     private void OnCameraPermissionFailed(string error)

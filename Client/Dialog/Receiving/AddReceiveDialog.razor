@@ -17,7 +17,7 @@
     <MudCard>
         <MudCardContent>
             <MudGrid>
-               
+
                 <MudItem xs="12" Class="mb-2">
                     <MudSelect T="string" Label="select" Variant="Variant.Outlined" @bind-Value="SelectedOption">
                         @foreach (var selecttab in selectedTab)
@@ -35,27 +35,36 @@
 </MudContainer>
 
 @code {
+
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public string Date { get; set; }
     [Parameter] public string SerialNumber { get; set; }
+    [Parameter] public EventCallback<Receiving> OnReceiveAdded { get; set; }
     private string SelectedOption { get; set; } = "";
 
 
     private List<string> selectedTab = new List<string>
     {
-        "Rotor/Feed rolls  Service",
-        "Pump Repair",
-        "System Assembly",
-        "Pelletizer Assembly",
-        "Pulverizer Assembly",
-        "Ettlinger  Assembly"
+         "Rotor/Feed rolls  Service"
+        // "Pump Repair",
+        // "System Assembly",
+        // "Pelletizer Assembly",
+        // "Pulverizer Assembly",
+        // "Ettlinger  Assembly"
     };
     protected override void OnInitialized()
     {
         // Optional: Ensure default values are set if parameters are missing
         Date ??= DateTime.Today.ToString("yyyy-MM-dd");
         SerialNumber ??= "MES00001";
-    
+
     }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+
 
     private async Task SubmitForm()
     {
@@ -76,6 +85,11 @@
             if (response.IsSuccessStatusCode)
             {
                 Snackbar.Add("Data submitted successfully!", Severity.Success);
+
+                // Notify the parent component (Index.razor) to update the table
+                await OnReceiveAdded.InvokeAsync(data);
+
+                MudDialog?.Cancel();
             }
             else
             {

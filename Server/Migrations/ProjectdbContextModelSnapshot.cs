@@ -397,6 +397,9 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Dia")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -438,6 +441,10 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Materials")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Module")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -485,6 +492,10 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TirLeftJournal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -498,6 +509,10 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Users")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

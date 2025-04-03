@@ -46,9 +46,11 @@
 
 
                         <MudTd Style="text-align:center">
-                            <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
-                            <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
-                            <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
+                          @*   <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
+                           *@ 
+                             <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
+                           <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
+                          
                         </MudTd>
                         </RowTemplate>
 
@@ -112,8 +114,9 @@
         {
             var parameters = new DialogParameters
             {
-                { "Date", DateTime.Today.ToString("yyyy-MM-dd") }, // Passing Date
+                 { "Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
                 { "SerialNumber", "MES00001" }, // Passing Serial Number
+                  { "OnReceiveAdded", EventCallback.Factory.Create<Receiving>(this, OnReceiveAdded) }
                // Default selection
             };
 
@@ -121,6 +124,14 @@
             var dialog = await DialogService.ShowAsync<AddReceiveDialog>("Add New Receive", parameters, dialogOptions);
         }
     
+
+    // Callback function to update the table dynamically
+    private void OnReceiveAdded(Receiving newReceive)
+    {
+        receiveModule = receiveModule.Prepend(newReceive).ToList(); // Add the new item to the list
+        StateHasChanged(); // Re-render the UI
+    }
+
 
     private async Task EditLocation(Receiving receive)
     {

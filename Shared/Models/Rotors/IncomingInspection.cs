@@ -50,5 +50,9 @@ namespace MES.Shared.Models.Rotors
         public string TirLeftJournal { get; set; }
         public string TirRightJournal { get; set; }
         public string SaddlePartNumber { get; set; }
+        public string SerialNumber { get; set; }
+        public string Module { get; set; }
+        public DateTime? DateTime { get; set; }
+        public string Users { get; set; }
     }
 }
