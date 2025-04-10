@@ -29,8 +29,11 @@ namespace MES.Server.Data
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
         public DbSet<IncomingInspection> IncomingInspections { get; set; }
         public DbSet<Imagedata> Imagedatas { get; set; }
-
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
+        public DbSet<RotorSalesData> RotorSalesData { get; set; }
+        public DbSet<RotorSalesSavedData> RotorSalesSavedData { get; set; }
+        public DbSet<RotorProductionData> RotorProductionData { get; set; }
+        public DbSet<RotorProcessDimensionsReport> RotorProcessDimensionsReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

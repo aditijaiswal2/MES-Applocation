@@ -1,7 +1,156 @@
 ﻿@page "/rfi"
 
-<h3>FinalInspectionVC</h3>
+@using MES.Client.Dialog
+@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using ReactorBlazorQRCodeScanner
+
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
+
+<MudContainer Style="overflow:hidden" Class="mt-5">
+    <MudGrid Class="d-flex justify-center">
+        @*    <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
+            <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
+        </MudItem> *@
+        <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
+            <div>
+                <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">Scan QR</MudButton>
+                @if (isCancel)
+                {
+                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">Cancel</MudButton>
+                }
+            </div>
+        </MudItem>
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
+            @if (isScanning)
+            {
+                <div class="d-flex justify-center" style="width: 350px; height: 350px;">
+                    <QRCodeScanner LoadingMessage="" />
+                </div>
+            }
+
+        </MudItem>
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
+            @if (!string.IsNullOrEmpty(qrCodeData))
+            {
+                <div>
+                    @*  <MudText Class="d-flex justify-center align-center">Incoming Inspection</MudText>
+                    *@ <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
+                        @foreach (var item in qrCodeData.Split(','))
+                        {
+                            <p class="qr-item">@item.Trim()</p>
+                        }
+                    </div>
+
+                </div>
+            }
+            else if (cameraError)
+            {
+                <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .bordered-container {
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+
+    .qr-item {
+        margin: 1.5rem;
+        font-size: 16px;
+        white-space: nowrap; /* Ensures text stays in one line */
+    }
+
+
+    .full-width-grid {
+        width: 100%;
+        margin: 0;
+    }
+
+</style>
 
 @code {
+
+
+    private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
+    private Action<string>? _onQrCodeScanAction;
+    private Action<string>? _onCameraPermissionFailedAction;
+    private QRCodeScanner qrCodeScanner;
+    private string qrCodeData;
+    private DateTime? fromDate = DateTime.Today; // Default to today
+    private bool isScanning;
+    private bool isCancel = false;
+    private bool cameraError = false;
+
+
+
+    private async Task StartScanning()
+    {
+        try
+        {
+            isScanning = true;
+            qrCodeData = null;
+            cameraError = false;
+
+            _onQrCodeScanAction = (code) => OnQrCodeScan(code);
+            _onCameraPermissionFailedAction = (error) => OnCameraPermissionFailed(error);
+
+            _qrCodeScannerJsInterop = new QRCodeScannerJsInterop(JS);
+            await _qrCodeScannerJsInterop.Init(_onQrCodeScanAction, _onCameraPermissionFailedAction);
+
+            isCancel = true;
+        }
+        catch (Exception ex)
+        {
+            // Handle any unexpected errors
+            cameraError = true;
+        }
+
+        StateHasChanged(); // Update the UI to show the camera or error message
+    }
+
+
+    private void StopScanning()
+    {
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop?.StopRecording();
+        StateHasChanged();
+    }
+
+    private void OnQrCodeScan(string code)
+    {
+        qrCodeData = code;
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop.StopRecording();
+        StateHasChanged();
+    }
+
+
+
+
+    private void OnCameraPermissionFailed(string error)
+    {
+        cameraError = true;
+        isScanning = false;
+        isCancel = false;
+        StateHasChanged();
+    }
 
 }

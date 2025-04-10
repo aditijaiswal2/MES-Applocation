@@ -1,0 +1,120 @@
+﻿@using MES.Shared.Models.Rotors
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                Generate Process Dimensions Report
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            @if (selectedProductionData != null)
+            {
+                <MudGrid>
+                    <MudItem xs="4">
+                        <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Rotor Dia.Right" @bind-Value="@GetRotorProcess.RotorsDiaRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Relief Land" @bind-Value="@GetRotorProcess.ReliefLand" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Tooth Face Left" @bind-Value="@GetRotorProcess.ToothFaceLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Tooth Face Right" @bind-Value="@GetRotorProcess.ToothFaceRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Visual Checks" @bind-Value="@GetRotorProcess.VisualChecks" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Inspected By" @bind-Value="@GetRotorProcess.InspectedBy" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem md="6" sm="12" xs="12">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                        @bind-Date="Date"
+                        Variant="Variant.Outlined"
+                        Label="Date"
+                        MinDate="@MinDate" />
+
+                    </MudItem>                   
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Notes" @bind-Value="@GetRotorProcess.Notes" Variant="Variant.Outlined" />
+                    </MudItem>                   
+
+                </MudGrid>
+                <br />
+
+                <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+
+                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>                    
+                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                </MudItem>
+
+
+            }
+
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
+    }
+
+</style>
+
+
+
+@code {
+
+    [Parameter] public RotorProductionData selectedProductionData { get; set; }
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+
+    private RotorProcessDimensionsReport GetRotorProcess { get; set; } = new RotorProcessDimensionsReport();
+    private DateTime? Date = DateTime.Today;
+    private DateTime MinDate = DateTime.Today;
+
+    protected override void OnInitialized()
+    {
+        MinDate = DateTime.Today;
+    }
+
+    private async Task Save()
+    {
+
+    }
+
+    private async Task ClearAll()
+    {
+        GetRotorProcess = new RotorProcessDimensionsReport();
+        Date = DateTime.Today;
+        StateHasChanged();
+    }
+}

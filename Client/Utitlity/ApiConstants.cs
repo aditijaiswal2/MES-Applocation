@@ -29,7 +29,22 @@
         public const string AddLocation = $"{BaseUrl}/MESWorkCenters/addwc";
         public const string EditLocation = $"{BaseUrl}/MESWorkCenters/editwc";
         public const string DeleteLocation = $"{BaseUrl}/MESWorkCenters";
-       
+
+
+        // RotorSales 
+
+        public const string GetIncomingDataBySerialNumber = $"{BaseUrl}/RotorSales/GetBySerialNumber";
+        public const string GetAllIncominginspectionData = $"{BaseUrl}/RotorSales/GetAll";
+        public const string AddRotorSalesData = $"{BaseUrl}/RotorSales/AddSalesData";
+        public const string GetAllSalesData = $"{BaseUrl}/RotorSales/GetAllSalesData";
+
+        // RotorSales saved data
+        public const string AddRotorSalesSavedData = $"{BaseUrl}/RotorSalesSaveData/AddSalesSaveData";
+        public const string GetAllSalessavedData = $"{BaseUrl}/RotorSalesSaveData/GetRecentSalesData";
+
+        // Rotor Production Data
+        public const string AddRotorProductionData = $"{BaseUrl}/RotorProduction/AddProductionData";
+        public const string GetAllProductionData = $"{BaseUrl}/RotorProduction/GetAllProductionData";
 
 
 

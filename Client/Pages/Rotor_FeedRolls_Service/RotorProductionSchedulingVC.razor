@@ -2,6 +2,9 @@
 @using MES.Client.Dialog
 @using MES.Client.Utitlity
 @using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using ReactorBlazorQRCodeScanner
+@using System.Text
 
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -9,74 +12,382 @@
 @inject ISnackbar Snackbar
 @inject IDialogCompletionService CompletionService
 @inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
 
-<MudContainer Style="height: 100%;width: 100%;overflow-y:hidden;overflow-x:hidden">
 
-    <MudGrid Class="d-flex Justify-arround">
-
-        <MudItem md="4" sm="12" xs="12">
-            <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedProductionPlanning" AnchorOrigin="Origin.BottomCenter" Label="Production Planning" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
-                @foreach (var ps in ProductionPlanningStatus)
+<MudContainer Style="overflow:hidden" Class="mt-5">
+    <MudGrid Class="d-flex justify-center">
+        <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
+            <div>
+                <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">Scan QR</MudButton>
+                @if (isCancel)
                 {
-                    <MudSelectItem Value="@ps">@ps</MudSelectItem>
+                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">Cancel</MudButton>
                 }
-            </MudSelect>
-        </MudItem>      
+            </div>
+        </MudItem>
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
+            @if (isScanning)
+            {
+                <div class="d-flex justify-center" style="width: 350px; height: 350px;">
+                    <QRCodeScanner LoadingMessage="" />
+                </div>
+            }
+
+        </MudItem>
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
+            @if (!string.IsNullOrEmpty(qrCodeData))
+            {
+                GetIncomingData();
+                <div>
+                    @*  <MudText Class="d-flex justify-center align-center">Incoming Inspection</MudText>
+                    *@ <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
+                        @foreach (var item in qrCodeData.Split(','))
+                        {
+                            <p class="qr-item">@item.Trim()</p>
+                        }
+                    </div>
+
+                </div>
+            }
+            else if (cameraError)
+            {
+                <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+            }
+
+        </MudItem>
+
+        @if (inspections.Any())
+        {
+            <MudGrid Spacing="3">
+                <!-- Left Panel: Search & List -->
+                <MudItem xs="12" md="4">
+                    <MudPaper Elevation="3" Class="pa-3">
+                        <MudTextField @bind-Value="searchTerm" Placeholder="Search..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" />
+                        <MudList Dense="true">
+                            @foreach (var item in inspections.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
+                                             @onmouseover="() => hoveredInspection = item"
+                                             @onmouseout="() => hoveredInspection = null">
+                                    <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudPaper>
+                </MudItem>
+
+                @if (selectedInspection != null)
+                {
+                    <MudItem xs="12" md="8">
+                        <MudPaper Elevation="3" Class="pa-3" Style="overflow: visible;">
+                            @if (selectedInspection != null)
+                            {
+                                <MudGrid>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Sales Order" Value="@selectedInspection.SalesOrderNumber" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Work Order" Value="@selectedInspection.WorkOrder" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Mat#" Value="@selectedInspection.MatNumber" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Customer" @bind-Value="selectedInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Location" @bind-Value="selectedInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Received" @bind-Value="selectedInspection.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Inspected" @bind-Value="selectedInspection.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Rotors#" @bind-Value="selectedInspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Initials" @bind-Value="selectedInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Make" @bind-Value="selectedInspection.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Dia" @bind-Value="selectedInspection.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Len" @bind-Value="selectedInspection.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Fits" @bind-Value="selectedInspection.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Materials" @bind-Value="selectedInspection.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Others" @bind-Value="selectedInspection.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+
+                                        <MudTextField Label="Rotor Dia." @bind-Value="selectedInspection.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Rotor Style" @bind-Value="selectedInspection.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Type" @bind-Value="selectedInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bearing Removed" @bind-Value="selectedInspection.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bearings" @bind-Value="selectedInspection.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bearing Seals" @bind-Value="selectedInspection.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Ceramic Seals" @bind-Value="selectedInspection.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="selectedInspection.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="selectedInspection.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Basic Sharpening" @bind-Value="selectedInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="selectedInspection.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Center Grinding" @bind-Value="selectedInspection.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Aligned" @bind-Value="selectedInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Plastic Sleeves" @bind-Value="selectedInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Welding" @bind-Value="selectedInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Bed Knife in Box" @bind-Value="selectedInspection.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Replace Blades" @bind-Value="selectedInspection.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Re-Profile" @bind-Value="selectedInspection.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Sand Blasting" @bind-Value="selectedInspection.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Manual Labor" @bind-Value="selectedInspection.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="selectedInspection.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="selectedInspection.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="QTY" @bind-Value="selectedInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Set-up Tir Left Journal" @bind-Value="selectedInspection.TirLeftJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Set-up Tir Right Journal" @bind-Value="selectedInspection.TirRightJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Saddle Part Number" @bind-Value="selectedInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Target Date" @bind-Value="selectedInspection.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Customer Priority" @bind-Value="selectedInspection.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                    <MudItem xs="4">
+                                        <MudTextField Label="Customer Instructions" @bind-Value="selectedInspection.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                    </MudItem>
+
+                                </MudGrid>
+
+                                <MudGrid Class="d-flex Justify-arround">
+
+                                    <MudItem md="6" sm="12" xs="12">
+                                        <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedProductionPlanning" AnchorOrigin="Origin.BottomCenter" Label="Production Planning" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
+                                            @foreach (var ps in ProductionPlanningStatus)
+                                            {
+                                                <MudSelectItem Value="@ps">@ps</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    </MudItem>
+
+                                    @if (SelectedProductionPlanning == "Advanced Sharping")
+                                    {
+
+                                        <MudItem md="6" sm="12" xs="12">
+                                            <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedAdvancedSharping" AnchorOrigin="Origin.BottomCenter" Label="Advanced Sharping" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
+                                                @foreach (var ads in AdvancedSharpingStatus)
+                                                {
+                                                    <MudSelectItem Value="@ads">@ads</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudItem>
+                                    }
+
+                                </MudGrid>
+                                <br />
+
+                                <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+
+                                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                                </MudItem>
+                                <br />
+
+                            }
+
+                        </MudPaper>
+                    </MudItem>
+                }
+
+            </MudGrid>
+
+        }
+
 
     </MudGrid>
-
-    @if (SelectedProductionPlanning == "New" || SelectedProductionPlanning == "Simple")
-    {
-        <MudContainer Class="d-flex justify-start mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenGrindingDepartment">
-                Grinding Department
-            </MudButton>
-        </MudContainer>
-
-        <MudContainer Class="d-flex justify-start mt-4">
-            <MudItem md="4" sm="12" xs="12">
-                <MudSelect Variant="Variant.Outlined" @bind-Value="Selectedworkcenters"
-                AnchorOrigin="Origin.BottomCenter" Label="WorkCenters"
-                OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
-                    @if (MESWorkcenters != null)
-                    {
-                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
-                        {
-                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
-                        }
-                    }
-                </MudSelect>
-            </MudItem>
-        </MudContainer>
-    }
-    @if (SelectedProductionPlanning == "Advanced Sharping")
-    {
-        <MudGrid Class="d-flex Justify-arround">
-
-            <MudItem md="4" sm="12" xs="12">
-                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedAdvancedSharping" AnchorOrigin="Origin.BottomCenter" Label="Advanced Sharping" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
-                    @foreach (var ads in AdvancedSharpingStatus)
-                    {
-                        <MudSelectItem Value="@ads">@ads</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-
-        </MudGrid>
-
-    }
-
-
 </MudContainer>
 
+<style>
+    .bordered-container {
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+
+    .qr-item {
+        margin: 1.5rem;
+        font-size: 16px;
+        white-space: nowrap; /* Ensures text stays in one line */
+    }
+
+
+    .full-width-grid {
+        width: 100%;
+        margin: 0;
+    }
+
+    .hover-highlight {
+        background-color: #c4c4c4;
+        cursor: pointer;
+    }
+
+    .overflow-visible {
+        overflow: visible !important;
+    }
+
+</style>
+
 @code {
+
+
+    private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
+    private Action<string>? _onQrCodeScanAction;
+    private Action<string>? _onCameraPermissionFailedAction;
+    private QRCodeScanner qrCodeScanner;
+    private string qrCodeData;
+    private DateTime? fromDate = DateTime.Today; // Default to today
+    private bool isScanning;
+    private bool isCancel = false;
+    private bool cameraError = false;
+
+
     [Inject] private IDialogService DialogService { get; set; } = default!;
     private string? SelectedProductionPlanning { get; set; }
     private List<string> ProductionPlanningStatus = new List<string>();
-    private string? Selectedworkcenters { get; set; }
-    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    // private string? Selectedworkcenters { get; set; }
+    // private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
     private string? SelectedAdvancedSharping { get; set; }
     private List<string> AdvancedSharpingStatus = new List<string>();
+    //private RotorSalesData inspection { get; set; } = new RotorSalesData();
+    private RotorSalesData selectedInspection;
+    private string searchTerm = "";
+    private RotorSalesData? hoveredInspection;
+    private List<RotorSalesData> inspections = new();
+    private List<RotorProductionData> RotorProductionDatas = new();
+    private bool _hasFetchedIncomingData = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,35 +406,251 @@
 
     private async Task LoadData()
     {
+        // try
+        // {
+        //     HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        //     var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        //     if (workcenterResponse.IsSuccessStatusCode)
+        //     {
+        //         var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+        //         if (locationResult != null)
+        //         {
+        //             MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Snackbar.Add($"Failed to fetch Workcenters: {workcenterResponse.ReasonPhrase}", Severity.Warning);
+        //     }
+        // }
+        // catch (Exception ex)
+        // {
+        //     Snackbar.Add($"Error Occurred: {ex.Message}", Severity.Warning);
+        // }
+    }
+
+
+    private async Task StartScanning()
+    {
         try
         {
-            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+            isScanning = true;
+            qrCodeData = null;
+            cameraError = false;
 
-            if (workcenterResponse.IsSuccessStatusCode)
+            _onQrCodeScanAction = (code) => OnQrCodeScan(code);
+            _onCameraPermissionFailedAction = (error) => OnCameraPermissionFailed(error);
+
+            _qrCodeScannerJsInterop = new QRCodeScannerJsInterop(JS);
+            await _qrCodeScannerJsInterop.Init(_onQrCodeScanAction, _onCameraPermissionFailedAction);
+
+            isCancel = true;
+        }
+        catch (Exception ex)
+        {
+            // Handle any unexpected errors
+            cameraError = true;
+        }
+
+        StateHasChanged(); // Update the UI to show the camera or error message
+    }
+
+
+    private void StopScanning()
+    {
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop?.StopRecording();
+        StateHasChanged();
+    }
+
+    private void OnQrCodeScan(string code)
+    {
+        qrCodeData = code;
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop.StopRecording();
+        StateHasChanged();
+    }
+
+
+
+
+    private void OnCameraPermissionFailed(string error)
+    {
+        cameraError = true;
+        isScanning = false;
+        isCancel = false;
+        StateHasChanged();
+    }
+
+
+
+    public async Task GetIncomingData()
+    {
+        if (_hasFetchedIncomingData) return;
+
+        _hasFetchedIncomingData = true;
+
+        try
+        {
+            string serialNumber = ExtractSerialNumber(qrCodeData);
+
+            if (string.IsNullOrEmpty(serialNumber))
             {
-                var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+                Snackbar.Add("Serial number not found in QR code data.", Severity.Error);
+                return;
+            }
 
-                if (locationResult != null)
+            var incomingDataResponse = await HttpClient.GetAsync($"{ApiConstants.GetIncomingDataBySerialNumber}/{serialNumber}");
+
+            if (incomingDataResponse.IsSuccessStatusCode)
+            {
+                var incomingDataJson = await incomingDataResponse.Content.ReadAsStringAsync();
+
+                var allInspections = JsonSerializer.Deserialize<List<RotorSalesData>>(incomingDataJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorSalesData>();
+
+                if (allInspections.Any())
                 {
-                    MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                    await GetProductionData(); // Ensure this does NOT call GetIncomingData again
+
+                    inspections = allInspections
+                        .Where(i => !RotorProductionDatas.Any(r =>
+                            string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
+                            string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
                 }
+                else
+                {
+                    inspections = null;
+                }
+
+                StateHasChanged();
             }
             else
             {
-                Snackbar.Add($"Failed to fetch Workcenters: {workcenterResponse.ReasonPhrase}", Severity.Warning);
+                Console.WriteLine($"Failed to fetch incoming data. Status Code: {incomingDataResponse.StatusCode}");
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error Occurred: {ex.Message}", Severity.Warning);
+            Console.WriteLine($"An error occurred in GetIncomingData: {ex.Message}");
         }
     }
 
-    private async Task OpenGrindingDepartment()
+
+
+    public async Task GetProductionData()
     {
-        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
-        await DialogService.ShowAsync<GrindingDepartmentDialog>("Add Grinding Department", dialogOptions);
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            // Get all existing RotorProductionData
+            var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
+
+            if (rotorSalesDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotorSalesDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    RotorProductionDatas = JsonSerializer.Deserialize<List<RotorProductionData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorProductionData>();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred in GetIncomingData: {ex.Message}");
+        }
     }
-   
+
+
+    private string ExtractSerialNumber(string qrData)
+    {
+        var parts = qrData.Split(',');
+
+        foreach (var part in parts)
+        {
+            if (part.Trim().StartsWith("Serial Number:"))
+            {
+                return part.Replace("Serial Number:", "").Trim();
+            }
+        }
+
+        return string.Empty;
+    }
+
+    private async Task SelectInspection(RotorSalesData inspection)
+    {
+        selectedInspection = inspection;
+    }
+
+    private async Task Submit()
+    {
+        if (selectedInspection == null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(SelectedProductionPlanning))
+        {
+            Snackbar.Add("Please select SelectedProductionPlanning.", Severity.Error);
+            return;
+        }
+
+        var submissionData = new productiondataSubmission
+            {
+                SelectedInspection = selectedInspection,
+                ProductionPlanningStatus = SelectedProductionPlanning,
+                AdvancedSharpingStatus = string.IsNullOrWhiteSpace(SelectedAdvancedSharping) ? null : SelectedAdvancedSharping
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                ClearAll();
+                _hasFetchedIncomingData = false;
+                await GetProductionData();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ClearAll()
+    {
+        selectedInspection = null;
+        SelectedProductionPlanning = string.Empty;
+        SelectedAdvancedSharping = string.Empty;
+
+        StateHasChanged();
+    }
+
+
+    public class productiondataSubmission
+    {
+        public RotorSalesData SelectedInspection { get; set; }
+        public string ProductionPlanningStatus { get; set; }
+        public string? AdvancedSharpingStatus { get; set; }
+    }
+
 }

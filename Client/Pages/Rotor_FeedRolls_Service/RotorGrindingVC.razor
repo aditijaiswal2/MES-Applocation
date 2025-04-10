@@ -1,8 +1,182 @@
 ﻿@page "/rg"
 
+@using MES.Client.Dialog
+@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using ReactorBlazorQRCodeScanner
 
-<h3>RotorGrindingVC</h3>
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
+
+
+<MudContainer Fixed="true">
+    <MudGrid Class="d-flex">
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
+                <div class="table-container">
+                    <MudTable Items="@RotorProductionDatas" Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
+                              Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Serial Number</MudTh>
+                            <MudTh Style="text-align:center">Module</MudTh>
+                            <MudTh Style="text-align:center">Rotor Number</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="data">
+                            <MudTd>@data.SerialNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.Module</MudTd>
+                            <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
+
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
+                        </PagerContent>
+                    </MudTable>
+                </div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+        .selected > td {
+            color: white !important;
+        }
+
+            .selected > td .mud-input {
+                color: white !important;
+            }
+</style>
 
 @code {
+
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private string? Selectedworkcenters { get; set; }
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    private List<RotorProductionData> RotorProductionDatas = new();
+    private string searchString1 = "";
+    private int selectedRowNumber = -1;
+    private MudTable<RotorProductionData> mudTable;
+    private List<string> clickedEvents = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+            if (workcenterResponse.IsSuccessStatusCode)
+            {
+                var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+                if (locationResult != null)
+                {
+                    MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                }
+            }
+
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            // Get all existing RotorProductionData
+            var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
+
+            if (rotorSalesDatasResponse.IsSuccessStatusCode)
+            {
+                var data = await rotorSalesDatasResponse.Content.ReadAsStringAsync();
+                var allInspections = JsonSerializer.Deserialize<List<RotorProductionData>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorProductionData>();
+
+                // Exclude inspections that already exist in rotorSalesDatas (based on SerialNumber, Module, RotorsNumber)
+                RotorProductionDatas = allInspections;
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occurred: {ex.Message}", Severity.Warning);
+        }
+    }
+
+    private async Task OpenGrindingDepartment()
+    {
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+        await DialogService.ShowAsync<GrindingDepartmentDialog>("Add Grinding Department", dialogOptions);
+    }
+
+    private bool FilterFunc1(RotorProductionData element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(RotorProductionData element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.SerialNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task RowClickEvent(TableRowClickEventArgs<RotorProductionData> tableRowClickEventArgs)
+    {
+        var selectedData = tableRowClickEventArgs.Item;
+
+        var parameters = new DialogParameters
+            {
+                ["selectedData"] = selectedData
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        await DialogService.ShowAsync<GrindingDepartmentDialog>("Rotor Details", parameters, dialogOptions);
+    }
+
+
+
+    private string SelectedRowClassFunc(RotorProductionData element, int rowNumber)
+    {
+        if (selectedRowNumber == rowNumber)
+        {
+            selectedRowNumber = -1;
+            clickedEvents.Add("Selected Row: None");
+            return string.Empty;
+        }
+        else if (mudTable.SelectedItem != null && mudTable.SelectedItem.Equals(element))
+        {
+            selectedRowNumber = rowNumber;
+            clickedEvents.Add($"Selected Row: {rowNumber}");
+            return "selected";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
 
 }

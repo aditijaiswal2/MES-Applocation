@@ -9,6 +9,7 @@ namespace MES.Client.Utitlity
             MaxWidth = MaxWidth.Small,
             FullWidth = true,
             CloseButton = true,
+            DisableBackdropClick = true,
             CloseOnEscapeKey = false,
             Position = DialogPosition.Center
         };
