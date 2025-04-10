@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250403074416_Initial")]
+    [Migration("20250409165212_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -329,6 +329,10 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Customer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -345,6 +349,32 @@ namespace MES.Server.Migrations
                     b.ToTable("Receivings");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageFilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IncomingImageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("IncomingImageId");
+
+                    b.ToTable("Imagedatas");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingInspection", b =>
                 {
                     b.Property<int>("Id")
@@ -353,46 +383,40 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddQty")
+                    b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
                     b.Property<string>("Aligned")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BasicSharpening")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bearing")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BearingRemoved")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BearingSeals")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BedKnife")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bottom")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BoxReceivedWithSaddles")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CenterGrinding")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CeramicSeals")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ComponentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -404,15 +428,18 @@ namespace MES.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Dia")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Fits")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IfYBasicSharpening")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IfYCenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Initials")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Inspected")
@@ -420,11 +447,9 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Left")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Len")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
@@ -432,19 +457,15 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Make")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ManualLabor")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Materials")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Module")
@@ -452,15 +473,12 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Others")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReProfile")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Received")
@@ -468,15 +486,16 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Right")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RotorCategorization")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorStyle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
@@ -484,15 +503,12 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SaddlePartNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SalesOrderNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SandBlasting")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
@@ -500,19 +516,15 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TirLeftJournal")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TirRightJournal")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Top")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Users")
@@ -520,15 +532,21 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WedgelockAlignmentMarks")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Welding")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WeldingNum")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkOrder")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("yLeft")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -674,6 +692,17 @@ namespace MES.Server.Migrations
                     b.Navigation("ShipmentImage");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
+                {
+                    b.HasOne("MES.Shared.Models.Rotors.IncomingInspection", "IncomingImage")
+                        .WithMany("Images")
+                        .HasForeignKey("IncomingImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IncomingImage");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("MES.Shared.Entities.AppRole", null)
@@ -718,6 +747,11 @@ namespace MES.Server.Migrations
             modelBuilder.Entity("MES.Shared.Entities.AppUser", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingInspection", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>

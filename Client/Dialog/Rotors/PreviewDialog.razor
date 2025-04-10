@@ -1,0 +1,144 @@
+﻿ @using MES.Shared.Models.Rotors
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
+    <DialogContent>
+        <MudPaper Class="pa-6" Style=" border-radius: 12px;" id="print-section">
+            <MudText Typo="Typo.h5" Class="mb-4" Color="Color.Primary">INCOMING ROTOR INSPECTION</MudText>
+
+            @foreach (var row in ChunkFields(GetInspectionFields(), 6))
+            {
+                <MudGrid GutterSize="3">
+                    @foreach (var item in row)
+                    {
+                        <MudItem xs="12" md="2">
+                            <MudStack Spacing="0">
+                                <MudText Typo="Typo.subtitle2" Color="Color.Primary">@item.label</MudText>
+                                <MudText Typo="Typo.body1">@item.value</MudText>
+                            </MudStack>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        </MudPaper>
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="PrintDialog" Color="Color.Primary">Print</MudButton>
+        <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton> 
+    </DialogActions>
+</MudDialog>
+
+
+
+
+@code {
+    [Parameter]
+    public IncomingInspection InspectionData { get; set; }
+
+    [Parameter]
+    public string SelectedMaterial { get; set; }
+    [Parameter] public string SelectedType { get; set; }
+   
+    [Parameter] public string SelectedRotorStyle { get; set; }
+    [Parameter] public string Selectedberrem { get; set; }
+    [Parameter] public string SelectedBearings { get; set; }
+    [Parameter] public string SelectedBearSeals { get; set; }
+    [Parameter] public string SelectedCerSeals { get; set; }
+    [Parameter] public string SelectedRL { get; set; }
+    [Parameter] public string SelectedLR { get; set; }
+    [Parameter] public string Selectedbs { get; set; }
+    [Parameter] public string Selectedybasicsharp { get; set; }
+    [Parameter] public string Selectedpre { get; set; }
+    [Parameter] public string Selectedctr { get; set; }
+    [Parameter] public string Selectedycg { get; set; }
+    [Parameter] public string Selectedalign { get; set; }
+    [Parameter] public string Selectedyps { get; set; }
+    [Parameter] public string Selectedwelding { get; set; }
+    [Parameter] public string Selectebkid { get; set; }
+    [Parameter] public string Selectedrp { get; set; }
+    [Parameter] public string Selectedsb { get; set; }
+    [Parameter] public string Selectedbt { get; set; }
+    [Parameter] public string Selectedtb { get; set; }
+    [Parameter] public string Selectedddrc { get; set; }
+    [Parameter] public string Selecteddd { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    
+
+    private List<(string label, string value)> GetInspectionFields()
+    {
+        return new List<(string, string)>
+    {
+        ("Sales Order", InspectionData.SalesOrderNumber),
+        ("Work Order", InspectionData.WorkOrder),
+        ("Mat#", InspectionData.MatNumber),
+        ("Customer", InspectionData.Customer),
+        ("Location", InspectionData.Location),
+        ("Received", InspectionData.Received),
+        ("Inspected", InspectionData.Inspected),
+        ("Rotors#", InspectionData.RotorsNumber),
+        ("Initial", InspectionData.Initials),
+        ("Make", InspectionData.Make),
+        ("Dia", InspectionData.Dia),
+        ("Len", InspectionData.Len),
+        ("Fits", InspectionData.Fits),
+        ("Materials", SelectedMaterial),
+        ("Others", InspectionData.Others),
+        ("Rotors Dia", InspectionData.RotorsDia),
+        ("Rotors Style", SelectedRotorStyle),
+        ("Type", SelectedType),
+        ("Bearing Removed", Selectedberrem),
+        ("Bearings", SelectedBearings),
+        ("Bearing Seals",SelectedBearSeals),
+        ("Ceramic Seals", SelectedCerSeals),
+        ("Bearing Journal Dia (Right)", SelectedRL),
+        ("Bearing Journal Dia Details (Right)", InspectionData.yRight),
+        ("Bearing Journal Dia (Left)", SelectedLR),
+        ("Bearing Journal Dia Details (Left)", InspectionData.yLeft),
+        ("Basic Sharpening", Selectedbs),
+        ("Basic Sharpening Details", Selectedybasicsharp),
+        ("Wedgelock Alignment Marks; Present", Selectedpre),
+         ("Center Grinding", Selectedctr),
+        ("Center Grinding Details", Selectedycg),
+        ("Aligned", Selectedalign),
+        ("Plastic Sleaves", Selectedyps),
+        ("Welding", Selectedwelding),
+        ("No. of Welding", InspectionData.WeldingNum),
+        ("Bed Knife in box", Selectebkid),
+        ("Replace Blades", InspectionData.BoxReceivedWithSaddles),
+        ("Re-Profile", Selectedrp),
+        ("Sand Blasting", Selectedsb),
+        ("Manual Labor", InspectionData.ManualLabor),
+        ("Box Received with Saddles(Bottom)", Selectedbt),
+        ("Box Received with Saddles(Top)", Selectedtb),
+        ("Add QTY", InspectionData.AddQty?.ToString()),
+        ("Saddle Part Number", InspectionData.SaddlePartNumber),
+        ("Rotor Categorize", Selectedddrc),
+        ("Sub Module", Selecteddd),
+    };
+    }
+
+    private IEnumerable<List<(string label, string value)>> ChunkFields(List<(string label, string value)> fields, int size)
+    {
+        for (int i = 0; i < fields.Count; i += size)
+        {
+            yield return fields.Skip(i).Take(size).ToList();
+        }
+    }
+
+    async void PrintDialog()
+    {
+        await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
+    }
+
+
+    void CloseDialog()
+    {
+        MudDialog.Cancel();
+    }
+}

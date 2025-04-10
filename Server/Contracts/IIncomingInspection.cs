@@ -6,9 +6,9 @@ namespace MES.Server.Contracts
     {
 
         Task<IEnumerable<IncomingInspection>> GetAllAsync();
-        Task<IncomingInspection> GetByIdAsync(int id);
-        Task AddAsync(IncomingInspection order);
-        Task UpdateAsync(IncomingInspection order);
-        Task DeleteAsync(int id);
+        Task<IncomingInspection?> GetByIdAsync(int id);
+        Task<IncomingInspection> AddAsync(IncomingInspection inspection);
+        Task<IncomingInspection?> UpdateAsync(int id, IncomingInspection inspection);
+        Task<bool> DeleteAsync(int id);
     }
 }

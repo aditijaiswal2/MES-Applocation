@@ -1,0 +1,45 @@
+﻿@using MES.Shared.Models
+
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex justify-center mb-4" style="height:470px;">
+            <MudCarousel Class="mud-width-full" TData="Image" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
+                @foreach (var item in Images)
+                {
+                    <MudCarouselItem>
+                        <MudImage ObjectFit="ObjectFit.Contain" Src="@($"data:image/png;base64,{Convert.ToBase64String(item.Data)}")" Alt="Image" Elevation="25" Class="rounded-lg custom-image" />
+                    </MudCarouselItem>
+                }
+            </MudCarousel>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+<style>
+    .custom-image {
+        max-height: 470px; /* Ensures the image height does not exceed 470px */
+        width: auto; /* Maintains the aspect ratio by adjusting the width accordingly */
+        display: block; /* Ensures that the image is treated as a block element */
+        margin-left: auto; /* Automatically adjusts the left margin */
+        margin-right: auto; /* Automatically adjusts the right margin */
+    }
+</style>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public List<Image> Images { get; set; }
+
+    private int selectedIndex = 2;
+    private MudCarousel<string> _carousel;
+    private bool _arrows = true;
+    private bool _bullets = true;
+    private bool _enableSwipeGesture = true;
+    private bool _autocycle = true;
+    private IList<string> _source = new List<string>() { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

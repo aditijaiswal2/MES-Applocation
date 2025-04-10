@@ -15,36 +15,43 @@ namespace MES.Server.Data.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(IncomingInspection order)
-        {
-            await _context.IncomingInspections.AddAsync(order);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var order = await _context.IncomingInspections.FindAsync(id);
-            if (order != null)
-            {
-                _context.IncomingInspections.Remove(order);
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public async Task<IEnumerable<IncomingInspection>> GetAllAsync()
         {
-            return await _context.IncomingInspections.ToListAsync();
+            return await _context.IncomingInspections.Include(i => i.Images).ToListAsync();
         }
 
-        public async Task<IncomingInspection> GetByIdAsync(int id)
+        public async Task<IncomingInspection?> GetByIdAsync(int id)
         {
-            return await _context.IncomingInspections.FindAsync(id);
+            return await _context.IncomingInspections
+                                 .Include(i => i.Images)
+                                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
-        public async Task UpdateAsync(IncomingInspection order)
+        public async Task<IncomingInspection> AddAsync(IncomingInspection inspection)
         {
-            _context.IncomingInspections.Update(order);
+            _context.IncomingInspections.Add(inspection);
             await _context.SaveChangesAsync();
+            return inspection;
+        }
+
+        public async Task<IncomingInspection?> UpdateAsync(int id, IncomingInspection inspection)
+        {
+            var existing = await _context.IncomingInspections.Include(i => i.Images).FirstOrDefaultAsync(i => i.Id == id);
+            if (existing == null) return null;
+
+            _context.Entry(existing).CurrentValues.SetValues(inspection);
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var existing = await _context.IncomingInspections.FindAsync(id);
+            if (existing == null) return false;
+
+            _context.IncomingInspections.Remove(existing);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

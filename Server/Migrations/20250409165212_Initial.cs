@@ -67,50 +67,57 @@ namespace MES.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SalesOrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WorkOrder = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SalesOrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkOrder = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MatNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Customer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Received = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Inspected = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RotorsNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Initials = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Make = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dia = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Len = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Fits = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Materials = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Others = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RotorsDia = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RotorStyle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BearingRemoved = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Bearing = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BearingSeals = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CeramicSeals = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Right = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Left = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BasicSharpening = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WedgelockAlignmentMarks = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CenterGrinding = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Aligned = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlasticSleaves = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Welding = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BedKnife = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BoxReceivedWithSaddles = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReProfile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SandBlasting = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ManualLabor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Bottom = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Top = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddQty = table.Column<int>(type: "int", nullable: false),
-                    TirLeftJournal = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TirRightJournal = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SaddlePartNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Initials = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Dia = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Len = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fits = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Materials = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Others = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorsDia = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorStyle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BearingRemoved = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bearing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BearingSeals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CeramicSeals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    yRight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    yLeft = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BasicSharpening = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IfYBasicSharpening = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockAlignmentMarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CenterGrinding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IfYCenterGrinding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Aligned = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PlasticSleaves = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Welding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WeldingNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BedKnife = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BoxReceivedWithSaddles = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SandBlasting = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ManualLabor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bottom = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Top = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddQty = table.Column<int>(type: "int", nullable: true),
+                    TirLeftJournal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TirRightJournal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SaddlePartNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Module = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RotorCategorization = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ComponentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Users = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -184,6 +191,7 @@ namespace MES.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Customer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SelectedOption = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -327,6 +335,27 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Imagedatas",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IncomingImageId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Imagedatas", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Imagedatas_IncomingInspections_IncomingImageId",
+                        column: x => x.IncomingImageId,
+                        principalTable: "IncomingInspections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Images",
                 columns: table => new
                 {
@@ -396,6 +425,11 @@ namespace MES.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Imagedatas_IncomingImageId",
+                table: "Imagedatas",
+                column: "IncomingImageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Images_ShipmentImageId",
                 table: "Images",
                 column: "ShipmentImageId");
@@ -420,10 +454,10 @@ namespace MES.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "Imagedatas");
 
             migrationBuilder.DropTable(
-                name: "IncomingInspections");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Logindetails");
@@ -448,6 +482,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "IncomingInspections");
 
             migrationBuilder.DropTable(
                 name: "ShipmentImage");

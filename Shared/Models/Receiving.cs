@@ -13,6 +13,7 @@ namespace MES.Shared.Models
         public int Id { get; set; } // Primary Key
         public DateTime Date { get; set; } = DateTime.Today; // Auto-set to today's date
         public string SerialNumber { get; set; } // Auto-generated serial number
+        public string Customer { get; set; }
         public string SelectedOption { get; set; } // Dropdown selection
     }
 }

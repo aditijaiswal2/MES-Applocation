@@ -26,6 +26,10 @@
                         }
                     </MudSelect>
                 </MudItem>
+                <MudItem xs="12" Class="mb-2">
+                    <MudTextField Label="Customer" @bind-Value="Customer" FullWidth="true" Style="margin-top:6px;" />
+
+                </MudItem>
                 <MudItem xs="12">
                     <MudButton OnClick="SubmitForm" Color="Color.Primary">Submit</MudButton>
                 </MudItem>
@@ -39,25 +43,37 @@
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public string Date { get; set; }
     [Parameter] public string SerialNumber { get; set; }
+    [Parameter] public string Customer { get; set; }
     [Parameter] public EventCallback<Receiving> OnReceiveAdded { get; set; }
     private string SelectedOption { get; set; } = "";
 
 
     private List<string> selectedTab = new List<string>
     {
-         "Rotor/Feed rolls  Service"
+         "Rotor/Feed rolls"
         // "Pump Repair",
         // "System Assembly",
         // "Pelletizer Assembly",
         // "Pulverizer Assembly",
         // "Ettlinger  Assembly"
     };
-    protected override void OnInitialized()
-    {
-        // Optional: Ensure default values are set if parameters are missing
-        Date ??= DateTime.Today.ToString("yyyy-MM-dd");
-        SerialNumber ??= "MES00001";
+    // protected override void OnInitialized()
+    // {
+    //     // Optional: Ensure default values are set if parameters are missing
+    //     Date ??= DateTime.Today.ToString("yyyy-MM-dd");
+    //     SerialNumber ??= "MES00001";
+     
 
+    // }
+
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(Date))
+            Date = DateTime.Today.ToString("yyyy-MM-dd");
+
+        if (string.IsNullOrWhiteSpace(SerialNumber))
+            SerialNumber = "MES00001";
     }
 
     private void Cancel()
@@ -75,7 +91,8 @@
             {
                 Date = DateTime.Parse(Date),
                 SerialNumber = SerialNumber,
-                SelectedOption = SelectedOption
+                SelectedOption = SelectedOption,
+                     Customer = Customer
             };
 
         try
@@ -84,10 +101,12 @@
 
             if (response.IsSuccessStatusCode)
             {
+                var createdData = await response.Content.ReadFromJsonAsync<Receiving>();
+
                 Snackbar.Add("Data submitted successfully!", Severity.Success);
 
                 // Notify the parent component (Index.razor) to update the table
-                await OnReceiveAdded.InvokeAsync(data);
+                await OnReceiveAdded.InvokeAsync(createdData);
 
                 MudDialog?.Cancel();
             }

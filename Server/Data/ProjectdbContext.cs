@@ -28,6 +28,7 @@ namespace MES.Server.Data
         public DbSet<Receiving> Receivings { get; set; }
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
         public DbSet<IncomingInspection> IncomingInspections { get; set; }
+        public DbSet<Imagedata> Imagedatas { get; set; }
 
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
 
@@ -49,7 +50,14 @@ namespace MES.Server.Data
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
+     
+            base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Imagedata>()
+                .HasOne(i => i.IncomingImage)
+                .WithMany(ii => ii.Images)
+                .HasForeignKey(i => i.IncomingImageId);
+        
 
 
 

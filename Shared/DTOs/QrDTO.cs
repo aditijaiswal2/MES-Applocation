@@ -10,6 +10,7 @@ namespace MES.Shared.DTOs
     {
         public string SerialNumber { get; set; }  // Changed to PascalCase
         public string SelectedOption { get; set; } // Changed to PascalCase
+        public string Customer { get; set; }
         public byte[] QRData { get; set; }
     }
 

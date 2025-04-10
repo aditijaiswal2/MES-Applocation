@@ -35,6 +35,7 @@
                         <HeaderContent>
                             <MudTh Style="text-align:center;width:150px">Serial Number</MudTh>
                             <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Customer</MudTh>
                             <MudTh Style="text-align:center;width:150px">Module</MudTh>
                             <MudTh Style="text-align:center;width:150px">Action</MudTh>
 
@@ -42,6 +43,7 @@
                         <RowTemplate Context="appUsers">
                             <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SerialNumber</MudTd>
                             <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.Date</MudTd>
+                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.Customer</MudTd>
                             <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SelectedOption</MudTd>
 
 
@@ -95,7 +97,11 @@
                 var locationResult = await response.Content.ReadFromJsonAsync<IEnumerable<Receiving>>();
                 if (locationResult != null)
                 {
-                    receiveModule = locationResult.ToList().OrderByDescending(l => l.Id);
+                    var now = DateTime.Now;
+                    receiveModule = locationResult
+                        .Where(r => (now - r.Date).TotalHours <= 24) // Assuming r.Date is DateTime
+                        .OrderByDescending(r => r.Id)
+                        .ToList();
                 }
 
             }
@@ -122,31 +128,13 @@
 
             var dialogOptions = DialogSettings.DialogOptionsAddEditDelete; // Ensure this is properly set
             var dialog = await DialogService.ShowAsync<AddReceiveDialog>("Add New Receive", parameters, dialogOptions);
-        }
-    
+        }    
 
     // Callback function to update the table dynamically
     private void OnReceiveAdded(Receiving newReceive)
     {
         receiveModule = receiveModule.Prepend(newReceive).ToList(); // Add the new item to the list
         StateHasChanged(); // Re-render the UI
-    }
-
-
-    private async Task EditLocation(Receiving receive)
-    {
-        var parameters = new DialogParameters
-        {
-            { "SerialNumber", receive.SerialNumber },
-            { "Date", receive.Date },
-            { "SelectedOption", receive.SelectedOption }
-        };
-
-        var dialogOptions = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<EditReceiveDialog>("Edit Receive Data", parameters, dialogOptions);
-
-        var result = await dialog.Result;
-     
     }
 
     private async Task DeleteLocation(Receiving receive)
@@ -181,18 +169,6 @@
         }
     }
 
-    // private void GenerateQR(Receiving receive)
-    // {
-    //     string qrData = JsonSerializer.Serialize(receive);
-    //     string qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={Uri.EscapeDataString(qrData)}";
-
-    //     Snackbar.Add($"QR Code generated: {qrUrl}", Severity.Info);
-    // }
-
-
-
-
-
     public async Task GenerateQR(Receiving receive)
     {
         Snackbar.Clear();
@@ -201,7 +177,7 @@
         try
         {
 
-            string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.SelectedOption}, Date: {receive.Date}";
+            string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.SelectedOption}, Customer: {receive.Customer}, Date: {receive.Date}";
 
 
             var jsonPart = JsonConvert.SerializeObject(receive);
@@ -230,6 +206,7 @@
                     {
                         SerialNumber = receive.SerialNumber,  // Match property names
                         SelectedOption = receive.SelectedOption,
+                        Customer = receive.Customer,
                         QRData = qrCodeBytes,
                     };
 
@@ -250,8 +227,5 @@
             Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
         }
     }
-
- 
-
 
 }

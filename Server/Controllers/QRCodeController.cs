@@ -20,7 +20,7 @@ namespace MES.Server.Controllers
             {
                 
 
-                var qrText = $"Serial Number: {receive.SerialNumber},Module: {receive.SelectedOption}, Date: {receive.Date}";
+                var qrText = $"Serial Number: {receive.SerialNumber},Module: {receive.SelectedOption}, Customer: {receive.Customer}, Date: {receive.Date}";
                 var width = 250;
                 var height = 250;
                 var margin = 0;
