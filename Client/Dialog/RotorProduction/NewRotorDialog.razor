@@ -1,0 +1,130 @@
+﻿@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IHttpClientFactory _httpClient
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                New Rotor Details
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            <MudGrid>
+
+                <MudItem md="12" xs="12">
+                    <MudTextField Label="Customer Name" @bind-Value="CustomerName" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem md="12" xs="12">
+                    <MudTextField Label="Work Order Number " @bind-Value="WorkOrderNumber " FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem md="12" sm="12" xs="12">
+                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedWorkCenters"
+                    AnchorOrigin="Origin.BottomCenter" Label="Work centers"
+                    OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
+                        @if (MESWorkcenters != null)
+                        {
+                            @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                            {
+                                <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+
+            </MudGrid>
+            <br />
+            <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+                <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+            </MudItem>
+
+
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    private string? CustomerName { get; set; }
+    private string? WorkOrderNumber { get; set; }
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    private string? SelectedWorkCenters { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
+
+
+    }
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(CustomerName) || string.IsNullOrWhiteSpace(WorkOrderNumber) || string.IsNullOrWhiteSpace(SelectedWorkCenters))
+        {
+            Snackbar.Add("Please fill all required fields", Severity.Warning);
+            return;
+        }
+
+        var newRotor = new NewRotorData
+            {
+                CustomerName = CustomerName,
+                WorkOrderNumber = WorkOrderNumber,
+                Workcenters = SelectedWorkCenters
+            };
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsJsonAsync(ApiConstants.AddNewRotorData, newRotor);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("New rotor data saved successfully!", Severity.Success);
+                ClearAll();
+                StateHasChanged();
+                MudDialog?.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to save new rotor data.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+
+    private async Task ClearAll()
+    {       
+        CustomerName = string.Empty;
+        SelectedWorkCenters = string.Empty;
+        WorkOrderNumber = string.Empty;
+        StateHasChanged();
+    }
+
+}

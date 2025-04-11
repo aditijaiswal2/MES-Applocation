@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MES.Shared.Models.Rotors
 {
-    public class RotorProductionData : BaseEntity
+    public class RotorProductionSavedData : BaseEntity
     {
         public string SerialNumber { get; set; }
         public string Module { get; set; }
@@ -64,10 +64,10 @@ namespace MES.Shared.Models.Rotors
         public string CustomerInstructions { get; set; }
         public string CustomerImportance { get; set; }
         public DateTime? SubmitDate { get; set; }
-        public string SubmitedBy { get; set; }
+        public string SubmitedBy { get; set; }       
         public string? AdvancedSharpingStatus { get; set; }
         public string Workcenters { get; set; }
-        public DateTime? ProductionSubmitDate { get; set; }
-        public string ProductionSubmitBy { get; set; }
+        public DateTime? ProductionSavedDate { get; set; }
+        public string ProductionSavedBy { get; set; }
     }
 }

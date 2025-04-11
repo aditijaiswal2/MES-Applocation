@@ -46,10 +46,12 @@
         public const string AddRotorProductionData = $"{BaseUrl}/RotorProduction/AddProductionData";
         public const string GetAllProductionData = $"{BaseUrl}/RotorProduction/GetAllProductionData";
 
+        // Rotor Production savedData
+        public const string SaveproductionsavedData = $"{BaseUrl}/RotorProductionSaveData/AddProductionSaveData";
+        public const string GetSavedproductionData = $"{BaseUrl}/RotorProductionSaveData/GetRecentProductionSaveData";
 
-
-
-
+        // new rotor data
+        public const string AddNewRotorData = $"{BaseUrl}/NewRotorDetails/SaveNewRotor";
 
     }
 }

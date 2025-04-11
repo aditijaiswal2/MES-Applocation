@@ -5,28 +5,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static MES.Client.Pages.Rotor_FeedRolls_Service.RotorProductionSchedulingVC;
 
+
 namespace MES.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RotorProductionController : ControllerBase
+    public class RotorProductionSaveDataController : ControllerBase
     {
         private readonly ProjectdbContext _context;
 
-        public RotorProductionController(ProjectdbContext context)
+        public RotorProductionSaveDataController(ProjectdbContext context)
         {
             _context = context;
         }
 
-        [HttpPost("AddProductionData")]
-        public async Task<IActionResult> AddSalesData([FromBody] productiondataSubmission submission)
+        [HttpPost("AddProductionSaveData")]
+        public async Task<IActionResult> AddProductionSaveData([FromBody] productiondataSubmission submission)
         {
             if (submission == null || submission.SelectedInspection == null)
                 return BadRequest("Submission is invalid.");
 
             try
             {
-                var rotorData = new RotorProductionData
+                var rotorData = new RotorProductionSavedData
                 {
                     SerialNumber = submission.SelectedInspection.SerialNumber,
                     Module = submission.SelectedInspection.Module,
@@ -85,34 +86,53 @@ namespace MES.Server.Controllers
                     CustomerImportance = submission.SelectedInspection.CustomerImportance,
                     SubmitDate = submission.SelectedInspection.DateTime,
                     SubmitedBy = submission.SelectedInspection.Users,
-                    Workcenters = submission.Workcenters,
+                   Workcenters = submission.Workcenters ?? "N/A",
                     AdvancedSharpingStatus = submission.AdvancedSharpingStatus,
-                    ProductionSubmitDate = submission.ProductionSavedDate,
-                    ProductionSubmitBy = submission.ProductionSavedBy,
+                   ProductionSavedDate = submission.ProductionSavedDate,
+                   ProductionSavedBy = submission.ProductionSavedBy,                 
+
+
                 };
 
-                _context.RotorProductionData.Add(rotorData);
+                _context.RotorProductionSavedData.Add(rotorData);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { Message = "Rotor Production data saved successfully!" });
+                return Ok(new { Message = "Rotor sales data saved successfully!" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error saving rotor Production data: {ex.Message}");
+                return StatusCode(500, $"Error saving rotor sales data: {ex.Message}");
             }
         }
 
 
-        [HttpGet("GetAllProductionData")]
-        public async Task<ActionResult<IEnumerable<RotorProductionData>>> GetAllRotorProductionData()
+        [HttpGet("GetRecentProductionSaveData")]
+        public async Task<IActionResult> GetRecentSalesData(string serialNumber, string module, string rotorsNumber)
         {
-            var records = await _context.RotorProductionData.ToListAsync();
+            if (string.IsNullOrWhiteSpace(serialNumber) || string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(rotorsNumber))
+                return BadRequest("Invalid parameters provided.");
 
-            if (records == null || !records.Any())
-                return NotFound("No RotorProductionData records found.");
+            try
+            {
+                var recentData = await _context.RotorProductionSavedData
+                    .Where(r =>
+                        r.SerialNumber == serialNumber &&
+                        r.Module == module &&
+                        r.RotorsNumber == rotorsNumber)
+                    .OrderByDescending(r => r.ProductionSavedDate)
+                    .FirstOrDefaultAsync();
 
-            return Ok(records);
+                if (recentData == null)
+                    return NotFound("No matching rotor production save data found.");
+
+                return Ok(recentData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving rotor production save data: {ex.Message}");
+            }
         }
+
 
     }
 }
