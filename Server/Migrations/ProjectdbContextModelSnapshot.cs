@@ -372,6 +372,22 @@ namespace MES.Server.Migrations
                     b.ToTable("Imagedatas");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingImages", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IncomingImages");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingInspection", b =>
                 {
                     b.Property<int>("Id")
@@ -1604,13 +1620,13 @@ namespace MES.Server.Migrations
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
                 {
-                    b.HasOne("MES.Shared.Models.Rotors.IncomingInspection", "IncomingImage")
+                    b.HasOne("MES.Shared.Models.Rotors.IncomingImages", "IncomingImages")
                         .WithMany("Images")
                         .HasForeignKey("IncomingImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("IncomingImage");
+                    b.Navigation("IncomingImages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1659,7 +1675,7 @@ namespace MES.Server.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingInspection", b =>
+            modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingImages", b =>
                 {
                     b.Navigation("Images");
                 });

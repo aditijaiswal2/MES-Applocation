@@ -88,8 +88,11 @@
             // Clear any previous messages
             Snackbar.Clear();
 
+           
+
             // Send HTTP request to fetch data from the API
-            var response = await HttpClient.GetAsync("https://localhost:7172/api/ReceivingData/getrd");
+           // var response = await HttpClient.GetAsync("https://localhost:7172/api/ReceivingData/getrd");
+            var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
 
             if (response.IsSuccessStatusCode)
             {
@@ -149,9 +152,13 @@
         {
             try
             {
-                var response = await HttpClient.DeleteAsync($"https://localhost:7172/api/ReceivingData/{receive.Id}");
+                // var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
 
-             //   var response = await HttpClient.DeleteAsync($"https://localhost:7172/api/ReceivingData/delete/{receive.Id}");
+               // var response = await HttpClient.DeleteAsync($"https://localhost:7172/api/ReceivingData/{receive.Id}");
+                var response = await HttpClient.DeleteAsync($"{ApiConstants.DeleteReceiving}/{receive.Id}");
+
+
+
                 if (response.IsSuccessStatusCode)
                 {
                     Snackbar.Add("Record deleted successfully.", Severity.Success);
@@ -183,11 +190,12 @@
             var jsonPart = JsonConvert.SerializeObject(receive);
             var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
 
-            // Serialize receiving data
+            // Serialize receiving data  
        
 
           
-            var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/locQR", content);
+           // var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/locQR", content);
+            var response = await HttpClient.PostAsync(ApiConstants.AddQRCode, content);
             byte[] qrCodeBytes = null;
 
 

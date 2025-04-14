@@ -1,4 +1,4 @@
-﻿@using System.ComponentModel.DataAnnotations;
+﻿﻿@using System.ComponentModel.DataAnnotations;
 @using MES.Client.Utitlity;
 @using MES.Client.Pages.Rotor_FeedRolls_Service;
 @using MES.Shared.DTOs
@@ -7,8 +7,9 @@
 @using System.Text
 @using System.Linq
 @using MES.Shared.Models
+@using static MES.Shared.Models.Rotors.IncomingInspection
 @using static MES.Client.Pages.Rotor_FeedRolls_Service.RotorIncomingInspectionVC
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -26,7 +27,7 @@
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.AddAPhoto" Class="mr-2 mb-n1" />
-                Add Project Images
+                Add Images
             </MudText>
         </TitleContent>
         <DialogContent>
@@ -172,16 +173,14 @@
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public List<string> SavedImages { get; set; } = new List<string>();
-    [Parameter] public ProjectImgDTO projectImagesDTO { get; set; }
+    // [Parameter] public ProjectImgDTO projectImagesDTO { get; set; }
+
+    [Parameter]
+    public string SerialNumber { get; set; }
     private bool isMobile;
     private PartInfoDTO PartInfo { get; set; } = new PartInfoDTO();
 
     private Dictionary<string, bool> SelectedImages { get; set; } = new Dictionary<string, bool>();
-  
- 
-   
-
-   
 
     private int selectedITSImageID;
     private bool EnableDeleteButton { get; set; } = false;
@@ -189,19 +188,18 @@
     private string frameUri;
     private int selectedImageCount = 0;
 
-
-    private List<IncomingInspection> selectedImagesFromSM = new List<IncomingInspection>();
+    private List<IncomingImages> selectedImagesFromSM = new List<IncomingImages>();
     private List<string> oversizedImageNames = new List<string>();
     private IList<IBrowserFile> files = new List<IBrowserFile>();
 
-    private IEnumerable<IncomingInspection>? iTSImages;
+    private IEnumerable<IncomingImages>? iTSImages;
 
- 
+
 
     protected override async Task OnInitializedAsync()
     {
         isMobile = await JSR.InvokeAsync<bool>("isMobileDevice");
-
+        selectedPartNumber = SerialNumber;
 
     }
 
@@ -293,7 +291,7 @@
                     }
                 }//SerialNumber = selectedPartNumber,
 
-                selectedImagesFromSM.Add(new IncomingInspection { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
+                selectedImagesFromSM.Add(new IncomingImages { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
             }
             else
             {
@@ -347,7 +345,7 @@
                         }
                     }
 
-                    selectedImagesFromSM.Add(new IncomingInspection { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageStreamToBytes } } });
+                    selectedImagesFromSM.Add(new IncomingImages { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageStreamToBytes } } });
                 }
 
                 await CheckPartNumberImageCount();
@@ -366,7 +364,7 @@
 
         if (string.IsNullOrEmpty(selectedPartNumber))
         {
-            Snackbar.Add("Please select a part number first.", Severity.Warning);
+            Snackbar.Add("Please select a Serial number first.", Severity.Warning);
             EnableDeleteButton = false;
             return false;
         }
@@ -393,6 +391,7 @@
                 }
 
                 selectedITSImageID = existingPart.Id;
+
             }
             else
             {
@@ -426,13 +425,19 @@
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
+        //selectedImagesFromSM.Clear(); // Important: Clear previous entries
+
         foreach (var imageUri in SavedImages)
         {
             try
             {
-                var imageData = Convert.FromBase64String(imageUri.Split(',')[1]); // Extract base64 string and convert to byte array
+                var imageData = Convert.FromBase64String(imageUri.Split(',')[1]);
 
-                selectedImagesFromSM.Add(new IncomingInspection { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
+                selectedImagesFromSM.Add(new IncomingImages
+                    {
+                        SerialNumber = selectedPartNumber,
+                        Images = new List<Imagedata> { new Imagedata { Data = imageData } }
+                    });
             }
             catch (Exception e)
             {
@@ -440,13 +445,74 @@
             }
         }
 
+        StateHasChanged(); // 🔄 Force UI update to render image preview
     }
+
+
+    // private void ConvertSavedImagesToITSImages()
+    // {
+    //     Snackbar.Clear();
+    //     Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+    //     foreach (var imageUri in SavedImages)
+    //     {
+    //         try
+    //         {
+    //             var imageData = Convert.FromBase64String(imageUri.Split(',')[1]); // Extract base64 string and convert to byte array
+
+    //             selectedImagesFromSM.Add(new IncomingImages { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             Snackbar.Add($"Error Occurred {e.Message}", Severity.Error);
+    //         }
+    //     }
+
+    // }
 
     private async Task AddImages()
     {
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
         ConvertSavedImagesToITSImages();
+
+        if (selectedImagesFromSM.Count == 0)
+        {
+            Snackbar.Add("Please select at least one image before adding.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+
+
+            var uploadDto = new IncomingInspectionImageDTO
+                {
+                // Project = projectImagesDTO.ProjectNumber?.Trim(),
+
+                    SerialNumber = SerialNumber?.Trim(),
+                // SerialNumber = int.TryParse(inspection.SerialNumber, out var sn) ? sn : 0,
+
+                    Images = selectedImagesFromSM.Select(image =>
+                    {
+                        var imageDataDto = new ImageDto { Data = image.Images.First().Data, IncomingImageId = selectedITSImageID };
+
+                        return imageDataDto;
+                    }).ToList()
+                };
+
+            Snackbar.Add("Images added successfully.", Severity.Success);
+            MudDialog.Close();
+            await localStorage.SetItemAsync<IncomingInspectionImageDTO>("ProjectImageData", uploadDto);
+            CompletionService.IsCompleted = true;
+
+
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occurred {ex.Message}", Severity.Error);
+        }
 
     }
 
@@ -456,7 +522,7 @@
         selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
     }
 
-    private void DeleteImage(IncomingInspection imageToDelete)
+    private void DeleteImage(IncomingImages imageToDelete)
     {
         selectedImagesFromSM.Remove(imageToDelete);
         selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
@@ -508,7 +574,7 @@
             imageData = stream.ToArray();
         }
 
-        selectedImagesFromSM.Add(new IncomingInspection { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
+        selectedImagesFromSM.Add(new IncomingImages { SerialNumber = selectedPartNumber, Images = new List<Imagedata> { new Imagedata { Data = imageData } } });
 
 
         selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;

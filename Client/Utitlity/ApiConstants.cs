@@ -30,6 +30,18 @@
         public const string EditLocation = $"{BaseUrl}/MESWorkCenters/editwc";
         public const string DeleteLocation = $"{BaseUrl}/MESWorkCenters";
 
+        //Receiving   
+        public const string GetReceiving = $"{BaseUrl}/ReceivingData/getrd";
+        public const string DeleteReceiving = $"{BaseUrl}/ReceivingData";
+        public const string AddQRCode = $"{BaseUrl}/QRCode/locQR";
+        public const string AddReceiving = $"{BaseUrl}/ReceivingData/addrd";
+
+        //RotorsIncoming    
+        public const string AddRotorIncoming = $"{BaseUrl}/IncomingInspection/addincoming";
+        public const string AddImagesIncoming = $"{BaseUrl}/IncomingImages/addbi";
+        public const string CheckSerialNumber = $"{BaseUrl}/IncomingInspection/CheckSerialExists";
+
+
 
         // RotorSales 
 

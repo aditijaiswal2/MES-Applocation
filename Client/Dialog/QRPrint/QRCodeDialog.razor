@@ -21,8 +21,10 @@
                 {
                     <img src="@($"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}")" alt="QR Code" style="width: 1.5in; height: 1.5in;" />
                 }
-                <div style=" text-align:center; font-size: 15px; margin-bottom:1rem">@LocQR.SelectedOption</div>
-                <div style=" text-align:center; font-size: 15px; margin-bottom:1rem">@LocQR.Customer</div>
+                <div style="text-align:center; font-size: 15px; margin-bottom:1rem">
+                    <p>@LocQR.SelectedOption</p>
+                    <p>@LocQR.Customer</p>
+                </div>
             </div>
         </div>
     </DialogContent>

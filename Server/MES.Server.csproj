@@ -41,5 +41,9 @@
     <ProjectReference Include="..\Shared\MES.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IncomingInspection\" />
+  </ItemGroup>
+
 
 </Project>

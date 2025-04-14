@@ -27,8 +27,11 @@ namespace MES.Server.Data
         public DbSet<Params> Params { get; set; }
         public DbSet<Receiving> Receivings { get; set; }
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
+        public DbSet<IncomingImages> IncomingImages { get; set; }
+        public DbSet<MES.Shared.Models.Rotors.Imagedata> Imagedatas { get; set; }
+
         public DbSet<IncomingInspection> IncomingInspections { get; set; }
-        public DbSet<Imagedata> Imagedatas { get; set; }
+       // public DbSet<Imagedata> Imagedatas { get; set; }
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
         public DbSet<RotorSalesData> RotorSalesData { get; set; }
         public DbSet<RotorSalesSavedData> RotorSalesSavedData { get; set; }
@@ -55,11 +58,23 @@ namespace MES.Server.Data
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
-     
+            modelBuilder.Entity<IncomingImages>()
+.HasKey(i => i.Id);
+
+            modelBuilder.Entity<MES.Shared.Models.Rotors.Imagedata>()
+                .HasKey(i => i.ID);
+
+            modelBuilder.Entity<MES.Shared.Models.Rotors.Imagedata>()
+                .HasOne(i => i.IncomingImages)
+                .WithMany(its => its.Images)
+                .HasForeignKey(i => i.IncomingImageId)
+                .IsRequired();
+
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Imagedata>()
-                .HasOne(i => i.IncomingImage)
+                .HasOne(i => i.IncomingImages)
                 .WithMany(ii => ii.Images)
                 .HasForeignKey(i => i.IncomingImageId);
         

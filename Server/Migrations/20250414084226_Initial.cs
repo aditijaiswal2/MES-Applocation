@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,6 +59,19 @@ namespace MES.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IncomingImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomingImages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -674,9 +687,9 @@ namespace MES.Server.Migrations
                 {
                     table.PrimaryKey("PK_Imagedatas", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Imagedatas_IncomingInspections_IncomingImageId",
+                        name: "FK_Imagedatas_IncomingImages_IncomingImageId",
                         column: x => x.IncomingImageId,
-                        principalTable: "IncomingInspections",
+                        principalTable: "IncomingImages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -786,6 +799,9 @@ namespace MES.Server.Migrations
                 name: "Images");
 
             migrationBuilder.DropTable(
+                name: "IncomingInspections");
+
+            migrationBuilder.DropTable(
                 name: "Logindetails");
 
             migrationBuilder.DropTable(
@@ -828,7 +844,7 @@ namespace MES.Server.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "IncomingInspections");
+                name: "IncomingImages");
 
             migrationBuilder.DropTable(
                 name: "ShipmentImage");

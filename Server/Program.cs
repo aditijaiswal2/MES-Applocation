@@ -48,6 +48,9 @@ builder.Services.AddTransient<IMESWorkCentersRepository, MESWorkCentersRepositor
 builder.Services.AddTransient<MESWorkCentersRepository>();
 builder.Services.AddTransient<IIncomingInspection, IncomingInspectionRepository>();
 builder.Services.AddTransient<IncomingInspectionRepository>();
+builder.Services.AddTransient<IImageRepository, ImageRepository>();
+builder.Services.AddTransient<ImageRepository>();
+builder.Services.AddSingleton<HttpClient>();
 
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>

@@ -65,23 +65,6 @@ namespace MES.Shared.Models.Rotors
         public string RotorCategorization { get; set; }
         public string ComponentType { get; set; }
         public string Users { get; set; }
-
-        public List<Imagedata> Images { get; set; } = new();
     }
-
-
-    public class Imagedata
-    {
-        public int ID { get; set; }
-        public byte[] Data { get; set; }
-        public string ImageFilePath { get; set; }
-
-        public int IncomingImageId { get; set; }
-        [JsonIgnore]
-        public IncomingInspection IncomingImage { get; set; }
-    }
-
-
-
 
 }

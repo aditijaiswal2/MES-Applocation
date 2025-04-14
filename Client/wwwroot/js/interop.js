@@ -1,4 +1,5 @@
-﻿window.printDiv = function (divId) {
+﻿
+window.printDiv = function (divId) {
     const content = document.getElementById(divId);
     if (!content) {
         alert("Print content not found.");
@@ -7,65 +8,124 @@
 
     const printWindow = window.open('', '_blank');
 
-    // Clone and write full HTML with corrected layout styles
-    printWindow.document.write(`
+    // Collect stylesheets
+    const stylesheets = Array.from(document.styleSheets)
+        .filter(style => style.href)
+        .map(style => `<link rel="stylesheet" href="${style.href}">`)
+        .join("");
+
+    const htmlContent = `
         <html>
             <head>
                 <title>INCOMING ROTOR INSPECTION</title>
-                <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
+                ${stylesheets}
                 <style>
                     body {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
                         margin: 0;
+                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        background-color: white;
+                        color: black;
                     }
 
-                    /* Force grid layout for printing */
+                    .mud-dialog,
+                    .mud-paper {
+                        box-shadow: none !important;
+                        border: 1px solid #000;
+                        padding: 20px;
+                        margin: 10px;
+                        background-color: white;
+                    }
+
+                    .mud-dialog-title {
+                        font-weight: bold;
+                        font-size: 18px;
+                        margin-bottom: 16px;
+                        border-bottom: 1px solid #000;
+                        padding-bottom: 8px;
+                    }
+
                     .mud-grid {
                         display: grid !important;
-                        grid-template-columns: repeat(6, 1fr) !important;
-                        gap: 16px;
+                        grid-template-columns: repeat(3, 1fr) !important;
+                        gap: 12px;
                     }
 
                     .mud-item {
-                        width: 100% !important;
-                        margin: 0 !important;
                         padding: 4px;
                         box-sizing: border-box;
                     }
 
-                    .mud-stack {
+                    /* ✅ Uniform field container size */
+                    .field-container {
+                        border: 1px solid #000;
+                        border-radius: 4px;
+                        padding: 8px;
+                        height: 100px; /* uniform height */
+                        width: 100%; /* fills grid cell */
+                        box-sizing: border-box;
                         display: flex;
                         flex-direction: column;
-                        gap: 2px;
+                        justify-content: center;
+                        align-items: flex-start;
+                        font-size: 14px;
+                        overflow: hidden;
                     }
 
                     @media print {
                         body {
-                            margin: 0;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
                         }
 
-                        .mud-grid, .mud-item {
+                        .mud-grid,
+                        .mud-item,
+                        .field-container {
                             page-break-inside: avoid;
+                        }
+
+                        @page {
+                            margin: 10mm;
                         }
                     }
                 </style>
             </head>
             <body>
-                <div>${content.innerHTML}</div>
+                <div class="mud-dialog mud-paper">
+                    ${wrapFields(content.innerHTML)}
+                </div>
             </body>
-        </html> 
-    `);
+        </html>
+    `;
 
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
     printWindow.document.close();
 
-    printWindow.onload = function () {
+    printWindow.onload = () => {
         printWindow.focus();
-        printWindow.print();
-        printWindow.onafterprint = function () {
-            printWindow.close();
-        };
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.onafterprint = () => printWindow.close();
+        }, 500);
     };
+
+    // Wrap each field in a fixed-size container
+    function wrapFields(html) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+
+        const targets = tempDiv.querySelectorAll(".mud-item, .mud-grid > div");
+        targets.forEach(el => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "field-container";
+            wrapper.innerHTML = el.innerHTML;
+            el.innerHTML = '';
+            el.appendChild(wrapper);
+        });
+
+        return tempDiv.innerHTML;
+    }
 };
 
 
