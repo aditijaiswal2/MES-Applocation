@@ -315,21 +315,6 @@
                 </MudItem>
 
             </MudGrid>
-            <div style="width: 2in; height: 2in;  padding: 0.25in; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div class="mt-2">
-
-                    @if (LocQR?.QRData != null)
-                    {
-                        <img src="data:image/png;base64,@Convert.ToBase64String(LocQR.QRData)" />
-                    }
-                    else
-                    {
-                        <p style="color:red;">QR Code not available.</p>
-                    }
-
-                   
-                </div>
-            </div>
         </MudPaper>
 
     </DialogContent>
@@ -341,15 +326,49 @@
 </MudDialog>
 
 
+<style>
+   /*  .outlined-box {
+        border: 1px solid #444; 
+        border-radius: 8px;
+        padding: 8px;
+     
+    
+        margin-bottom: 8px;
+     
+        background-color: #1e1e1e; 
+        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        color: #f0f0f0; 
+    } */
 
+    .outlined-box .mud-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    .outlined-box {
+  
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+
+    #print-section {
+        background-color: #2a2a2a; /* Dark section background */
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        color: #ffffff; /* White text */
+    }
+
+</style>
 
 
 
 @code {
     [Parameter]
     public IncomingInspection InspectionData { get; set; }
-  
-    private QRRequestDTO LocQR { get; set; } = new();
 
     [Parameter]
     public string SelectedMaterial { get; set; }
@@ -381,7 +400,6 @@
     [Parameter] public string SelectedModule { get; set; }
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
-
 
 
 
@@ -448,11 +466,9 @@
 
     async void PrintDialog()
     {
-        await GenerateQR(InspectionData);
 
         //  await GenerateQR(SelectedSerialNumber, SelectedModule, InspectionData.Customer);
         await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
-
 
 
     }
@@ -462,106 +478,12 @@
         MudDialog.Cancel();
     }
 
-
-    public async Task GenerateQR(IncomingInspection receive)
-    {
-        Snackbar.Clear();
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-
-        try
-        {
-
-            string receiveData = $"Serial Number: {SelectedSerialNumber},Module: {SelectedModule}, Customer: {receive.Customer}, Date: {receive.DateTime}";
-
-
-            var jsonPart = JsonConvert.SerializeObject(receive);
-            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
-
-            // Serialize receiving data
-
-
-
-            var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/IncomlocQR", content);
-            //  var response = await HttpClient.PostAsync(ApiConstants.AddQRCode, content);
-            byte[] qrCodeBytes = null;
-
-
-
-            if (response.IsSuccessStatusCode)
-            {
-                using (var stream = await response.Content.ReadAsStreamAsync())
-                using (var memoryStream = new MemoryStream())
-                {
-                    await stream.CopyToAsync(memoryStream);
-                    qrCodeBytes = memoryStream.ToArray();
-                }
-
-                LocQR = new QRRequestDTO
-                    {
-                        SerialNumber = receive.SerialNumber,
-                        Module = receive.Module,
-                        Customer = receive.Customer,
-                        QRData = qrCodeBytes
-                    };
-
-
-            }
-            else
-            {
-                Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
-        }
-    }
     public class QRRequestDTO
     {
         public string SerialNumber { get; set; }
         public string Module { get; set; }
         public string Customer { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
-        public byte[] QRData { get; set; }
     }
-
 
 }
-
-
-<style>
-    /*  .outlined-box {
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 8px;
-
-
-            margin-bottom: 8px;
-
-            background-color: #1e1e1e;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-            color: #f0f0f0;
-        } */
-
-    .outlined-box .mud-text {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-
-    .outlined-box {
-        border-radius: 8px;
-        padding: 16px;
-    }
-
-
-    #print-section {
-        background-color: #2a2a2a; /* Dark section background */
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-        color: #ffffff; /* White text */
-    }
-
-</style>
