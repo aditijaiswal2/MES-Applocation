@@ -1,4 +1,4 @@
-﻿ @using MES.Shared.Models.Rotors
+﻿﻿ @using MES.Shared.Models.Rotors
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @inject ISnackbar Snackbar
@@ -15,7 +15,7 @@
 <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
     <DialogContent>
         <MudPaper Class="pa-6" Style=" border-radius: 12px;" id="print-section">
-         
+
             <MudText Typo="Typo.h6" Class="mt-6 mb-2" Color="Color.Secondary">INCOMING ROTOR INSPECTION</MudText>
 
             <MudGrid Spacing="3">
@@ -37,7 +37,7 @@
 
             <MudGrid Spacing="3">
 
-              
+
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Work Order</MudText>
                     <MudText Typo="Typo.body1">@InspectionData.WorkOrder</MudText>
@@ -45,7 +45,7 @@
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Mat#</MudText>
                     <MudText Typo="Typo.body1">@InspectionData.MatNumber</MudText>
-                </MudItem> 
+                </MudItem>
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Customer</MudText>
                     <MudText Typo="Typo.body1">@InspectionData.Customer</MudText>
@@ -54,7 +54,7 @@
 
             <MudGrid Spacing="3">
 
-               
+
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Location</MudText>
                     <MudText Typo="Typo.body1">@InspectionData.Location</MudText>
@@ -99,7 +99,7 @@
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Fits</MudText>
                     <MudText Typo="Typo.body1">@InspectionData.Fits</MudText>
                 </MudItem>
-               
+
             </MudGrid>
 
             <MudGrid Spacing="3">
@@ -124,7 +124,7 @@
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Rotor Style</MudText>
                     <MudText Typo="Typo.body1">@SelectedRotorStyle</MudText>
                 </MudItem>
-                 
+
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Type</MudText>
                     <MudText Typo="Typo.body1">@SelectedType</MudText>
@@ -181,7 +181,7 @@
 
             <MudGrid Spacing="3">
 
-              
+
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Wedgelock Alignment Marks Present</MudText>
@@ -206,7 +206,7 @@
 
             <MudGrid Spacing="3">
 
-              
+
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Plastic Sleeves</MudText>
@@ -232,7 +232,7 @@
 
             <MudGrid Spacing="3">
 
-               
+
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Replace Blades</MudText>
@@ -253,7 +253,7 @@
 
             <MudGrid Spacing="3">
 
-             
+
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.subtitle2" Color="Color.Primary">Manual Labor</MudText>
@@ -327,18 +327,18 @@
 
 
 <style>
-   /*  .outlined-box {
-        border: 1px solid #444; 
-        border-radius: 8px;
-        padding: 8px;
-     
-    
-        margin-bottom: 8px;
-     
-        background-color: #1e1e1e; 
-        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-        color: #f0f0f0; 
-    } */
+    /*  .outlined-box {
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 8px;
+
+
+            margin-bottom: 8px;
+
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            color: #f0f0f0;
+        } */
 
     .outlined-box .mud-text {
         white-space: nowrap;
@@ -348,7 +348,6 @@
 
 
     .outlined-box {
-  
         border-radius: 8px;
         padding: 16px;
     }
