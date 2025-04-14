@@ -30,13 +30,15 @@
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh>Serial Number</MudTh>
-                            <MudTh Style="text-align:center">Module</MudTh>
+                            <MudTh Style="text-align:center">Customer Name</MudTh>
                             <MudTh Style="text-align:center">Rotor Number</MudTh>
+                            <MudTh Style="text-align:center">Customer Priority</MudTh>
                         </HeaderContent>
                         <RowTemplate Context="data">
                             <MudTd>@data.SerialNumber</MudTd>
-                            <MudTd Style="text-align:center">@data.Module</MudTd>
+                            <MudTd Style="text-align:center">@data.Customer</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.CustomerImportance</MudTd>
 
                         </RowTemplate>
                         <PagerContent>

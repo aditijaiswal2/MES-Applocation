@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Incoming Inspection\**" />
+    <Content Remove="Incoming Inspection\**" />
+    <EmbeddedResource Remove="Incoming Inspection\**" />
+    <None Remove="Incoming Inspection\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.7.1" />
@@ -32,10 +39,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\MES.Client.csproj" />
     <ProjectReference Include="..\Shared\MES.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Incoming Inspection\" />
   </ItemGroup>
 
 

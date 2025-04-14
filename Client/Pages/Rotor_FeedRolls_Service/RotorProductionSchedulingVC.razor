@@ -44,7 +44,7 @@
                                         <MudList Dense="true">
                                             @foreach (var item in simpleRotorList.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                                             {
-                                                <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
+                                                <MudListItem Button="true" OnClick="() => SelectsimpleInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                                 @onmouseover="() => hoveredInspection = item"
                                                 @onmouseout="() => hoveredInspection = null">
                                                     <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
@@ -281,7 +281,7 @@
                                                     </MudItem>
 
                                                     <MudItem md="12" sm="12" xs="12">
-                                                        <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedWorkCenters"
+                                                        <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedsimpleWorkCenters"
                                                         AnchorOrigin="Origin.BottomCenter" Label="Work centers"
                                                         OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
                                                             @if (MESWorkcenters != null)
@@ -300,7 +300,7 @@
                                                 <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
 
 
-                                                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                                                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submitsimplerotors">SUBMIT</MudButton>
                                                     <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
 
                                                 </MudItem>
@@ -653,7 +653,7 @@
                                 <MudList Dense="true">
                                     @foreach (var item in feedRollList.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                                     {
-                                        <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
+                                        <MudListItem Button="true" OnClick="() => SelectFeedRoleInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                         @onmouseover="() => hoveredInspection = item"
                                         @onmouseout="() => hoveredInspection = null">
                                             <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
@@ -663,234 +663,234 @@
                             </MudPaper>
                         </MudItem>
 
-                        @if (selectedInspection != null)
+                        @if (selectedfeedroleInspection != null)
                         {
                             <MudItem xs="12" md="8">
                                 <MudPaper Elevation="3" Class="pa-3" Style="overflow: visible;">
-                                    @if (selectedInspection != null)
+                                    @if (selectedfeedroleInspection != null)
                                     {
                                         <MudGrid>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Customer" @bind-Value="selectedInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Customer" @bind-Value="selectedfeedroleInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="4">
-                                                <MudTextField Label="Location" @bind-Value="selectedInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Location" @bind-Value="selectedfeedroleInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="4">
-                                                <MudTextField Label="Received" @bind-Value="selectedInspection.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Received" @bind-Value="selectedfeedroleInspection.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="4">
-                                                <MudTextField Label="Inspected" @bind-Value="selectedInspection.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Rotors#" @bind-Value="selectedInspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Inspected" @bind-Value="selectedfeedroleInspection.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Initials" @bind-Value="selectedInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Rotors#" @bind-Value="selectedfeedroleInspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Make" @bind-Value="selectedInspection.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Initials" @bind-Value="selectedfeedroleInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Dia" @bind-Value="selectedInspection.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Make" @bind-Value="selectedfeedroleInspection.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Len" @bind-Value="selectedInspection.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Dia" @bind-Value="selectedfeedroleInspection.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Fits" @bind-Value="selectedInspection.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Len" @bind-Value="selectedfeedroleInspection.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Materials" @bind-Value="selectedInspection.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
+                                                <MudTextField Label="Fits" @bind-Value="selectedfeedroleInspection.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Others" @bind-Value="selectedInspection.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="4">
-
-                                                <MudTextField Label="Rotor Dia." @bind-Value="selectedInspection.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Rotor Style" @bind-Value="selectedInspection.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Materials" @bind-Value="selectedfeedroleInspection.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Type" @bind-Value="selectedInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Others" @bind-Value="selectedfeedroleInspection.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="4">
+
+                                                <MudTextField Label="Rotor Dia." @bind-Value="selectedfeedroleInspection.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Rotor Style" @bind-Value="selectedfeedroleInspection.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bearing Removed" @bind-Value="selectedInspection.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Type" @bind-Value="selectedfeedroleInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bearings" @bind-Value="selectedInspection.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bearing Removed" @bind-Value="selectedfeedroleInspection.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bearing Seals" @bind-Value="selectedInspection.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bearings" @bind-Value="selectedfeedroleInspection.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Ceramic Seals" @bind-Value="selectedInspection.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bearing Seals" @bind-Value="selectedfeedroleInspection.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="selectedInspection.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Ceramic Seals" @bind-Value="selectedfeedroleInspection.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="selectedInspection.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="selectedfeedroleInspection.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="yLeft" @bind-Value="selectedInspection.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="selectedfeedroleInspection.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Basic Sharpening" @bind-Value="selectedInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="yLeft" @bind-Value="selectedfeedroleInspection.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="If Basic Sharpening" @bind-Value="selectedInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Basic Sharpening" @bind-Value="selectedfeedroleInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="selectedInspection.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
+                                                <MudTextField Label="If Basic Sharpening" @bind-Value="selectedfeedroleInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Center Grinding" @bind-Value="selectedInspection.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="selectedfeedroleInspection.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="If Center Grinding" @bind-Value="selectedInspection.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Center Grinding" @bind-Value="selectedfeedroleInspection.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Aligned" @bind-Value="selectedInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="If Center Grinding" @bind-Value="selectedfeedroleInspection.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Plastic Sleeves" @bind-Value="selectedInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Aligned" @bind-Value="selectedfeedroleInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Welding" @bind-Value="selectedInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Plastic Sleeves" @bind-Value="selectedfeedroleInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Welding Number" @bind-Value="selectedInspection.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Welding" @bind-Value="selectedfeedroleInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Bed Knife in Box" @bind-Value="selectedInspection.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Welding Number" @bind-Value="selectedfeedroleInspection.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Replace Blades" @bind-Value="selectedInspection.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Re-Profile" @bind-Value="selectedInspection.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Bed Knife in Box" @bind-Value="selectedfeedroleInspection.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Sand Blasting" @bind-Value="selectedInspection.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
-                                            </MudItem>
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Manual Labor" @bind-Value="selectedInspection.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Replace Blades" @bind-Value="selectedfeedroleInspection.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="selectedInspection.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Re-Profile" @bind-Value="selectedfeedroleInspection.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="selectedInspection.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Sand Blasting" @bind-Value="selectedfeedroleInspection.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                                            </MudItem>
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Manual Labor" @bind-Value="selectedfeedroleInspection.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="selectedfeedroleInspection.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="QTY" @bind-Value="selectedInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="selectedfeedroleInspection.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Set-up Tir Left Journal" @bind-Value="selectedInspection.TirLeftJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Set-up Tir Right Journal" @bind-Value="selectedInspection.TirRightJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="QTY" @bind-Value="selectedfeedroleInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Saddle Part Number" @bind-Value="selectedInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Set-up Tir Left Journal" @bind-Value="selectedfeedroleInspection.TirLeftJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Set-up Tir Right Journal" @bind-Value="selectedfeedroleInspection.TirRightJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Saddle Part Number" @bind-Value="selectedfeedroleInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="6">
-                                                <MudTextField Label="Rotor Categorize" @bind-Value="selectedInspection.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Rotor Categorize" @bind-Value="selectedfeedroleInspection.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="6">
-                                                <MudTextField Label="Sub-Module" @bind-Value="selectedInspection.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Sub-Module" @bind-Value="selectedfeedroleInspection.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Sales Order" @bind-Value="@selectedInspection.SalesOrderNumber" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Sales Order" @bind-Value="@selectedfeedroleInspection.SalesOrderNumber" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="4">
-                                                <MudTextField Label="Work Order" @bind-Value="@selectedInspection.WorkOrder" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Work Order" @bind-Value="@selectedfeedroleInspection.WorkOrder" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="4">
-                                                <MudTextField Label="Mat#" @bind-Value="@selectedInspection.MatNumber" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="4">
-                                                <MudTextField Label="Target Date" @bind-Value="selectedInspection.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Mat#" @bind-Value="@selectedfeedroleInspection.MatNumber" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Customer Priority" @bind-Value="selectedInspection.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Target Date" @bind-Value="selectedfeedroleInspection.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem xs="4">
-                                                <MudTextField Label="Customer Instructions" @bind-Value="selectedInspection.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Customer Priority" @bind-Value="selectedfeedroleInspection.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="4">
+                                                <MudTextField Label="Customer Instructions" @bind-Value="selectedfeedroleInspection.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                             <MudItem md="12" sm="12" xs="12">
-                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedWorkCenters"
+                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedFeedRoleWorkCenters"
                                                 AnchorOrigin="Origin.BottomCenter" Label="Work centers"
                                                 OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
                                                     @if (MESWorkcenters != null)
@@ -907,7 +907,7 @@
                                         <br />
 
                                         <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
-                                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>                                           
+                                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="SubmitFeedRoles">SUBMIT</MudButton>                                           
                                             <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
 
                                         </MudItem>
@@ -973,7 +973,9 @@
     private RotorSalesData selectedAdvanceInspection;
     private List<RotorProductionSavedData> rotorproductionSavedDatas = new();
     private bool _hasFetchedIncomingData = false;
-
+    private RotorSalesData selectedfeedroleInspection;
+    private string? SelectedFeedRoleWorkCenters { get; set; }
+    private string? SelectedsimpleWorkCenters { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -997,13 +999,13 @@
         }
 
         await FetchAllInspections();
-       
+
 
     }
 
 
-     private async Task FetchAllInspections()
-     {
+    private async Task FetchAllInspections()
+    {
         // Get all existing RotorProductionData
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");        
         var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
@@ -1020,7 +1022,7 @@
         }
 
 
-         // fetching all sales data
+        // fetching all sales data
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
         var rotorSalesDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesData);
         if (rotorSalesDatasresponse.IsSuccessStatusCode)
@@ -1054,25 +1056,10 @@
                 .Where(r => r.RotorCategorization?.Equals("Advance", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
         }
-        
-     }
 
-    void ToggleRotor()
-    {
-        ShowRotorFilters = !ShowRotorFilters;
     }
 
-    void Togglefeedroles()
-    {
-        ShowfeedrolesFilters = !ShowfeedrolesFilters;
-    }
-
-
-    void ToggleSimplerotors()
-    {
-        ShowSimpleRotorFilters = !ShowSimpleRotorFilters;
-    }
-
+   
 
     // advance part
     void ToggleAdvanceRotor()
@@ -1106,7 +1093,7 @@
         }
         catch (Exception ex)
         {
-           
+
             rotorproductionSavedDatas = new List<RotorProductionSavedData>();
         }
 
@@ -1115,12 +1102,12 @@
         {
             var latest = rotorproductionSavedDatas.First();
             SelectedAdvancedSharping = latest.AdvancedSharpingStatus ?? string.Empty;
-            
+
         }
         else
         {
             SelectedAdvancedSharping = string.Empty;
-           
+
         }
 
     }
@@ -1184,7 +1171,7 @@
             return;
         }
 
-         if (string.IsNullOrWhiteSpace(SelectedWorkCenters))
+        if (string.IsNullOrWhiteSpace(SelectedWorkCenters))
         {
             Snackbar.Add("Please select Work Center.", Severity.Error);
             return;
@@ -1234,8 +1221,6 @@
         }
     }
 
-
-
     // public async Task GetProductionData()
     // {
     //     try
@@ -1263,15 +1248,74 @@
     //     }
     // }
 
+    void ToggleRotor()
+    {
+        ShowRotorFilters = !ShowRotorFilters;
+    }
 
-    private async Task SelectInspection(RotorSalesData inspection)
+    // simple rotor part   
+
+     void ToggleSimplerotors()
+    {
+        ShowSimpleRotorFilters = !ShowSimpleRotorFilters;
+    }
+
+    private async Task SelectsimpleInspection(RotorSalesData inspection)
     {
         selectedInspection = inspection;
     }
 
-    private async Task Submit()
-    {
+    private async Task Submitsimplerotors()
+    {       
+        if (string.IsNullOrWhiteSpace(SelectedsimpleWorkCenters))
+        {
+            Snackbar.Add("Please select Work Center.", Severity.Error);
+            return;
+        }
 
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new productiondataSubmission
+            {
+                SelectedInspection = selectedInspection,
+                Workcenters = SelectedsimpleWorkCenters,
+                AdvancedSharpingStatus = string.IsNullOrWhiteSpace(SelectedAdvancedSharping) ? null : SelectedAdvancedSharping,
+                ProductionSavedBy = useradd,
+                ProductionSavedDate = DateTime.Now
+
+        };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                ClearAll();
+                _hasFetchedIncomingData = false;
+                await FetchAllInspections();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+       
     }
 
     private async Task Togglenewrotors()
@@ -1282,11 +1326,80 @@
     }
 
 
+    // feed role part
+
+    void Togglefeedroles()
+    {
+        ShowfeedrolesFilters = !ShowfeedrolesFilters;
+    }
+
+
+    private async Task SelectFeedRoleInspection(RotorSalesData feedroleinspection)
+    {
+        selectedfeedroleInspection = feedroleinspection;
+    }
+
+    private async Task SubmitFeedRoles()
+    {
+        
+        if (string.IsNullOrWhiteSpace(SelectedFeedRoleWorkCenters))
+        {
+             Snackbar.Add("Please select Work Center.", Severity.Error);
+            return;
+        }
+       
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new productiondataSubmission
+            {
+                SelectedInspection = selectedfeedroleInspection,
+                Workcenters = SelectedFeedRoleWorkCenters,
+                AdvancedSharpingStatus = string.IsNullOrWhiteSpace(SelectedAdvancedSharping) ? null : SelectedAdvancedSharping,
+                ProductionSavedBy = useradd,
+                ProductionSavedDate = DateTime.Now
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                ClearAll();
+                _hasFetchedIncomingData = false;
+                await FetchAllInspections();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+    }
+
+
     private async Task ClearAll()
     {
         selectedInspection = null;
         SelectedWorkCenters = null;
         selectedAdvanceInspection = null;
+        selectedfeedroleInspection = null;
+        SelectedFeedRoleWorkCenters = null;
         StateHasChanged();
     }
 
