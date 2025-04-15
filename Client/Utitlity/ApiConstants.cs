@@ -35,6 +35,7 @@
         public const string DeleteReceiving = $"{BaseUrl}/ReceivingData";
         public const string AddQRCode = $"{BaseUrl}/QRCode/locQR";
         public const string AddReceiving = $"{BaseUrl}/ReceivingData/addrd";
+        public const string AddprintQRCode = $"{BaseUrl}/QRCode/IncomlocQR";
 
         //RotorsIncoming    
         public const string AddRotorIncoming = $"{BaseUrl}/IncomingInspection/addincoming";

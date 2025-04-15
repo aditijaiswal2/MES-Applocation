@@ -170,7 +170,7 @@ namespace MES.Server.Controllers
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("Axiscades", "aditi.jaiswal@axiscades.in"));
             email.To.Add(new MailboxAddress("Sales Team", "aditi.jaiswal@axiscades.in"));
-            email.Subject = $"Inspection Report - {IncomingDataDTO.SalesOrderNumber}";
+            email.Subject = $"{IncomingDataDTO.SerialNumber} - {IncomingDataDTO.Customer}";
             email.Body = new TextPart(TextFormat.Plain) { Text = "Please find the attached inspection report." };
 
             var attachment = new MimePart("application", "pdf")

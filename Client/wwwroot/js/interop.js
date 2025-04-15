@@ -1,34 +1,26 @@
 ﻿
-window.printDiv = function (divId) {
-    const content = document.getElementById(divId);
-    if (!content) {
-        alert("Print content not found.");
-        return;
-    }
-
-    const printWindow = window.open('', '_blank');
-
-    // Collect stylesheets
-    const stylesheets = Array.from(document.styleSheets)
-        .filter(style => style.href)
-        .map(style => `<link rel="stylesheet" href="${style.href}">`)
-        .join("");
+function printincomingImage(imageDataUrl, labelText) {
+    const previewContent = document.getElementById("print-section");
 
     const htmlContent = `
         <html>
             <head>
-                <title>INCOMING ROTOR INSPECTION</title>
-                ${stylesheets}
+               
                 <style>
                     body {
-                        margin: 0;
-                        padding: 0;
                         font-family: Arial, sans-serif;
                         background-color: white;
                         color: black;
+                        margin: 0;
+                        padding: 0;
                     }
 
-                    .mud-dialog,
+                    .dialog-title {
+                      text-align: center;
+                      margin: 0;
+                    }              
+
+                      .mud-dialog,
                     .mud-paper {
                         box-shadow: none !important;
                         border: 1px solid #000;
@@ -37,15 +29,14 @@ window.printDiv = function (divId) {
                         background-color: white;
                     }
 
-                    .mud-dialog-title {
+                      .mud-dialog-title {
                         font-weight: bold;
                         font-size: 18px;
                         margin-bottom: 16px;
                         border-bottom: 1px solid #000;
                         padding-bottom: 8px;
                     }
-
-                    .mud-grid {
+                     .mud-grid {
                         display: grid !important;
                         grid-template-columns: repeat(3, 1fr) !important;
                         gap: 12px;
@@ -56,34 +47,16 @@ window.printDiv = function (divId) {
                         box-sizing: border-box;
                     }
 
-                    /* ✅ Uniform field container size */
-                    .field-container {
-                        border: 1px solid #000;
-                        border-radius: 4px;
-                        padding: 8px;
-                        height: 100px; /* uniform height */
-                        width: 100%; /* fills grid cell */
-                        box-sizing: border-box;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: flex-start;
-                        font-size: 14px;
-                        overflow: hidden;
+                    .qr-container {
+                        text-align: center;
+                        margin-top: 20px;
                     }
-
+.qr-container img {
+    width: 75px !important;
+    height: 75px !important;
+    object-fit: contain;
+}
                     @media print {
-                        body {
-                            -webkit-print-color-adjust: exact;
-                            print-color-adjust: exact;
-                        }
-
-                        .mud-grid,
-                        .mud-item,
-                        .field-container {
-                            page-break-inside: avoid;
-                        }
-
                         @page {
                             margin: 10mm;
                         }
@@ -91,45 +64,47 @@ window.printDiv = function (divId) {
                 </style>
             </head>
             <body>
-                <div class="mud-dialog mud-paper">
-                    ${wrapFields(content.innerHTML)}
+              
+                  <div class="mud-dialog">
+                   <title class="dialog-title">INCOMING ROTOR INSPECTION</title>
+                       <img id="qr-img" src="${imageDataUrl}" alt="QR Code" />
+
+                    ${previewContent ? previewContent.innerHTML : ""}
                 </div>
+
+                <script>
+                    window.onload = function() {
+                        const img = document.getElementById('qr-img');
+                        if (img.complete) {
+                            window.print();
+                            window.onafterprint = () => window.close();
+                        } else {
+                            img.onload = function () {
+                                setTimeout(() => {
+                                    window.print();
+                                    window.onafterprint = () => window.close();
+                                }, 300); // wait for rendering
+                            };
+                        }
+                    }
+                </script>
             </body>
         </html>
     `;
 
-    printWindow.document.open();
+
+    const printWindow = window.open('', '_blank');
+
+
+
     printWindow.document.write(htmlContent);
     printWindow.document.close();
 
-    printWindow.onload = () => {
-        printWindow.focus();
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.onafterprint = () => printWindow.close();
-        }, 500);
-    };
-
-    // Wrap each field in a fixed-size container
-    function wrapFields(html) {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
-
-        const targets = tempDiv.querySelectorAll(".mud-item, .mud-grid > div");
-        targets.forEach(el => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "field-container";
-            wrapper.innerHTML = el.innerHTML;
-            el.innerHTML = '';
-            el.appendChild(wrapper);
-        });
-
-        return tempDiv.innerHTML;
-    }
-};
+}
 
 
-function printImage(imageData, partOrLoc) {
+
+function printImage(imageData, partOrLoc, customer) {
     // Define the canvas size in pixels (2.4 inches at 96 DPI)
     const dpi = 96;
     const canvasWidth = 2.4 * dpi; // 230.4 pixels
@@ -148,85 +123,90 @@ function printImage(imageData, partOrLoc) {
 
     img.onload = function () {
         // Calculate dimensions for the QR code area
-        const qrCodeSize = canvasWidth * 0.85; // QR code takes 85% of the canvas width
-        const qrCodeX = (canvasWidth - qrCodeSize) / 2; // Center QR code horizontally
-        const qrCodeY = (canvasHeight - qrCodeSize) / 2 - 10; // Center vertically, with padding for text
+        const qrCodeSize = canvasWidth * 0.85;
+        const qrCodeX = (canvasWidth - qrCodeSize) / 2;
+        const qrCodeY = (canvasHeight - qrCodeSize) / 2 - 10;
 
         // Draw the QR code image on the canvas
         context.drawImage(img, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize);
 
         // Add the partOrLoc text below the QR code
+        context.font = 'bold 16px Arial';
+        context.textAlign = 'center';
+        context.fillStyle = 'black';
+
         if (partOrLoc) {
-            context.font = 'bold 16px Arial'; // Adjust font size to fit within the canvas
-            context.textAlign = 'center';
-            context.fillStyle = 'black';
-            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY + qrCodeSize + 20); // Text below QR code
+            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
         }
+
+        // Add the customer text below the partOrLoc
+        if (customer) {
+            context.fillText(customer, canvasWidth / 2, qrCodeY + qrCodeSize + 40);
+        }
+
         // Convert the canvas to an image for downloading
         const combinedImage = canvas.toDataURL('image/png');
 
-        // Trigger download of the image
+        // Trigger download
         const link = document.createElement('a');
         link.href = combinedImage;
         link.download = 'QRCode.png';
         link.style.display = 'none';
         document.body.appendChild(link);
-        link.click(); // Trigger download
-        document.body.removeChild(link); // Clean up
+        link.click();
+        document.body.removeChild(link);
 
-        // Open a new window for print preview
+        // Open new window for print
         const win = window.open('', '', 'height=800,width=800');
         win.document.write('<html><head><title>Print QR Code</title>');
         win.document.write('<style>');
         win.document.write(`
-            @media print {
-                @page {
-                    margin: 0;
-                    size: 2.4in 2.4in; /* Custom square paper size */
-                }
-                body, html {
-                    margin: 0;
-                    padding: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    text-align: center;
-                    background: none !important;
-                }
-                .print-container {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                }
-                img {
-                    max-width: 100%;                   
-                    object-fit: contain;
-                }
-                .text {
-                    font-size: 14px;
-                    font-weight: bold;
-                    margin-top: 10px;
-                }
+        @media print {
+            @page {
+                margin: 0;
+                size: 2.4in 2.4in;
             }
-        `);
+            body, html {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                background: none !important;
+            }
+            .print-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            img {
+                max-width: 100%;
+                object-fit: contain;
+            }
+            .text {
+                font-size: 14px;
+                font-weight: bold;
+                margin-top: 5px;
+            }
+        }
+    `);
         win.document.write('</style></head><body>');
         win.document.write('<div class="print-container">');
         win.document.write(`<img src="${combinedImage}" alt="QR Code" />`);
-        //if (partOrLoc) {
-        //    win.document.write(`<div class="text">${partOrLoc}</div>`);
-        //}
+
         win.document.write('</div></body></html>');
         win.document.close();
 
-        // Delay printing to allow the window to fully load
         setTimeout(() => {
             win.print();
             win.close();
         }, 200);
     };
+
 
     // Handle errors if the image fails to load
     img.onerror = function () {

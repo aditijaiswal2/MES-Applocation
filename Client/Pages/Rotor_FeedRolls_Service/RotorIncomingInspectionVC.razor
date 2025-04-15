@@ -235,10 +235,10 @@
                                                 @if (selectedbs == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                               @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
-                                                               ValueChanged="OnybasicsharpChanged"
-                                                               FullWidth="true"
-                                                               Class="custom-select">
+                                                    @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
+                                                    ValueChanged="OnybasicsharpChanged"
+                                                    FullWidth="true"
+                                                    Class="custom-select">
                                                         @foreach (var ber in ybasicsharp)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -269,10 +269,10 @@
                                                 @if (selectedctr == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                               @bind-SelectedValue="selectedycg"
-                                                               ValueChanged="OnycgChanged"
-                                                               FullWidth="true" Variant="Variant.Outlined"
-                                                               Class="custom-select">
+                                                    @bind-SelectedValue="selectedycg"
+                                                    ValueChanged="OnycgChanged"
+                                                    FullWidth="true" Variant="Variant.Outlined"
+                                                    Class="custom-select">
                                                         @foreach (var ber in ycg)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -441,7 +441,7 @@
 
                                         <MudGrid>
                                             <MudItem xs="12" md="6">
-                                                <MudSelect T="string" Label=" Rotor Categorize " ValueChanged="OnddrcChanged" Variant="Variant.Outlined" @bind-SelectedValue="selectedddrc" FullWidth="true" Class="custom-select">
+                                                <MudSelect T="string" Label=" Rotor Categorize " ValueChanged="OnddrcChanged" Variant="Variant.Outlined" @bind-SelectedValue="selectedddrc" FullWidth="true" Class="custom-select" Required="true">
                                                     @foreach (var ber in ddrc)
                                                     {
                                                         <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -450,7 +450,7 @@
                                             </MudItem>
 
                                             <MudItem xs="12" md="6">
-                                                <MudSelect T="string" Label="Sub Module" @bind-SelectedValue="selecteddd" Variant="Variant.Outlined" FullWidth="true" ValueChanged="OnddChanged" Class="custom-select">
+                                                <MudSelect T="string" Label="Sub Module" @bind-SelectedValue="selecteddd" Variant="Variant.Outlined" FullWidth="true" ValueChanged="OnddChanged" Class="custom-select" Required="true">
                                                     @foreach (var ber in dd)
                                                     {
                                                         <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -474,7 +474,7 @@
                     else
                     {
 
-                        <MudText Typo="Typo.h6">This serial number already have data. Please check in Sales.</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Error">This serial number already exists. Please check in Sales.</MudText>
 
                     }
 
@@ -490,30 +490,30 @@
 
 <style>
     .bordered-container {
-        width: 100%;
-        max-width: 100%;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-        padding: 30px;
-        margin-bottom: 16px;
-        box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
     }
 
 
     .qr-item {
-        margin: 1.5rem;
-        font-size: 16px;
-        white-space: nowrap; /* Ensures text stays in one line */
+    margin: 1.5rem;
+    font-size: 16px;
+    white-space: nowrap; /* Ensures text stays in one line */
     }
 
 
     .full-width-grid {
-        width: 100%;
-        margin: 0;
+    width: 100%;
+    margin: 0;
     }
 
     .spaced-select .mud-input-label {
-        margin-bottom: 6px; /* Adjust as needed */
+    margin-bottom: 6px; /* Adjust as needed */
     }
 
 </style>
@@ -920,6 +920,13 @@
             {
                 useradd = userData.UserName;
             }
+
+            if (string.IsNullOrWhiteSpace(selectedddrc) || string.IsNullOrWhiteSpace(selecteddd))
+            {
+                Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
+                return;
+            }
+
 
             // Assign scanned QR Code data if available
             if (!string.IsNullOrEmpty(qrCodeData))

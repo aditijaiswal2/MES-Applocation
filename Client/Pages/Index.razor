@@ -190,15 +190,9 @@
             var jsonPart = JsonConvert.SerializeObject(receive);
             var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
 
-            // Serialize receiving data  
-       
-
-          
            // var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/locQR", content);
             var response = await HttpClient.PostAsync(ApiConstants.AddQRCode, content);
             byte[] qrCodeBytes = null;
-
-
 
             if (response.IsSuccessStatusCode)
             {
