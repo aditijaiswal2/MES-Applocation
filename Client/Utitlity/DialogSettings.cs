@@ -14,5 +14,14 @@ namespace MES.Client.Utitlity
             Position = DialogPosition.Center
         };
 
+        public static DialogOptions ViewImageDialogOptions = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            CloseButton = true,
+            DisableBackdropClick = true,
+            Position = DialogPosition.Center
+        };
+
     }
 }

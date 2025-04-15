@@ -1,4 +1,5 @@
-﻿using MES.Shared.DTOs;
+﻿using iTextSharp.text.rtf.graphic;
+using MES.Shared.DTOs;
 using MES.Shared.Models.Rotors;
 
 namespace MES.Server.Contracts
@@ -13,6 +14,8 @@ namespace MES.Server.Contracts
         Task<IncomingImages> AddImagesAsync(IncomingImages wIPForProjectJOB);
 
         Task<IncomingImages> GetImagesByDTOAsync(IncomingInspectionImageDTO wIPForProjectJOBDTO);
+
+        Task<IncomingImages> GetImagesBySerialNumberAsync(string serialnumber);
 
 
 

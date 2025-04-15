@@ -1,4 +1,5 @@
-﻿using MES.Server.Contracts;
+﻿using iTextSharp.text.rtf.graphic;
+using MES.Server.Contracts;
 using MES.Server.Data;
 using MES.Shared.DTOs;
 using MES.Shared.Models.Rotors;
@@ -128,6 +129,45 @@ namespace MES.Server.Data.Repositories
         {
             _context.IncomingImages.Update(image);
             await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<IncomingImages> GetImagesBySerialNumberAsync(string serialNumber)
+        {
+            try
+            {
+                var partImages = await _context.IncomingImages
+                                    .Where(i => i.SerialNumber == serialNumber)
+                                    .Include(i => i.Images)
+                                    .FirstOrDefaultAsync();
+
+                if (partImages != null)
+                {
+                    foreach (var image in partImages.Images)
+                    {
+                        if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
+                        {
+                            try
+                            {
+                                var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
+                                image.Data = await File.ReadAllBytesAsync(imagePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error reading file at path {image.ImageFilePath}: {ex.Message}");
+                                throw;
+                            }
+                        }
+                    }
+                }
+
+                return partImages;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                throw;
+            }
         }
     }
 }

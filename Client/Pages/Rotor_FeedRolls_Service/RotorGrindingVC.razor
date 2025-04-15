@@ -1,6 +1,7 @@
 ﻿@page "/rg"
 
 @using MES.Client.Dialog
+@using MES.Client.Dialog.Grinding
 @using MES.Client.Utitlity
 @using MES.Shared.Models
 @using MES.Shared.Models.Rotors
@@ -32,14 +33,29 @@
                             <MudTh>Serial Number</MudTh>
                             <MudTh Style="text-align:center">Customer Name</MudTh>
                             <MudTh Style="text-align:center">Rotor Number</MudTh>
+                            <MudTh Style="text-align:center">Work Center</MudTh>
+                            <MudTh Style="text-align:center">Component Type</MudTh>
                             <MudTh Style="text-align:center">Customer Priority</MudTh>
+                            <MudTh Style="text-align:center">Status Indicator</MudTh>
                         </HeaderContent>
                         <RowTemplate Context="data">
                             <MudTd>@data.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@data.Customer</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.Workcenters</MudTd>
+                            <MudTd Style="text-align:center">@data.ComponentType</MudTd>
                             <MudTd Style="text-align:center">@data.CustomerImportance</MudTd>
+                            <MudTd Style="text-align:center">
+                                <MudChip Color="@(data.TargetDate < DateTime.Today ? Color.Error
+                                : data.TargetDate > DateTime.Today ? Color.Success
+                                : Color.Primary)"
+                                         Style="min-width: 100px;" Label="true">
+                                    @(data.TargetDate < DateTime.Today ? "Overdue"
+                                        : data.TargetDate > DateTime.Today ? "Upcoming"
+                                        : "Due Today")
+                                </MudChip>
 
+                            </MudTd>
                         </RowTemplate>
                         <PagerContent>
                             <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
@@ -75,31 +91,49 @@
     private int selectedRowNumber = -1;
     private MudTable<RotorProductionData> mudTable;
     private List<string> clickedEvents = new();
+    private List<RotorGrindingData> RotorgrindingDatas = new();
 
     protected override async Task OnInitializedAsync()
     {
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
+
         await LoadData();
     }
 
     private async Task LoadData()
     {
         try
-        {
+        {           
+
+             // Get all existing Rotor grinding Data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
 
-            if (workcenterResponse.IsSuccessStatusCode)
+            if (rotorgrindingDatasResponse.IsSuccessStatusCode)
             {
-                var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+                var productionDataJson = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
 
-                if (locationResult != null)
+                if (!string.IsNullOrEmpty(productionDataJson))
                 {
-                    MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                    RotorgrindingDatas = JsonSerializer.Deserialize<List<RotorGrindingData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
                 }
             }
 
-            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
             // Get all existing RotorProductionData
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");            
             var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
 
             if (rotorSalesDatasResponse.IsSuccessStatusCode)
@@ -108,8 +142,13 @@
                 var allInspections = JsonSerializer.Deserialize<List<RotorProductionData>>(data,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorProductionData>();
 
-                // Exclude inspections that already exist in rotorSalesDatas (based on SerialNumber, Module, RotorsNumber)
-                RotorProductionDatas = allInspections;
+                // Exclude inspections that already exist in rotorgrindingDatas (based on SerialNumber, Module, RotorsNumber)
+                RotorProductionDatas = allInspections
+                .Where(i => !RotorgrindingDatas.Any(r =>
+                    string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
 
             }
 
@@ -132,7 +171,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.SerialNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Workcenters.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
@@ -154,11 +193,57 @@
                 ["selectedData"] = selectedData
             };
 
-        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;       
 
-        await DialogService.ShowAsync<GrindingDepartmentDialog>("Rotor Details", parameters, dialogOptions);
+        DialogService.Show<GrindingData>("Rotor Details", parameters, dialogOptions);
+
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await UpdateproductionDataAsync();
+        };
     }
 
+    private async Task UpdateproductionDataAsync()
+    {
+        if (CompletionService.IsCompleted)
+        {
+            // Get all existing Rotor grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+
+            if (rotorgrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    RotorgrindingDatas = JsonSerializer.Deserialize<List<RotorGrindingData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
+                }
+            }
+
+            // Get all existing RotorProductionData
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
+
+            if (rotorSalesDatasResponse.IsSuccessStatusCode)
+            {
+                var data = await rotorSalesDatasResponse.Content.ReadAsStringAsync();
+                var allInspections = JsonSerializer.Deserialize<List<RotorProductionData>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorProductionData>();
+
+                // Exclude inspections that already exist in rotorgrindingDatas (based on SerialNumber, Module, RotorsNumber)
+                RotorProductionDatas = allInspections
+                .Where(i => !RotorgrindingDatas.Any(r =>
+                    string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+                StateHasChanged();
+
+            }
+        }
+    }
 
 
     private string SelectedRowClassFunc(RotorProductionData element, int rowNumber)

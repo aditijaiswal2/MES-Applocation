@@ -1,0 +1,108 @@
+﻿@using MES.Client.Utitlity
+@using MES.Shared.Models.Rotors
+@inject IJSRuntime JS;
+
+<script>
+    <script src="js/cp.js" >
+</script>
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                View Images
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            <MudItem md="12" sm="12" xs="12" class="center">
+                <MudButton StartIcon="@Icons.Material.Filled.Download"
+                Variant="Variant.Filled" Size="Size.Small" 
+                Color="Color.Primary" OnClick="DownloadAllImages">Download Images</MudButton>
+
+            </MudItem>
+           
+
+
+            <MudGrid Class="d-flex mt-4 mb-4" Spacing="2" Justify="Justify.Center">
+
+                <MudItem md="6" sm="12" xs="12" Class="pa-0">
+                    <MudContainer>
+                        <MudGrid Class="d-flex mt-4 mb-4" Spacing="2" Justify="Justify.Center">
+              
+                            @if (Images != null && Images.Images != null)
+                            {
+
+                                foreach (var image in Images.Images)
+                                {
+                                    <MudCard Class="pa-2" Outlined="true" Style="width: 100px; margin: 5px;">
+
+                                        <MudCardMedia @onclick="OpenDialog"
+                                                      Image="@($"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}")"
+                                                      Height="80" />
+                                    </MudCard>
+                                }
+                            }
+                           
+
+
+
+                        </MudGrid>
+                    </MudContainer>
+                </MudItem>
+            </MudGrid>
+           
+            
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .table-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+</style>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public IncomingImages Images { get; set; }
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+
+   
+
+    private void OpenDialog()
+    {
+        var parameters = new DialogParameters<ImageDisplayDialog>();
+        parameters.Add("Images", Images.Images);
+
+        DialogService.Show<ImageDisplayDialog>("Images", parameters, DialogSettings.ViewImageDialogOptions);
+    }
+
+    private async Task DownloadAllImages()
+    {
+        if (Images?.Images == null || Images.Images.Count == 0)
+            return;
+
+        int index = 1;
+        foreach (var image in Images.Images)
+        {
+            var base64 = $"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}";
+            var filename = $"Image_{index++}.jpg";
+
+            await JS.InvokeVoidAsync("downloadImageFromBase64", base64, filename);
+        }
+    }
+
+}

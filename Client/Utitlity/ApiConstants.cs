@@ -40,6 +40,7 @@
         public const string AddRotorIncoming = $"{BaseUrl}/IncomingInspection/addincoming";
         public const string AddImagesIncoming = $"{BaseUrl}/IncomingImages/addbi";
         public const string CheckSerialNumber = $"{BaseUrl}/IncomingInspection/CheckSerialExists";
+        public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImages";
 
 
 
@@ -64,6 +65,11 @@
 
         // new rotor data
         public const string AddNewRotorData = $"{BaseUrl}/NewRotorDetails/SaveNewRotor";
+
+        // Rotor Grinding Data
+        public const string AddRotorGrindingData = $"{BaseUrl}/RotorGrinding/AddGrindingData";
+        public const string GetAllGrindingData = $"{BaseUrl}/RotorGrinding/GetAllGrindingData";
+
 
     }
 }

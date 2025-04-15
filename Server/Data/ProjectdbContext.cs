@@ -37,8 +37,9 @@ namespace MES.Server.Data
         public DbSet<RotorSalesSavedData> RotorSalesSavedData { get; set; }
         public DbSet<RotorProductionData> RotorProductionData { get; set; }
         public DbSet<RotorProductionSavedData> RotorProductionSavedData { get; set; }
-        public DbSet<RotorProcessDimensionsReport> RotorProcessDimensionsReports { get; set; }
+        //public DbSet<RotorProcessDimensionsReport> RotorProcessDimensionsReports { get; set; }
         public DbSet<NewRotorData> NewRotorData { get; set; }
+        public DbSet<RotorGrindingData> RotorGrindingData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

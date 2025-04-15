@@ -1,0 +1,223 @@
+﻿@using MES.Client.Utitlity
+@using MES.Shared.Models.Rotors
+@using System.Text
+@using static MES.Client.Pages.LoginVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IHttpClientFactory _httpClient
+@inject IDialogCompletionService CompletionService
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                Generate Process Dimensions Report
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            @if (selectedData != null)
+            {
+                <MudGrid>
+                    <MudItem xs="4">
+                        <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Rotor Dia.Right" @bind-Value="@GetRotorProcess.RotorsDiaRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Relief Land" @bind-Value="@GetRotorProcess.ReliefLand" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Tooth Face Left" @bind-Value="@GetRotorProcess.ToothFaceLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Tooth Face Right" @bind-Value="@GetRotorProcess.ToothFaceRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Visual Checks" @bind-Value="@GetRotorProcess.VisualChecks" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Inspected By" @bind-Value="@GetRotorProcess.InspectedBy" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem md="6" sm="12" xs="12">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                        @bind-Date="Date"
+                        Variant="Variant.Outlined"
+                        Label="Date"
+                        MinDate="@MinDate" />
+
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Notes" @bind-Value="@GetRotorProcess.Notes" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem md="12" sm="12" xs="12">
+
+                        <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                </MudGrid>
+                <br />
+
+                <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+
+                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                    <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                </MudItem>
+
+
+            }
+
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
+    }
+
+</style>
+
+
+
+
+@code {
+
+
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public RotorProductionData selectedData { get; set; }
+    private RotorGrindingData GetRotorProcess { get; set; } = new RotorGrindingData();
+    private DateTime? Date = DateTime.Today;
+    private DateTime MinDate = DateTime.Today;
+    private string? DelayReasonTracking { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MinDate = DateTime.Today;
+    }
+
+    private async Task Submit()
+    {
+        if (string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ||
+             string.IsNullOrWhiteSpace(GetRotorProcess.Notes))
+        {
+            Snackbar.Add("Please fill all required fields", Severity.Warning);
+            return;
+        }
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new GrindingInspectionSubmission
+            {
+                SelectedProductionInspection = selectedData,
+                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
+                ReliefLand = GetRotorProcess.ReliefLand,
+                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = GetRotorProcess.ToothFaceRight,
+                CentersLeft = GetRotorProcess.CentersLeft,
+                CentersRight = GetRotorProcess.CentersRight,
+                VisualChecks = GetRotorProcess.VisualChecks,
+                InspectedBy = GetRotorProcess.InspectedBy,               
+                Notes = GetRotorProcess.Notes,
+                SelectedDate = Date,
+                DelayReasonTracking = DelayReasonTracking,
+                GrindingdataSavedBy = useradd,
+                GrindingdataSavedByDate = DateTime.Now.ToString()             
+
+                
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorGrindingData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                ClearAll();               
+                StateHasChanged();
+                CompletionService.IsCompleted = true;
+                MudDialog?.Close();
+
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ClearAll()
+    {
+        GetRotorProcess = new RotorGrindingData();
+        Date = DateTime.Today;
+        DelayReasonTracking = null;
+        StateHasChanged();
+    }
+
+
+    public class GrindingInspectionSubmission
+    {
+        public RotorProductionData SelectedProductionInspection { get; set; }
+        public string RotorsDiaLeft { get; set; }
+        public string RotorsDiaRight { get; set; }
+        public string ReliefLand { get; set; }
+        public string ToothFaceLeft { get; set; }
+        public string ToothFaceRight { get; set; }
+        public string CentersLeft { get; set; }
+        public string CentersRight { get; set; }
+        public string VisualChecks { get; set; }
+        public string InspectedBy { get; set; }
+        public DateTime? SelectedDate { get; set; }
+        public string Notes { get; set; }
+        public string DelayReasonTracking { get; set; }
+        public string GrindingdataSavedBy { get; set; }
+        public string GrindingdataSavedByDate { get; set; }
+    }
+}
