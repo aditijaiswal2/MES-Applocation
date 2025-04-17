@@ -1,0 +1,425 @@
+﻿@page "/ddgr"
+
+@using MES.Client.Dialog
+@using MES.Client.Dialog.Grinding
+@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using ReactorBlazorQRCodeScanner
+
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+
+
+
+<MudGrid Spacing="3">
+    <!-- Left Panel: Search & List -->
+    <MudItem xs="12" md="4">
+        <MudPaper Elevation="3" Class="pa-3">
+            <MudTextField @bind-Value="searchTerm" Placeholder="Search..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" />
+            <MudList Dense="true">
+                @foreach (var item in inspections.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                {
+                    <MudListItem Button="true" OnClick="() => SelectAdvanceInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
+                                 @onmouseover="() => hoveredInspection = item"
+                                 @onmouseout="() => hoveredInspection = null">
+                        <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
+
+    @if (selectedAdvanceInspection != null)
+    {
+        <MudItem xs="12" md="8">
+            <MudPaper Elevation="3" Class="pa-3" Style="overflow: visible;">
+                @if (selectedAdvanceInspection != null)
+                {
+                    <MudGrid>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Customer" @bind-Value="selectedAdvanceInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Location" @bind-Value="selectedAdvanceInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Received" @bind-Value="selectedAdvanceInspection.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Inspected" @bind-Value="selectedAdvanceInspection.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Rotors#" @bind-Value="selectedAdvanceInspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Initials" @bind-Value="selectedAdvanceInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Make" @bind-Value="selectedAdvanceInspection.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Dia" @bind-Value="selectedAdvanceInspection.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Len" @bind-Value="selectedAdvanceInspection.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Fits" @bind-Value="selectedAdvanceInspection.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Materials" @bind-Value="selectedAdvanceInspection.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Others" @bind-Value="selectedAdvanceInspection.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+
+                            <MudTextField Label="Rotor Dia." @bind-Value="selectedAdvanceInspection.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Rotor Style" @bind-Value="selectedAdvanceInspection.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Type" @bind-Value="selectedAdvanceInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bearing Removed" @bind-Value="selectedAdvanceInspection.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bearings" @bind-Value="selectedAdvanceInspection.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bearing Seals" @bind-Value="selectedAdvanceInspection.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Ceramic Seals" @bind-Value="selectedAdvanceInspection.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="selectedAdvanceInspection.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="selectedAdvanceInspection.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="yLeft" @bind-Value="selectedAdvanceInspection.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Basic Sharpening" @bind-Value="selectedAdvanceInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="If Basic Sharpening" @bind-Value="selectedAdvanceInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="selectedAdvanceInspection.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Center Grinding" @bind-Value="selectedAdvanceInspection.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="If Center Grinding" @bind-Value="selectedAdvanceInspection.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Aligned" @bind-Value="selectedAdvanceInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Plastic Sleeves" @bind-Value="selectedAdvanceInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Welding" @bind-Value="selectedAdvanceInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Welding Number" @bind-Value="selectedAdvanceInspection.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Bed Knife in Box" @bind-Value="selectedAdvanceInspection.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Replace Blades" @bind-Value="selectedAdvanceInspection.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Re-Profile" @bind-Value="selectedAdvanceInspection.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Sand Blasting" @bind-Value="selectedAdvanceInspection.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Manual Labor" @bind-Value="selectedAdvanceInspection.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="selectedAdvanceInspection.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="selectedAdvanceInspection.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="QTY" @bind-Value="selectedAdvanceInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Set-up Tir Left Journal" @bind-Value="selectedAdvanceInspection.TirLeftJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Set-up Tir Right Journal" @bind-Value="selectedAdvanceInspection.TirRightJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Saddle Part Number" @bind-Value="selectedAdvanceInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="6">
+                            <MudTextField Label="Rotor Categorize" @bind-Value="selectedAdvanceInspection.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="6">
+                            <MudTextField Label="Sub-Module" @bind-Value="selectedAdvanceInspection.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Sales Order" @bind-Value="@selectedAdvanceInspection.SalesOrderNumber" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Work Order" @bind-Value="@selectedAdvanceInspection.WorkOrder" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Mat#" @bind-Value="@selectedAdvanceInspection.MatNumber" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Target Date" @bind-Value="selectedAdvanceInspection.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Customer Priority" @bind-Value="selectedAdvanceInspection.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Customer Instructions" @bind-Value="selectedAdvanceInspection.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem md="12" sm="12" xs="12">
+                            <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedAdvancedSharping" AnchorOrigin="Origin.BottomCenter" Label="Advanced Sharping" OpenIcon="@Icons.Material.Filled.Quiz" AdornmentColor="Color.Primary">
+                                @foreach (var ads in AdvancedSharpingStatus)
+                                {
+                                    <MudSelectItem Value="@ads">@ads</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        @if (SelectedAdvancedSharping == "Completed")
+                        {
+                            <MudItem md="12" sm="12" xs="12">
+                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedWorkCenters"
+                                           AnchorOrigin="Origin.BottomCenter" Label="Work Centers"
+                                           OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
+                                    @if (MESWorkcenters != null)
+                                    {
+                                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                                        {
+                                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </MudItem>
+
+                        }
+
+
+                    </MudGrid>
+                    <br />
+
+                    <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+                        @if (SelectedAdvancedSharping != "Completed")
+                        {
+                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="SaveAdvancedData">SAVE</MudButton>
+                        }
+
+                        @if (SelectedAdvancedSharping == "Completed")
+                        {
+                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="SubmitAdvancedData">SUBMIT</MudButton>
+                        }
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                    </MudItem>
+
+
+
+
+
+                }
+
+            </MudPaper>
+        </MudItem>
+    }
+
+</MudGrid>
+
+<style>
+
+    .hover-highlight {
+    background-color: #c4c4c4;
+    cursor: pointer;
+    }
+
+    .overflow-visible {
+    overflow: visible !important;
+    }
+
+</style>
+
+@code {
+
+    private string searchTerm = "";
+    private List<RotorGrindingData> inspections = new();
+    private RotorGrindingData selectedAdvanceInspection;
+    private RotorGrindingData? hoveredInspection;
+    private DateTime? fromDate = DateTime.Today;
+    private bool isLoading = false;
+    private string errorMessage = "";
+    private string? SelectedAdvancedSharping { get; set; }
+     private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    private List<string> AdvancedSharpingStatus = new List<string>();
+      private string? SelectedWorkCenters { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {      
+        AdvancedSharpingStatus.Add("Welding");
+        AdvancedSharpingStatus.Add("Chroming");
+        AdvancedSharpingStatus.Add("Other Operations");
+        AdvancedSharpingStatus.Add("Completed");
+
+        // get Work Centers
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
+
+        await FetchAllInspections();
+    }
+
+    private async Task FetchAllInspections()
+    {
+        try
+        {
+
+            // Get all existing Rotor grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+
+            if (rotorgrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var data = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
+                var allInspections = JsonSerializer.Deserialize<List<RotorGrindingData>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
+
+                // Filter only those where IsMoveoutsideoperation is true
+                inspections = allInspections.Where(x => x.IsMoveoutsideoperation).ToList();
+
+            }
+
+
+           
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+
+
+    private async Task SelectAdvanceInspection(RotorGrindingData inspection)
+    {
+        selectedAdvanceInspection = inspection;
+    }
+
+    private async Task SubmitAdvancedData()
+    {
+
+    }
+
+    private async Task SaveAdvancedData()
+    {
+
+    }
+
+    private async Task ClearAll()
+    {
+
+    }
+}

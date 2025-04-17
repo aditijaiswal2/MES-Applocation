@@ -71,6 +71,10 @@
         public const string AddRotorGrindingData = $"{BaseUrl}/RotorGrinding/AddGrindingData";
         public const string GetAllGrindingData = $"{BaseUrl}/RotorGrinding/GetAllGrindingData";
 
+        // Rotor Grinding Saved  Data
+        public const string AddRotorGrindingSavedData = $"{BaseUrl}/RotorGrindingSaved/AddGrindingSaveData";
+        public const string GetRotorGrindingSavedDatabyserialnumber = $"{BaseUrl}/RotorGrindingSaved/GGSDBSN";
+        public const string GetAllSavedGrindingData = $"{BaseUrl}/RotorGrindingSaved/GetAllSavedGrindingData";
 
     }
 }

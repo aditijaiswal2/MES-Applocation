@@ -36,6 +36,7 @@
             <MudNavLink Href="/rsales" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
             <MudNavLink Href="/rps" Icon="@Icons.Material.Filled.ProductionQuantityLimits" IconColor="Color.Primary" Class="custom-navlink">Production Scheduling</MudNavLink>
             <MudNavLink Href="/rg" Icon="@Icons.Material.Filled.GridOn" IconColor="Color.Primary" Class="custom-navlink">Grinding</MudNavLink>
+            <MudNavLink Href="/ddgr" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Damage During Grinding</MudNavLink>
             <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
             <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
 
@@ -174,6 +175,9 @@
 
             case "/rg":
                 return "Grinding";
+
+            case "/ddgr":
+                return "Damage During Grinding";
 
             case "/rfi":
                 return "Final Inspection";

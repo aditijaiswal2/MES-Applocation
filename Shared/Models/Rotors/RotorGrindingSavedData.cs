@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MES.Shared.Models.Rotors
 {
-    public class RotorGrindingData : BaseEntity
+    public class RotorGrindingSavedData : BaseEntity
     {
         public string SerialNumber { get; set; }
         public string Module { get; set; }
@@ -82,8 +82,7 @@ namespace MES.Shared.Models.Rotors
         public string Notes { get; set; }
         public string DelayReasonTracking { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
-        public string GrindingdataSubmiteddBy { get; set; }
-        public string GrindingdataSubmitedByDate { get; set; }
+        public string GrindingdataSavedBy { get; set; }
+        public string GrindingdataSavedByDate { get; set; }
     }
 }
-       

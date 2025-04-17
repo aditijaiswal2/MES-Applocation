@@ -40,6 +40,7 @@ namespace MES.Server.Data
         //public DbSet<RotorProcessDimensionsReport> RotorProcessDimensionsReports { get; set; }
         public DbSet<NewRotorData> NewRotorData { get; set; }
         public DbSet<RotorGrindingData> RotorGrindingData { get; set; }
+        public DbSet<RotorGrindingSavedData> RotorGrindingSavedData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -4,30 +4,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static MES.Client.Dialog.Grinding.GrindingData;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MES.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RotorGrindingController : ControllerBase
+    public class RotorGrindingSavedController : ControllerBase
     {
         private readonly ProjectdbContext _context;
 
-        public RotorGrindingController(ProjectdbContext context)
+        public RotorGrindingSavedController(ProjectdbContext context)
         {
             _context = context;
         }
 
-        [HttpPost("AddGrindingData")]
-        public async Task<IActionResult> AddSalesData([FromBody] GrindingInspectionSubmission submission)
+        [HttpPost("AddGrindingSaveData")]
+        public async Task<IActionResult> AddGrindingSaveData([FromBody] GrindingInspectionSubmission submission)
         {
             if (submission == null || submission.SelectedProductionInspection == null)
                 return BadRequest("Submission is invalid.");
 
             try
             {
-                var rotorData = new RotorGrindingData
+                var rotorData = new RotorGrindingSavedData
                 {
                     SerialNumber = submission.SelectedProductionInspection.SerialNumber,
                     Module = submission.SelectedProductionInspection.Module,
@@ -103,12 +102,12 @@ namespace MES.Server.Controllers
                     GrindingStartDate = submission.GrindingStartDate,
                     DelayReasonTracking = submission.DelayReasonTracking,
                     IsMoveoutsideoperation = submission.IsMoveoutsideoperation,
-                    GrindingdataSubmiteddBy = submission.GrindingdataSavedBy,
-                    GrindingdataSubmitedByDate = submission.GrindingdataSavedByDate
+                    GrindingdataSavedBy = submission.GrindingdataSavedBy,
+                    GrindingdataSavedByDate = submission.GrindingdataSavedByDate
                     
                 };
 
-                _context.RotorGrindingData.Add(rotorData);
+                _context.RotorGrindingSavedData.Add(rotorData);
                 await _context.SaveChangesAsync();
 
                 return Ok(new { Message = "Rotor Grinding data saved successfully!" });
@@ -120,10 +119,27 @@ namespace MES.Server.Controllers
         }
 
 
-        [HttpGet("GetAllGrindingData")]
-        public async Task<ActionResult<IEnumerable<RotorGrindingData>>> GetAllRotorGrindingData()
+        [HttpGet("GGSDBSN/{serialNumber}")]
+        public async Task<ActionResult<IEnumerable<RotorGrindingSavedData>>> GetBySerialNumber(string serialNumber)
         {
-            var records = await _context.RotorGrindingData.ToListAsync();
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return BadRequest("Serial number is required.");
+
+            var records = await _context.RotorGrindingSavedData
+                .Where(i => i.SerialNumber == serialNumber)
+                .ToListAsync();
+
+            if (records == null || records.Count == 0)
+                return NotFound($"No records found for Serial Number: {serialNumber}");
+
+            return Ok(records);
+        }
+
+
+        [HttpGet("GetAllSavedGrindingData")]
+        public async Task<ActionResult<IEnumerable<RotorGrindingSavedData>>> GetAllSavedGrindingData()
+        {
+            var records = await _context.RotorGrindingSavedData.ToListAsync();
 
             if (records == null || !records.Any())
                 return NotFound("No Rotor Grinding records found.");

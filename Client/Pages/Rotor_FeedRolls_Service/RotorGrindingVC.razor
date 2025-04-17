@@ -22,12 +22,18 @@
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
                 <div class="table-container">
                     <MudTable Items="@RotorProductionDatas" Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
-                              Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
+                    Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
-                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                            <MudSelect T="string" Label="Filter by WorkCenter" @bind-Value="Selectedworkcenters" Dense="true" Class="mt-0">
+                                <MudSelectItem T="string">All</MudSelectItem>
+                                @foreach (var workcenter in MESWorkcenters.Select(x => x.Workcenters).Distinct())
+                                {
+                                    <MudSelectItem Value="@workcenter">@workcenter</MudSelectItem>
+                                }
+                            </MudSelect>
+
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh>Serial Number</MudTh>
@@ -46,16 +52,33 @@
                             <MudTd Style="text-align:center">@data.ComponentType</MudTd>
                             <MudTd Style="text-align:center">@data.CustomerImportance</MudTd>
                             <MudTd Style="text-align:center">
-                                <MudChip Color="@(data.TargetDate < DateTime.Today ? Color.Error
-                                : data.TargetDate > DateTime.Today ? Color.Success
-                                : Color.Primary)"
-                                         Style="min-width: 100px;" Label="true">
-                                    @(data.TargetDate < DateTime.Today ? "Overdue"
-                                        : data.TargetDate > DateTime.Today ? "Upcoming"
-                                        : "Due Today")
-                                </MudChip>
+                                @{
+                                    var matchingGrindingData = rotorGrindingSavedDatas
+                                    .Where(x => x.SerialNumber == data.SerialNumber)
+                                    .ToList();
 
+                                    bool isGrindingInProgress = matchingGrindingData.Any(x => x.GrindingStartDate != null);
+
+                                    if (isGrindingInProgress)
+                                    {
+                                        <MudChip Color="Color.Warning" Style="min-width: 100px;" Label="true">
+                                            Progressing
+                                        </MudChip>
+                                    }
+                                    else
+                                    {
+                                        <MudChip Color="@(data.TargetDate < DateTime.Today ? Color.Error
+                                            : data.TargetDate > DateTime.Today ? Color.Success
+                                            : Color.Primary)"
+                                                 Style="min-width: 100px;" Label="true">
+                                            @(data.TargetDate < DateTime.Today ? "Overdue"
+                                            : data.TargetDate > DateTime.Today ? "Upcoming"
+                                            : "Due Today")
+                                        </MudChip>
+                                    }
+                                }
                             </MudTd>
+
                         </RowTemplate>
                         <PagerContent>
                             <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
@@ -69,16 +92,16 @@
 
 <style>
     .selected {
-        background-color: #1E88E5 !important;
+    background-color: #1E88E5 !important;
     }
 
-        .selected > td {
-            color: white !important;
-        }
+    .selected > td {
+    color: white !important;
+    }
 
-            .selected > td .mud-input {
-                color: white !important;
-            }
+    .selected > td .mud-input {
+    color: white !important;
+    }
 </style>
 
 @code {
@@ -92,6 +115,8 @@
     private MudTable<RotorProductionData> mudTable;
     private List<string> clickedEvents = new();
     private List<RotorGrindingData> RotorgrindingDatas = new();
+    private List<RotorGrindingSavedData> rotorGrindingSavedDatas = new();
+    private string? StatusIndicator { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,7 +139,23 @@
     private async Task LoadData()
     {
         try
-        {           
+        {       
+            // get all saved rotor grinding data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingsavedDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllSavedGrindingData);
+
+            if (rotorgrindingsavedDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotorgrindingsavedDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    rotorGrindingSavedDatas = JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSavedData>();
+
+                   
+                }
+            }
 
              // Get all existing Rotor grinding Data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
@@ -149,6 +190,7 @@
                     string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
+                StateHasChanged();
 
             }
 
@@ -159,22 +201,26 @@
         }
     }
 
+
     private async Task OpenGrindingDepartment()
     {
         var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
         await DialogService.ShowAsync<GrindingDepartmentDialog>("Add Grinding Department", dialogOptions);
     }
 
-    private bool FilterFunc1(RotorProductionData element) => FilterFunc(element, searchString1);
-
-    private bool FilterFunc(RotorProductionData element, string searchString)
+    private bool FilterFunc1(RotorProductionData element)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element.Workcenters.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
+        return FilterFunc(element);
     }
+
+    private bool FilterFunc(RotorProductionData element)
+    {
+        if (string.IsNullOrWhiteSpace(Selectedworkcenters))
+            return true;
+
+        return element.Workcenters?.Contains(Selectedworkcenters, StringComparison.OrdinalIgnoreCase) == true;
+    }
+        
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -207,6 +253,23 @@
     {
         if (CompletionService.IsCompleted)
         {
+            // get all saved rotor grinding data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingsavedDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllSavedGrindingData);
+
+            if (rotorgrindingsavedDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotorgrindingsavedDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    rotorGrindingSavedDatas = JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSavedData>();
+
+
+                }
+            }
+
             // Get all existing Rotor grinding Data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);

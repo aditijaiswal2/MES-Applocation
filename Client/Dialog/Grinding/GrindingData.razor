@@ -21,6 +21,15 @@
             @if (selectedData != null)
             {
                 <MudGrid>
+
+                    <MudItem md="12" sm="12" xs="12">
+                        <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                        @bind-Date="StartDate"
+                        Variant="Variant.Outlined"
+                        Label="Select Start Date"
+                        MinDate="@StartMinDate" />
+
+                    </MudItem>
                     <MudItem xs="4">
                         <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
                     </MudItem>
@@ -57,33 +66,44 @@
                         <MudTextField Label="Inspected By" @bind-Value="@GetRotorProcess.InspectedBy" Variant="Variant.Outlined" />
                     </MudItem>
 
-                    <MudItem md="6" sm="12" xs="12">
+                    @* <MudItem md="6" sm="12" xs="12">
                         <MudDatePicker PickerVariant="PickerVariant.Dialog"
                         @bind-Date="Date"
                         Variant="Variant.Outlined"
                         Label="Date"
                         MinDate="@MinDate" />
-
                     </MudItem>
-
-                    <MudItem xs="6">
+ *@
+                    <MudItem md="6" sm="12" xs="12">
                         <MudTextField Label="Notes" @bind-Value="@GetRotorProcess.Notes" Variant="Variant.Outlined" />
                     </MudItem>
 
-                    <MudItem md="12" sm="12" xs="12">
+                    <MudItem md="6" sm="12" xs="12">
 
                         <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
                     </MudItem>
 
+                    <div style="margin-top:-4px;margin-bottom:1.5rem;margin-left:-12px">
+                        <MudCheckBox @bind-Value="@IsMoveoutsideoperation" Color="Color.Success">Move to outside operation</MudCheckBox>
+                    </div>           
+
                 </MudGrid>
                 <br />
 
-                <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+                <MudItem Class="d-flex justify-end" md="12" sm="12" xs="12">
+                    @if (StartDate != null)
+                    {
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
+                    }
 
-                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                    @if (IsAllFieldsFilled())
+                    {
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                    }
+
                     <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
-
                 </MudItem>
+
 
 
             }
@@ -112,29 +132,44 @@
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public RotorProductionData selectedData { get; set; }
     private RotorGrindingData GetRotorProcess { get; set; } = new RotorGrindingData();
-    private DateTime? Date = DateTime.Today;
-    private DateTime MinDate = DateTime.Today;
+    // private DateTime? Date = DateTime.Today;
+    // private DateTime MinDate = DateTime.Today;
     private string? DelayReasonTracking { get; set; }
+    private DateTime? StartDate = DateTime.Today;
+    private DateTime StartMinDate = DateTime.Today;
+    public bool IsMoveoutsideoperation { get; set; } = false;
+    private List<RotorGrindingSavedData> rotorGrindingSavedDatas = new();
+    private List<RotorGrindingData> RotorgrindingDatas = new();
+
 
     protected override void OnInitialized()
     {
-        MinDate = DateTime.Today;
+        // MinDate = DateTime.Today;
+        StartMinDate = DateTime.Today;
     }
+
+    private bool IsAllFieldsFilled()
+    {
+        return StartDate != null
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy)
+            && !string.IsNullOrWhiteSpace(GetRotorProcess.Notes);
+        // && !string.IsNullOrWhiteSpace(DelayReasonTracking);
+    }
+
 
     private async Task Submit()
     {
-        if (string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ||
-             string.IsNullOrWhiteSpace(GetRotorProcess.Notes))
+        if (StartDate == null)
         {
-            Snackbar.Add("Please fill all required fields", Severity.Warning);
+            Snackbar.Add("Please Select Start Date", Severity.Warning);
             return;
         }
 
@@ -158,12 +193,13 @@
                 VisualChecks = GetRotorProcess.VisualChecks,
                 InspectedBy = GetRotorProcess.InspectedBy,               
                 Notes = GetRotorProcess.Notes,
-                SelectedDate = Date,
-                DelayReasonTracking = DelayReasonTracking,
+                GrindingStartDate = StartDate,
+                DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
                 GrindingdataSavedBy = useradd,
-                GrindingdataSavedByDate = DateTime.Now.ToString()             
+                GrindingdataSavedByDate = DateTime.Now.ToString(),
+                IsMoveoutsideoperation = IsMoveoutsideoperation
 
-                
+
             };
 
         try
@@ -193,11 +229,144 @@
         }
     }
 
+
+    private async Task Save()
+    {
+        if (StartDate == null)
+        {
+            Snackbar.Add("Please Select the Start Date", Severity.Warning);
+            return;
+        }
+
+        // get the alredy select the stsart date data
+
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var Response = await HttpClient.GetAsync($"{ApiConstants.GetRotorGrindingSavedDatabyserialnumber}/{selectedData.SerialNumber}");
+       
+        if (Response.IsSuccessStatusCode)
+        {
+            var productionDataJson = await Response.Content.ReadAsStringAsync();
+
+            if (!string.IsNullOrEmpty(productionDataJson))
+            {
+                Snackbar.Add("This Rotor Alredy Started", Severity.Error);
+                return;
+            }
+        }
+
+        // get all saved rotor grinding data
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var rotorgrindingsavedDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllSavedGrindingData);
+
+        if (rotorgrindingsavedDatasResponse.IsSuccessStatusCode)
+        {
+            var productionDataJson = await rotorgrindingsavedDatasResponse.Content.ReadAsStringAsync();
+
+            if (!string.IsNullOrEmpty(productionDataJson))
+            {
+                rotorGrindingSavedDatas = JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(productionDataJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSavedData>();
+
+                RotorgrindingDatas = new List<RotorGrindingData>();
+                // Get all existing Rotor grinding Data
+                HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+                var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+
+                if (rotorgrindingDatasResponse.IsSuccessStatusCode)
+                {
+                    var DataJson = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(DataJson))
+                    {
+                        RotorgrindingDatas = JsonSerializer.Deserialize<List<RotorGrindingData>>(DataJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
+                      
+                    }
+                }
+
+                // Step 1: Get serials from both lists
+                var allGrindingSerials = new HashSet<string>(RotorgrindingDatas.Select(x => x.SerialNumber));
+                var savedSerials = rotorGrindingSavedDatas.Select(x => x.SerialNumber);
+
+                // Step 2: Find if any saved serial is missing in grinding data
+                bool anySavedNotInGrinding = savedSerials.Any(serial => !allGrindingSerials.Contains(serial));
+
+                // Step 3: If yes, show the message
+                if (anySavedNotInGrinding)
+                {
+                    Snackbar.Add("One of the rotors is already started. Please complete it before starting a new rotor.", Severity.Error);
+                    return;
+                }
+
+
+            }            
+
+        }      
+
+
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new GrindingInspectionSubmission
+            {
+
+                SelectedProductionInspection = selectedData,
+                RotorsDiaLeft = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ? "N/A" : GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ? "N/A" : GetRotorProcess.RotorsDiaRight,
+                ReliefLand = string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ? "N/A" : GetRotorProcess.ReliefLand,
+                ToothFaceLeft = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ? "N/A" : GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ? "N/A" : GetRotorProcess.ToothFaceRight,
+                CentersLeft = string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ? "N/A" : GetRotorProcess.CentersLeft,
+                CentersRight = string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ? "N/A" : GetRotorProcess.CentersRight,
+                VisualChecks = string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ? "N/A" : GetRotorProcess.VisualChecks,
+                InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
+                Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
+                GrindingStartDate = StartDate,
+                DelayReasonTracking =string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                GrindingdataSavedBy = useradd,
+                GrindingdataSavedByDate = DateTime.Now.ToString(),
+                IsMoveoutsideoperation = IsMoveoutsideoperation
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorGrindingSavedData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Rotor Started", Severity.Success);
+                ClearAll();
+                StateHasChanged();
+                CompletionService.IsCompleted = true;
+                MudDialog?.Close();
+
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error save data: {ex.Message}", Severity.Error);
+        }
+    }
+
     private async Task ClearAll()
     {
         GetRotorProcess = new RotorGrindingData();
-        Date = DateTime.Today;
+        // Date = DateTime.Today;
         DelayReasonTracking = null;
+        StartDate = DateTime.Today;
         StateHasChanged();
     }
 
@@ -214,10 +383,11 @@
         public string CentersRight { get; set; }
         public string VisualChecks { get; set; }
         public string InspectedBy { get; set; }
-        public DateTime? SelectedDate { get; set; }
+        public DateTime? GrindingStartDate { get; set; }
         public string Notes { get; set; }
         public string DelayReasonTracking { get; set; }
         public string GrindingdataSavedBy { get; set; }
         public string GrindingdataSavedByDate { get; set; }
+        public bool IsMoveoutsideoperation { get; set; }
     }
 }
