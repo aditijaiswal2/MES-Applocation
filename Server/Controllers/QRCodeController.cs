@@ -75,8 +75,8 @@ namespace MES.Server.Controllers
 
 
                 var qrText = $"Serial Number: {request.SerialNumber},Module: {request.Module}, Customer: {request.Customer}, Date: {request.Date}";
-                var width = 150;
-                var height = 150;
+                var width = 100;
+                var height = 100;
                 var margin = 0;
                 var qrCodeWriter = new BarcodeWriterPixelData
                 {

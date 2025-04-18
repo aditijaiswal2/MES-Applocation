@@ -7,17 +7,19 @@ function printincomingImage(imageDataUrl, labelText) {
             <head>
                
                 <style>
-                    body {
-                        font-family: Arial, sans-serif;
+                   body, * {
+                        font-family: Arial, sans-serif !important;
+                        font-size: 16px !important;
                         background-color: white;
                         color: black;
-                        margin: 0;
+                        margin: 3px;
                         padding: 0;
                     }
 
                     .dialog-title {
                       text-align: center;
                       margin: 0;
+                      font-size: 14px !important;
                     }              
 
                       .mud-dialog,
@@ -31,7 +33,7 @@ function printincomingImage(imageDataUrl, labelText) {
 
                       .mud-dialog-title {
                         font-weight: bold;
-                        font-size: 18px;
+                  
                         margin-bottom: 16px;
                         border-bottom: 1px solid #000;
                         padding-bottom: 8px;
@@ -59,6 +61,7 @@ function printincomingImage(imageDataUrl, labelText) {
                     @media print {
                         @page {
                             margin: 10mm;
+                          
                         }
                     }
                 </style>
@@ -135,14 +138,21 @@ function printImage(imageData, partOrLoc, customer) {
         context.textAlign = 'center';
         context.fillStyle = 'black';
 
-        if (partOrLoc) {
-            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
+        if (partOrLoc || customer) {
+            const combinedText = `${partOrLoc || ""} ${customer || ""}`.trim();
+            context.textAlign = "center";
+            context.fillStyle = "black";
+            context.font = "14px Arial";
+
+            context.fillText(combinedText, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
         }
 
-        // Add the customer text below the partOrLoc
-        if (customer) {
-            context.fillText(customer, canvasWidth / 2, qrCodeY + qrCodeSize + 40);
-        }
+
+        //if (partOrLoc, customer) {
+        //    context.fillText(partOrLoc, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
+        //    context.fillText(customer, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
+        //}
+
 
         // Convert the canvas to an image for downloading
         const combinedImage = canvas.toDataURL('image/png');

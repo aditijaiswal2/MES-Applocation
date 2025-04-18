@@ -14,6 +14,7 @@ namespace MES.Shared.Entities
         public ICollection<AppUserRole> UserRoles { get; set; }
         public int isDeleted { get; set; }
         public string PageNames { get; set; }
+        public string SelectedWorkCenter { get; set; }
         public string Routes { get; set; }
 
         public AppUser()

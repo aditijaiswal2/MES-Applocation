@@ -12,7 +12,11 @@
     <MudText Typo="Typo.body2" Class="custom-navlink">Kent Manufacturing Execution System</MudText>
     <MudDivider Class="my-2" />
 
-    @if (BaseAuthentication.IsAuthenticated == false)
+    @if (UserData == null)
+    {
+        <p>Loading...</p>  <!-- Prevents UI from rendering before data loads -->
+    }
+    else if (BaseAuthentication.IsAuthenticated == false)
     {
         <MudNavLink Href="/aep"></MudNavLink>
     }
@@ -20,57 +24,67 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/adduser")
+            if (route != "/rii" && route != "adduser" && route != "wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc")
+
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
                 var icon = GetIconForRoute(route);
                 var displayName = GetDisplayNameForRoute(route);
 
                 <MudNavLink Href="@route" Icon="@icon" IconColor="Color.Primary" Class="custom-navlink">@displayName</MudNavLink>
-               
+
             }
         }
-        <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
-            @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
-            <MudNavLink Href="/rii" Icon="@Icons.Material.Filled.BrandingWatermark" IconColor="Color.Primary" Class="custom-navlink">Incoming Inspection</MudNavLink>
-            <MudNavLink Href="/rsales" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
-            <MudNavLink Href="/rps" Icon="@Icons.Material.Filled.ProductionQuantityLimits" IconColor="Color.Primary" Class="custom-navlink">Production Scheduling</MudNavLink>
-            <MudNavLink Href="/rg" Icon="@Icons.Material.Filled.GridOn" IconColor="Color.Primary" Class="custom-navlink">Grinding</MudNavLink>
-            <MudNavLink Href="/ddgr" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Damage During Grinding</MudNavLink>
-            <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
-            <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
-
-             </MudNavGroup>
-        
 
 
-    if (UserData.Router.Contains("/adduser"))
+        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/rsales") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/rwsc"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
-            @if (UserData.Router.Contains("/adduser"))
-            {
-
-               
-               @*  <MudNavLink Href="/pumpR" Icon="@Icons.Material.Filled.HeatPump" IconColor="Color.Primary" Class="custom-navlink">Pump Repair</MudNavLink>
-                <MudNavLink Href="/sasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">System Assembly</MudNavLink>
-                <MudNavLink Href="/pasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Pelletizer Assembly</MudNavLink>
-                <MudNavLink Href="/plasm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Pulverizer Assembly</MudNavLink>
-                <MudNavLink Href="/easm" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Ettlinger Assembly</MudNavLink>
-
-                <MudNavLink Href="/ship" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">ShipMent</MudNavLink>
-               
-                *@
-                
-            }
-
-
-
+            <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
+                @if (UserData.Router.Contains("/rii"))
+                {
+                    @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
+                    <MudNavLink Href="/rii" Icon="@Icons.Material.Filled.BrandingWatermark" IconColor="Color.Primary" Class="custom-navlink">Incoming Inspection</MudNavLink>
+                }
+                @if (UserData.Router.Contains("/rsales"))
+                {
+                    <MudNavLink Href="/rsales" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
+                }  @if (UserData.Router.Contains("/rps"))
+                {
+                    <MudNavLink Href="/rps" Icon="@Icons.Material.Filled.ProductionQuantityLimits" IconColor="Color.Primary" Class="custom-navlink">Production Scheduling</MudNavLink>
+                }
+                @if (UserData.Router.Contains("/rg"))
+                {
+                    <MudNavLink Href="/rg" Icon="@Icons.Material.Filled.GridOn" IconColor="Color.Primary" Class="custom-navlink">Grinding</MudNavLink>
+                }
+                @if (UserData.Router.Contains("/rfi"))
+                {
+                    <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
+                }
+                @if (UserData.Router.Contains("/rwsc"))
+                {
+                    <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
+                }
+            </MudNavGroup>
         }
 
-         <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
-            <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
-            <MudNavLink Href="/wc" Icon="@Icons.Material.Filled.BusinessCenter" IconColor="Color.Primary" Class="custom-navlink">Manage Workcenters </MudNavLink>
-             </MudNavGroup>
+
+        if (UserData.Router.Contains("/adduser") || UserData.Router.Contains("/wc"))
+        {
+
+            <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
+
+                @if (UserData.Router.Contains("/adduser"))
+                {
+                    <MudNavLink Href="/adduser" Icon="@Icons.Material.Filled.People" IconColor="Color.Primary" Class="custom-navlink">Manage Users</MudNavLink>
+                }
+
+                @if (UserData.Router.Contains("/wc"))
+                {
+                    <MudNavLink Href="/wc" Icon="@Icons.Material.Filled.BusinessCenter" IconColor="Color.Primary" Class="custom-navlink">Manage Workcenters </MudNavLink>
+                }
+            </MudNavGroup>
+        }
     }
 </MudNavMenu>
 
@@ -90,11 +104,21 @@
 @code {
     public UserPagesAndRouter? UserData { get; set; }
 
+    private bool isLoading = true;
+
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
+
         UserData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
 
-        // await localStorage.RemoveItemAsync("UserData");
+        if (UserData != null)
+        {
+            BaseAuthentication.IsAuthenticated = true;
+        }
+
+        isLoading = false;
+        StateHasChanged();
     }
 
     private string GetIconForRoute(string route)
@@ -104,20 +128,21 @@
 
             case "/index":
                 return Icons.Material.Outlined.AssignmentReturned;
-            case "/pump":
-                return Icons.Material.Filled.Image;
-            case "/sa":
-                return @Icons.Material.Filled.Info;
+            case "/rii":
+                return Icons.Material.Filled.BrandingWatermark;
+            case "/rsales":
+                return Icons.Material.Filled.Dashboard;
+            case "/rps":
+                return Icons.Material.Filled.ProductionQuantityLimits;
 
-            case "/adduser":
-                return Icons.Material.Filled.WorkspacePremium;
-
-            // case "/ship":
-            //     return Icons.Material.Filled.LocalShipping;
-
-            // case "/roter":
-            //     return Icons.Material.Filled.Feed;
-
+            case "/rg":
+                return Icons.Material.Filled.GridOn;
+            case "/rfi":
+                return Icons.Material.Filled.Dehaze;
+            case "/rwsc":
+                return Icons.Material.Filled.ClearAll;
+            // case "/adduser":
+            //     return Icons.Material.Filled.MyLocation;
             default:
                 return "";
         }
@@ -128,62 +153,53 @@
         switch (route)
         {
 
-            // case "/record":
-            //     return "Rotor/Feed rolls  Service";
-
-            case "/addinfo":
-                return "System Assembly ";
-
             case "/index":
                 return "Receiving";
 
             // case "/roter":
             //     return "Rotor/Feed Rolls Service";
 
-            case "/pumpR":
-                return "Pump Repair";
+            // case "/pumpR":
+            //     return "Pump Repair";
 
-            case "/sasm":
-                return "System Assembly";
+            // case "/sasm":
+            //     return "System Assembly";
 
-            case "/pasm":
-                return "Pelletizer Assembly";
+            // case "/pasm":
+            //     return "Pelletizer Assembly";
 
-            case "/plasm":
-                return "Pulverizer Assembly";
+            // case "/plasm":
+            //     return "Pulverizer Assembly";
 
-            case "/easm":
-                return "Ettlinger Assembly";
+            // case "/easm":
+            //     return "Ettlinger Assembly";
 
-            case "/adduser":
-                return "Pump Repair";
+            // case "/adduser":
+            //     return "Pump Repair";
 
-            case "/ship":
-                return "ShipMent";
+            // case "/ship":
+            //     return "ShipMent";
 
-            case "/wc":
-                return "Manage Workcenters";
+            // case "/wc":
+            //     return "Manage Workcenters";
 
             case "/rii":
-                return "Incoming Inspection";
+                return "Rotors Incoming Inspection";
 
             case "/rsales":
-                return "Sales";
+                return "Rotors Sales";
 
             case "/rps":
-                return "Production Scheduling";
+                return "Rotors Production Scheduling";
 
             case "/rg":
-                return "Grinding";
-
-            case "/ddgr":
-                return "Damage During Grinding";
+                return "Rotors Grinding";
 
             case "/rfi":
-                return "Final Inspection";
+                return "Rotors Final Inspection";
 
             case "/rwsc":
-                return "Waiting For Sales Clearance";
+                return "Rotors Waiting For Sales Clearance";
 
 
             default:
@@ -192,5 +208,5 @@
     }
 }
 
-                
+
 

@@ -40,7 +40,7 @@
                                 <MudTh Style="text-align:center;width:100px">User Code</MudTh>
                                 <MudTh Style="text-align:center;width:200px">Email</MudTh>
                                 <MudTh Style="text-align:center;width:250px">Page Privileges</MudTh>
-                                @* <MudTh>Role</MudTh> *@
+                                <MudTh Style="text-align:center;width:250px">Work Center</MudTh>
                                 <MudTh Style="text-align:center;width:200px">Actions</MudTh>
                         </HeaderContent>
                         <RowTemplate Context="appUsers">
@@ -49,9 +49,8 @@
                                 <MudTd Class="table-data-alignment">@appUsers.UserCode</MudTd>
                                 <MudTd Class="table-data-alignment">@appUsers.Email</MudTd>
                                 <MudTd Class="table-data-alignment">@appUsers.PageNames</MudTd>
-                                @* <MudTd class="@((string.IsNullOrWhiteSpace(userRolesDictionary.GetValueOrDefault(appUsers.Id))) ? "text-remove" : "")">
-                                @((string.IsNullOrWhiteSpace(userRolesDictionary.GetValueOrDefault(appUsers.Id))) ? "No roles assigned" : userRolesDictionary.GetValueOrDefault(appUsers.Id))
-                                </MudTd> *@
+                                <MudTd Class="table-data-alignment">@appUsers.SelectedWorkCenter</MudTd>
+                              
                                 <MudTd Class="table-data-alignment">
                                     <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditUser(appUsers))" />
                                     <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(appUsers))" />

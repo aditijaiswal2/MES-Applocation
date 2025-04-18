@@ -25,14 +25,15 @@
         </TitleContent>
         <DialogContent>
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                Label="User Name" @bind-Value="user.username" Variant="Variant.Outlined" class="mb-4" />
+                          Label="User Name" @bind-Value="user.username" Variant="Variant.Outlined" class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                Label="Name" @bind-Value="user.Name" Variant="Variant.Outlined" class="mb-4" />
+                          Label="Name" @bind-Value="user.Name" Variant="Variant.Outlined" class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                Label="User Code" @bind-Value="user.Usercode" Variant="Variant.Outlined" class="mb-4" />
+                          Label="User Code" @bind-Value="user.Usercode" Variant="Variant.Outlined" class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                Label="Email" @bind-Value="user.Email" Variant="Variant.Outlined" class="mb-4" />
+                          Label="Email" @bind-Value="user.Email" Variant="Variant.Outlined" class="mb-4" />
             <div class="mb-4">
+
                 <MudSelect Variant="Variant.Outlined" Label="Page Priviliges" MultiSelection="true" @bind-Value="user.PageNames">
 
                     @foreach (var pr in pages)
@@ -41,11 +42,24 @@
                     }
                 </MudSelect>
             </div>
-           
+
+            <div class="mb-4">
+
+                <MudSelect Variant="Variant.Outlined" Label="Work Center" @bind-Value="user.SelectedWorkCenter">
+                    @if (MESWorkcenters != null)
+                    {
+                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                        {
+                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </div>
+
         </DialogContent>
         <DialogActions>
             <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Add">Add</MudButton>
-            @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </DialogActions>
     </MudDialog>
 </div>
@@ -53,28 +67,44 @@
 @code {
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     private IEnumerable<AppRole> appRoles = new List<AppRole>();
+    private bool showWorkCenter = false;
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+
+
+    private void OnPageSelectionChanged(IEnumerable<string> selectedPages)
+    {
+        showWorkCenter = selectedPages.Contains("Rotors Grinding");
+    }
+
 
     private IEnumerable<string> MaxCharacters(string ch)
     {
         if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
             yield return "Max 250 characters";
     }
-   
+
     private string[] pages =
     {
-    /*  "Dashboard", */ "Job Image Capture","Records","Manage User",
+        "Receiving","Rotors Incoming Inspection","Rotors Sales","Rotors Production Scheduling","Rotors Grinding","Rotors Final Inspection","Rotors Waiting For Sales Clearance","Manage User","Manage Workcenters"
     };
 
-   
+   //  private string[] WC =
+   //   {
+   // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
+   //  };
 
     public Dictionary<string, string> pagePrevlgs = new Dictionary<string, string>
      {
-         
-          { "Job Image Capture", "/index" },
-          { "Records", "/record" },
-         { "Manage User", "/adduser" },
-         
-          
+          { "Receiving", "/index" },
+          { "Rotors Incoming Inspection", "/rii" },
+          { "Rotors Sales", "/rsales" },
+          { "Rotors Production Scheduling", "/rps" },
+          { "Rotors Grinding", "/rg" },
+          { "Rotors Final Inspection", "/rfi" },
+          { "Rotors Waiting For Sales Clearance", "/rwsc" },
+          { "Manage User", "/adduser" },
+          {"Manage Workcenters","/wc"}
+
      };
 
     private string value { get; set; } = "Nothing selected";
@@ -155,6 +185,24 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadRoles();
+
+        // get Work Centers
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                // Add "All" and "NA" options at the top
+               
+                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
+                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+            }
+        }
     }
 
     private async Task LoadRoles()

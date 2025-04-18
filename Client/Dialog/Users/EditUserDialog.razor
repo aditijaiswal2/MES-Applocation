@@ -21,37 +21,51 @@
         </TitleContent>
         <DialogContent>
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                Label="User Name" @bind-Value="@appUsers.UserName" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+                          Label="User Name" @bind-Value="@appUsers.UserName" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                 Label="Name " @bind-Value="@appUsers.Name" Variant="Variant.Outlined" Class="mb-4" />
+                          Label="Name " @bind-Value="@appUsers.Name" Variant="Variant.Outlined" Class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                 Label="User Code" @bind-Value="@appUsers.UserCode" Variant="Variant.Outlined" Class="mb-4" />
+                          Label="User Code" @bind-Value="@appUsers.UserCode" Variant="Variant.Outlined" Class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="Email " @bind-Value="@appUsers.Email" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="Assigned Page Privileges " @bind-Value="@appUsers.PageNames" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
-             <div class="mb-4">
-                 <MudSelect Variant="Variant.Outlined" @bind-Value="@appUsers.PageNames" Label="Update Page Privileges" MultiSelection="true">
+            <div class="mb-4">
+                <MudSelect Variant="Variant.Outlined" @bind-Value="@appUsers.PageNames" Label="Update Page Privileges" MultiSelection="true">
 
-                     @foreach (var pr in pages)
+                    @foreach (var pr in pages)
                     {
 
                         <MudSelectItem Value="@pr">@pr</MudSelectItem>
                     }
                 </MudSelect>
             </div>
-             @*  <div class="mb-4">
-                 <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRole" Label="Role">
-                     @foreach (var role in AppRoles)
+
+            <div class="mb-4">
+
+                <MudSelect Variant="Variant.Outlined" Label="Update Work Center" @bind-Value="appUsers.SelectedWorkCenter">
+                    @if (MESWorkcenters != null)
                     {
-                        <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                        {
+                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                        }
                     }
                 </MudSelect>
-            </div> *@
+
+
+
+              @*   <MudSelect Variant="Variant.Outlined" Label="Select Work Center" @bind-Value="user.SelectedWorkCenter">
+                    @foreach (var pr in WC)
+                    {
+                        <MudSelectItem Value="@pr">@pr</MudSelectItem>
+                    }
+                </MudSelect> *@
+            </div>
         </DialogContent>
         <DialogActions>
             <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">Save</MudButton>
-            @* <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </DialogActions>
     </MudDialog>
 
@@ -65,30 +79,57 @@
 
     private IEnumerable<AppRole> appRoles = new List<AppRole>();
     public UserAddDto user = new UserAddDto();
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
     public Dictionary<string, string> pagePrevlgs = new Dictionary<string, string>
      {
-          { "Job Image Capture", "/index" },
-          { "Records", "/record" },
-         { "Manage User", "/adduser" },
+           { "Receiving", "/index" },
+          { "Rotors Incoming Inspection", "/rii" },
+          { "Rotors Sales", "/rsales" },
+          { "Rotors Production Scheduling", "/rps" },
+          { "Rotors Grinding", "/rg" },
+          { "Rotors Final Inspection", "/rfi" },
+          { "Rotors Waiting For Sales Clearance", "/rwsc" },
+          { "Manage User", "/adduser" },
+          {"Manage Workcenters","/wc"}
+
 
      };
+   //  private string[] WC =
+   //     {
+   // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
+   //  };
 
     private IEnumerable<string> MaxCharacters(string ch)
     {
         if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
             yield return "Max 250 characters";
     }
-
     private string[] pages =
-    {
-      /*  "Dashboard", */ "Job Image Capture","Records","Manage User",
+       {
+     "Receiving","Rotors Incoming Inspection","Rotors Sales","Rotors Production Scheduling","Rotors Grinding","Rotors Final Inspection","Rotors Waiting For Sales Clearance","Manage User","Manage Workcenters"
     };
 
-    
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
+   // protected override void OnInitialized()
     {
-        user.Role = SelectedRole; 
+        user.Role = SelectedRole;
+
+        // get Work Centers
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
+                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+            }
+        }
     }
 
     private async Task Save()
@@ -108,6 +149,7 @@
                     Email = appUsers.Email,
                     Role = "User",
                     PageNames = appUsers.PageNames,
+                    SelectedWorkCenter = appUsers.SelectedWorkCenter,
                     Routes = appUsers.Routes
 
                 };

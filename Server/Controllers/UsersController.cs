@@ -44,8 +44,9 @@ namespace MES.Server.Controllers
                     Name = u.Name,
                     Email = u.Email,
                     PageNames = u.PageNames,
+                    SelectedWorkCenter = u.SelectedWorkCenter,
                     Routes = u.Routes,
-                  
+
                 })
                 .ToListAsync();
 
@@ -84,10 +85,11 @@ namespace MES.Server.Controllers
                     Username = u.UserName,
                     Name = u.Name,
                     Email = u.Email,
-                 
+
                     PageNames = u.PageNames,
+                    SelectedWorkCenter = u.SelectedWorkCenter,
                     Routes = u.Routes,
-                    
+
                 })
                 .SingleOrDefaultAsync(u => u.Username == username.ToLower());
 
@@ -144,6 +146,7 @@ namespace MES.Server.Controllers
                     existingUser.Name = addDto.Name;
                     existingUser.isDeleted = 0;
                     existingUser.PageNames = addDto.PageNames;
+                    existingUser.SelectedWorkCenter = addDto.SelectedWorkCenter;
                     existingUser.Routes = addDto.Routes;
 
 
@@ -173,11 +176,12 @@ namespace MES.Server.Controllers
 
                 var user = new AppUser
                 {
-                    UserName = addDto.Name.ToLower(), 
+                    UserName = addDto.Name.ToLower(),
                     Name = addDto.Name.ToLower(),
                     UserCode = addDto.Usercode.ToLower(),
                     Email = addDto.Email.ToLower(),
                     PageNames = addDto.PageNames,
+                    SelectedWorkCenter = addDto.SelectedWorkCenter,
                     Routes = addDto.Routes
                 };
 
@@ -274,6 +278,7 @@ namespace MES.Server.Controllers
             user.Email = updateDto.Email;
             user.UserCode = updateDto.Usercode;
             user.PageNames = updateDto.PageNames;
+            user.SelectedWorkCenter = updateDto.SelectedWorkCenter;
             user.Routes = updateDto.Routes;
 
             //Get the User Roles and then remove them and add the new roles back in
