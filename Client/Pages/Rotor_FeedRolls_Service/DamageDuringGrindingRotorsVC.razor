@@ -6,6 +6,8 @@
 @using MES.Shared.Models
 @using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
+@using System.Text
+@using static MES.Client.Pages.LoginVC
 
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -332,9 +334,9 @@
 @code {
 
     private string searchTerm = "";
-    private List<RotorGrindingData> inspections = new();
-    private RotorGrindingData selectedAdvanceInspection;
-    private RotorGrindingData? hoveredInspection;
+    private List<RotorDamageGrindingDataFromGrinding> inspections = new();
+    private RotorDamageGrindingDataFromGrinding selectedAdvanceInspection;
+    private RotorDamageGrindingDataFromGrinding? hoveredInspection;
     private DateTime? fromDate = DateTime.Today;
     private bool isLoading = false;
     private string errorMessage = "";
@@ -342,6 +344,9 @@
      private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
     private List<string> AdvancedSharpingStatus = new List<string>();
       private string? SelectedWorkCenters { get; set; }
+    private List<RotorDamageGrindingSaveData> rotorDamageGrindingSavedDatas = new();
+     private bool _hasFetchedIncomingData = false;
+    private List<RotorDamageGrindingSubmitedData> RotorGrindingSubitedDatas = new();
 
 
     protected override async Task OnInitializedAsync()
@@ -373,18 +378,41 @@
         try
         {
 
-            // Get all existing Rotor grinding Data
+
+            // Get all existing damage grinding submited data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+            var rotorSalesDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllDDGSubmitedData);
+
+            if (rotorSalesDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotorSalesDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    RotorGrindingSubitedDatas = JsonSerializer.Deserialize<List<RotorDamageGrindingSubmitedData>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingSubmitedData>();
+                }
+            }
+
+            // Get all existing Moved outside operation Rotor grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
 
             if (rotorgrindingDatasResponse.IsSuccessStatusCode)
             {
                 var data = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
-                var allInspections = JsonSerializer.Deserialize<List<RotorGrindingData>>(data,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
+                var allInspections = JsonSerializer.Deserialize<List<RotorDamageGrindingDataFromGrinding>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingDataFromGrinding>();
 
                 // Filter only those where IsMoveoutsideoperation is true
-                inspections = allInspections.Where(x => x.IsMoveoutsideoperation).ToList();
+                // inspections = allInspections.Where(x => x.IsMoveoutsideoperation).ToList();
+
+                inspections = allInspections
+                   .Where(i => !RotorGrindingSubitedDatas.Any(r =>
+                       string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
+                   .ToList();
 
             }
 
@@ -403,23 +431,175 @@
 
 
 
-    private async Task SelectAdvanceInspection(RotorGrindingData inspection)
+    private async Task SelectAdvanceInspection(RotorDamageGrindingDataFromGrinding inspection)
     {
         selectedAdvanceInspection = inspection;
+
+        try
+        {
+            // Fetch rotor production saved data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorSalesDatasresponse = await HttpClient.GetAsync(
+                $"{ApiConstants.GetSavedDamageGrindingData}?serialNumber={inspection.SerialNumber}&module={inspection.Module}&rotorsNumber={inspection.RotorsNumber}");
+
+            if (rotorSalesDatasresponse.IsSuccessStatusCode)
+            {
+                var data = await rotorSalesDatasresponse.Content.ReadAsStringAsync();
+                var recentData = JsonSerializer.Deserialize<RotorDamageGrindingSaveData>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                rotorDamageGrindingSavedDatas = recentData != null ? new List<RotorDamageGrindingSaveData> { recentData } : new List<RotorDamageGrindingSaveData>();
+            }
+            else
+            {
+                rotorDamageGrindingSavedDatas = new List<RotorDamageGrindingSaveData>();
+            }
+        }
+        catch (Exception ex)
+        {
+
+            rotorDamageGrindingSavedDatas = new List<RotorDamageGrindingSaveData>();
+        }
+
+        // Assign values based on retrieved data
+        if (rotorDamageGrindingSavedDatas.Any())
+        {
+            var latest = rotorDamageGrindingSavedDatas.First();
+            SelectedAdvancedSharping = latest.AdvancedSharpingStatus ?? string.Empty;
+
+        }
+        else
+        {
+            SelectedAdvancedSharping = string.Empty;
+
+        }
     }
 
     private async Task SubmitAdvancedData()
     {
+        if (string.IsNullOrWhiteSpace(SelectedAdvancedSharping))
+        {
+            Snackbar.Add("Please select Advanced sharping.", Severity.Error);
+            return;
+        }
 
+        if (string.IsNullOrWhiteSpace(SelectedWorkCenters))
+        {
+            Snackbar.Add("Please select Work Center.", Severity.Error);
+            return;
+        }
+
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new damagegrindingSubmission
+            {
+                SelectedInspection = selectedAdvanceInspection,
+                Workcenters = SelectedWorkCenters,
+                AdvancedSharpingStatus = SelectedAdvancedSharping,
+                DamageGrindingSavedBy = useradd,
+                DamageGrindingSavedDate = DateTime.Now
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddDDGSubmitedData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Damage Grinding Data submitted successfully!", Severity.Success);
+                ClearAll();
+                _hasFetchedIncomingData = false;
+                await FetchAllInspections();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
     }
+
 
     private async Task SaveAdvancedData()
     {
+        if (string.IsNullOrWhiteSpace(SelectedAdvancedSharping))
+        {
+            Snackbar.Add("Please select Advanced sharping.", Severity.Error);
+            return;
+        }
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new damagegrindingSubmission
+            {
+                SelectedInspection = selectedAdvanceInspection,
+                Workcenters = string.IsNullOrWhiteSpace(SelectedWorkCenters) ? null : SelectedWorkCenters,
+                AdvancedSharpingStatus = SelectedAdvancedSharping,
+                DamageGrindingSavedBy = useradd,
+                DamageGrindingSavedDate = DateTime.Now
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.SaveDamageGrindingsavedData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Damage Grinding Data Saved successfully!", Severity.Success);
+                ClearAll();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error save data: {ex.Message}", Severity.Error);
+        }
+
 
     }
 
     private async Task ClearAll()
     {
+        
+        SelectedWorkCenters = null;
+        selectedAdvanceInspection = null;      
+        SelectedWorkCenters = null;
+        StateHasChanged();
+    }
 
+    public class damagegrindingSubmission
+    {
+        public RotorDamageGrindingDataFromGrinding SelectedInspection { get; set; }
+        public string? Workcenters { get; set; }
+        public string? AdvancedSharpingStatus { get; set; }
+        public DateTime? DamageGrindingSavedDate { get; set; }
+        public string DamageGrindingSavedBy { get; set; }
     }
 }

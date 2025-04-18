@@ -164,6 +164,62 @@
         // && !string.IsNullOrWhiteSpace(DelayReasonTracking);
     }
 
+    private async Task submitIsMoveoutsideoperation()
+    {
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+        var submissionData = new GrindingInspectionSubmission
+            {
+                SelectedProductionInspection = selectedData,
+                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
+                ReliefLand = GetRotorProcess.ReliefLand,
+                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = GetRotorProcess.ToothFaceRight,
+                CentersLeft = GetRotorProcess.CentersLeft,
+                CentersRight = GetRotorProcess.CentersRight,
+                VisualChecks = GetRotorProcess.VisualChecks,
+                InspectedBy = GetRotorProcess.InspectedBy,
+                Notes = GetRotorProcess.Notes,
+                GrindingStartDate = StartDate,
+                DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                GrindingdataSavedBy = useradd,
+                GrindingdataSavedByDate = DateTime.Now.ToString(),
+                IsMoveoutsideoperation = IsMoveoutsideoperation
+
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddMovedOOPRotorGrindingData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Rotor Moved to Outside Operation successfully!", Severity.Success);
+                ClearAll();
+                StateHasChanged();
+                CompletionService.IsCompleted = true;
+                MudDialog?.Close();
+
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+    }
 
     private async Task Submit()
     {
@@ -173,12 +229,20 @@
             return;
         }
 
+        if (IsMoveoutsideoperation)
+        {
+            await submitIsMoveoutsideoperation();
+            return;
+        }
+
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
         string useradd = userData?.UserName ?? "User";
         if (userData != null)
         {
             useradd = userData.UserName;
         }
+
+       
 
         var submissionData = new GrindingInspectionSubmission
             {

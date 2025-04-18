@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "adduser" && route != "wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc")
+            if (route != "/rii" && route != "adduser" && route != "/wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc" && route != "/ddgr")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -37,7 +37,7 @@
         }
 
 
-        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/rsales") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/rwsc"))
+        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/rsales") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/rwsc"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
             <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
@@ -57,6 +57,11 @@
                 {
                     <MudNavLink Href="/rg" Icon="@Icons.Material.Filled.GridOn" IconColor="Color.Primary" Class="custom-navlink">Grinding</MudNavLink>
                 }
+                @if (UserData.Router.Contains("/ddgr"))
+                {
+                    <MudNavLink Href="/ddgr" Icon="@Icons.Material.Filled.AutoAwesomeMosaic" IconColor="Color.Primary" Class="custom-navlink">Damage During Grinding</MudNavLink>
+                }
+               
                 @if (UserData.Router.Contains("/rfi"))
                 {
                     <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
@@ -81,7 +86,7 @@
 
                 @if (UserData.Router.Contains("/wc"))
                 {
-                    <MudNavLink Href="/wc" Icon="@Icons.Material.Filled.BusinessCenter" IconColor="Color.Primary" Class="custom-navlink">Manage Workcenters </MudNavLink>
+                    <MudNavLink Href="/wc" Icon="@Icons.Material.Filled.BusinessCenter" IconColor="Color.Primary" Class="custom-navlink">Manage Workcenters</MudNavLink>
                 }
             </MudNavGroup>
         }
@@ -128,6 +133,8 @@
 
             case "/index":
                 return Icons.Material.Outlined.AssignmentReturned;
+            case "/wc":
+                return Icons.Material.Filled.BusinessCenter;
             case "/rii":
                 return Icons.Material.Filled.BrandingWatermark;
             case "/rsales":
@@ -137,12 +144,15 @@
 
             case "/rg":
                 return Icons.Material.Filled.GridOn;
+            case "/ddgr":
+                return Icons.Material.Filled.AutoAwesomeMosaic;
             case "/rfi":
                 return Icons.Material.Filled.Dehaze;
             case "/rwsc":
                 return Icons.Material.Filled.ClearAll;
             // case "/adduser":
             //     return Icons.Material.Filled.MyLocation;
+           
             default:
                 return "";
         }
@@ -180,8 +190,8 @@
             // case "/ship":
             //     return "ShipMent";
 
-            // case "/wc":
-            //     return "Manage Workcenters";
+            case "/wc":
+                return "Manage Workcenters";
 
             case "/rii":
                 return "Rotors Incoming Inspection";
@@ -195,12 +205,19 @@
             case "/rg":
                 return "Rotors Grinding";
 
+            case "/ddgr":
+                return "Damage During Grinding";
+
             case "/rfi":
                 return "Rotors Final Inspection";
 
             case "/rwsc":
                 return "Rotors Waiting For Sales Clearance";
 
+            
+
+
+               
 
             default:
                 return "";

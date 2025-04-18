@@ -117,6 +117,7 @@
     private List<RotorGrindingData> RotorgrindingDatas = new();
     private List<RotorGrindingSavedData> rotorGrindingSavedDatas = new();
     private string? StatusIndicator { get; set; }
+    private List<RotorDamageGrindingDataFromGrinding> RotorDamageDuringgrindingData = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -139,7 +140,23 @@
     private async Task LoadData()
     {
         try
-        {       
+        {   
+            // Get all Rotor Damage During Grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotordamagegrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
+
+            if (rotordamagegrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotordamagegrindingDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    RotorDamageDuringgrindingData = JsonSerializer.Deserialize<List<RotorDamageGrindingDataFromGrinding>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingDataFromGrinding>();
+                }
+            }
+            
+
             // get all saved rotor grinding data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorgrindingsavedDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllSavedGrindingData);
@@ -188,8 +205,10 @@
                 .Where(i => !RotorgrindingDatas.Any(r =>
                     string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)) &&
+                       !RotorDamageDuringgrindingData.Any(d =>
+                    string.Equals(d.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                   .ToList();
                 StateHasChanged();
 
             }
@@ -270,6 +289,22 @@
                 }
             }
 
+            // Get all Rotor Damage During Grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotordamagegrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
+
+            if (rotordamagegrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var productionDataJson = await rotordamagegrindingDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(productionDataJson))
+                {
+                    RotorDamageDuringgrindingData = JsonSerializer.Deserialize<List<RotorDamageGrindingDataFromGrinding>>(productionDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingDataFromGrinding>();
+                }
+            }
+
+
             // Get all existing Rotor grinding Data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
@@ -300,8 +335,10 @@
                 .Where(i => !RotorgrindingDatas.Any(r =>
                     string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+                    string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)) &&
+                       !RotorDamageDuringgrindingData.Any(d =>
+                    string.Equals(d.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                   .ToList();
                 StateHasChanged();
 
             }

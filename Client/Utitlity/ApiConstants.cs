@@ -76,5 +76,21 @@
         public const string GetRotorGrindingSavedDatabyserialnumber = $"{BaseUrl}/RotorGrindingSaved/GGSDBSN";
         public const string GetAllSavedGrindingData = $"{BaseUrl}/RotorGrindingSaved/GetAllSavedGrindingData";
 
+
+        // Moving to outside operation Rotor Grinding Data
+        public const string AddMovedOOPRotorGrindingData = $"{BaseUrl}/RotorDamageGrindingDataFromGrinding/AddMovedOOPGD";
+        public const string GetAllMovedOOPGrindingData = $"{BaseUrl}/RotorDamageGrindingDataFromGrinding/GetAllMovedOOPGrindingData";
+
+
+        // Rotor Damage Grinding savedData
+        public const string SaveDamageGrindingsavedData = $"{BaseUrl}/RotorDamageGrindingSaved/AddDamageGSDDSaveData";
+        public const string GetSavedDamageGrindingData = $"{BaseUrl}/RotorDamageGrindingSaved/GetRecentDDGSaveData";
+
+
+        // Rotor Damage Grinding Submited Data
+        public const string AddDDGSubmitedData = $"{BaseUrl}/RotorDamageGrindingSubmited/AddDDGPSumbitedData";
+        public const string GetAllDDGSubmitedData = $"{BaseUrl}/RotorDamageGrindingSubmited/GetAllDDGSubmitedData";
+
+
     }
 }

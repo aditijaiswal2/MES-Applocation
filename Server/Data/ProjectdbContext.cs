@@ -41,7 +41,9 @@ namespace MES.Server.Data
         public DbSet<NewRotorData> NewRotorData { get; set; }
         public DbSet<RotorGrindingData> RotorGrindingData { get; set; }
         public DbSet<RotorGrindingSavedData> RotorGrindingSavedData { get; set; }
-
+        public DbSet<RotorDamageGrindingDataFromGrinding>RotorDamageGrindingDataFromGrinding { get; set; }
+        public DbSet<RotorDamageGrindingSaveData> RotorDamageGrindingSaveData { get; set; }
+        public DbSet<RotorDamageGrindingSubmitedData> RotorDamageGrindingSubmitedData { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
