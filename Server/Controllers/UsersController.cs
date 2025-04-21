@@ -45,6 +45,7 @@ namespace MES.Server.Controllers
                     Email = u.Email,
                     PageNames = u.PageNames,
                     SelectedWorkCenter = u.SelectedWorkCenter,
+                    isSalesuser = u.IsSalesUser,
                     Routes = u.Routes,
 
                 })
@@ -100,6 +101,8 @@ namespace MES.Server.Controllers
 
             return Ok(user);
         }
+
+
         public async Task<string> GenerateUserCode()
         {
             int lastUserCodeNumber = 1000; // Default start number
@@ -148,6 +151,7 @@ namespace MES.Server.Controllers
                     existingUser.PageNames = addDto.PageNames;
                     existingUser.SelectedWorkCenter = addDto.SelectedWorkCenter;
                     existingUser.Routes = addDto.Routes;
+                    existingUser.IsSalesUser = addDto.IsSalesUser;
 
 
                     // Remove old roles
@@ -180,6 +184,7 @@ namespace MES.Server.Controllers
                     Name = addDto.Name.ToLower(),
                     UserCode = addDto.Usercode.ToLower(),
                     Email = addDto.Email.ToLower(),
+                    IsSalesUser = addDto.IsSalesUser,
                     PageNames = addDto.PageNames,
                     SelectedWorkCenter = addDto.SelectedWorkCenter,
                     Routes = addDto.Routes
@@ -279,6 +284,7 @@ namespace MES.Server.Controllers
             user.UserCode = updateDto.Usercode;
             user.PageNames = updateDto.PageNames;
             user.SelectedWorkCenter = updateDto.SelectedWorkCenter;
+            user.IsSalesUser = updateDto.IsSalesUser;
             user.Routes = updateDto.Routes;
 
             //Get the User Roles and then remove them and add the new roles back in

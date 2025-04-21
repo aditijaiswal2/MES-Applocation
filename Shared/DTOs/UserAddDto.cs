@@ -9,6 +9,7 @@ namespace MES.Shared.DTOs
 {
     public class UserAddDto
     {
+        public int Id { get; set; }
         [Required]
         public string username { get; set; }
 
@@ -22,6 +23,8 @@ namespace MES.Shared.DTOs
         public string Email { get; set; }
 
         public string PageNames { get; set; }
+        public bool IsSalesUser { get; set; }
+
         public string? SelectedWorkCenter { get; set; }
         public string Routes { get; set; }
 

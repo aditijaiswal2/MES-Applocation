@@ -32,6 +32,7 @@
                           Label="User Code" @bind-Value="user.Usercode" Variant="Variant.Outlined" class="mb-4" />
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="Email" @bind-Value="user.Email" Variant="Variant.Outlined" class="mb-4" />
+
             <div class="mb-4">
 
                 <MudSelect T="string" Variant="Variant.Outlined" Label="Page Priviliges" MultiSelection="true" @bind-Value="user.PageNames">
@@ -44,17 +45,27 @@
             </div>
 
             <div class="mb-4">
-                  @if (user?.PageNames != null && user.PageNames.Contains("Rotors Grinding"))
+                @if (user?.PageNames != null && user.PageNames.Contains("Rotors Grinding"))
                 {
-                <MudSelect Variant="Variant.Outlined" Label="Work Center" @bind-Value="user.SelectedWorkCenter">
-                    @if (MESWorkcenters != null)
-                    {
-                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                    <MudSelect Variant="Variant.Outlined" Label="Work Center" @bind-Value="user.SelectedWorkCenter">
+                        @if (MESWorkcenters != null)
                         {
-                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                            {
+                                <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            }
                         }
-                    }
-                </MudSelect>
+                    </MudSelect>
+                }
+            </div>
+            <div class="mb-4">
+                @if (user?.PageNames != null && user.PageNames.Contains("Rotors Sales"))
+                {
+                    <MudCheckBox T="bool"
+                                 Color="Color.Primary"
+                                 Checked="user.IsSalesUser"
+                                 CheckedChanged="OnSalesUserCheckedChanged"
+                                 Label="Is Sales User" />
                 }
             </div>
 
@@ -90,10 +101,10 @@
         "Receiving","Rotors Incoming Inspection","Rotors Sales","Rotors Production Scheduling","Rotors Grinding","Damage During Grinding","Rotors Final Inspection","Rotors Waiting For Sales Clearance","Manage User","Manage Workcenters"
     };
 
-   //  private string[] WC =
-   //   {
-   // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
-   //  };
+    //  private string[] WC =
+    //   {
+    // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
+    //  };
 
     public Dictionary<string, string> pagePrevlgs = new Dictionary<string, string>
      {
@@ -131,6 +142,20 @@
     {
         MudDialog?.Cancel();
     }
+    private void OnSalesUserCheckedChanged(bool isChecked)
+    {
+        user.IsSalesUser = isChecked;
+
+        // Optional: Do other things based on the checkbox state
+        if (isChecked)
+        {
+            // Snackbar.Add("Sales user enabled.", Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add("Sales user disabled.", Severity.Info);
+        }
+    }
 
     private async Task Add()
     {
@@ -138,6 +163,7 @@
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
         user.Role = "User";
+        user.IsSalesUser = user.IsSalesUser;
 
         user.Routes = string.Join(", ", user.PageNames.Split(',').Select(page => pagePrevlgs[page.Trim()]));
         var selectedPageList = string.Join(", ", options.Select(x => $"\"{x}\""));
@@ -201,9 +227,9 @@
             {
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
                 // Add "All" and "NA" options at the top
-               
+
                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
-                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
             }
         }
     }

@@ -167,8 +167,12 @@ namespace MES.Server.Controllers
         /// </summary>
         private async Task SendEmailWithAttachment(byte[] pdfBytes, IncomingInspectionDTO IncomingDataDTO)
         {
+            var user = HttpContext.User;
+            var fromEmail = user.Identity?.IsAuthenticated == true
+                ? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                : "aditi.jaiswal@axiscades.in";
             var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Axiscades", "aditi.jaiswal@axiscades.in"));
+            email.From.Add(new MailboxAddress("Axiscades", fromEmail));
             email.To.Add(new MailboxAddress("Sales Team", "aditi.jaiswal@axiscades.in"));
             email.Subject = $"{IncomingDataDTO.SerialNumber} - {IncomingDataDTO.Customer}";
             email.Body = new TextPart(TextFormat.Plain) { Text = "Please find the attached inspection report." };

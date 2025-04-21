@@ -35,26 +35,27 @@
                 <div style="max-height: 500px; max-width:100%;">
                     <MudTable Items="@appUsers" Class="table table-bordered table-striped mt-2">
                         <HeaderContent>
-                                <MudTh Style="text-align:center;width:150px">User Name</MudTh>
-                                <MudTh Style="text-align:center;width:200px">Name</MudTh>
-                                <MudTh Style="text-align:center;width:100px">User Code</MudTh>
-                                <MudTh Style="text-align:center;width:200px">Email</MudTh>
-                                <MudTh Style="text-align:center;width:250px">Page Privileges</MudTh>
-                                <MudTh Style="text-align:center;width:250px">Work Center</MudTh>
-                                <MudTh Style="text-align:center;width:200px">Actions</MudTh>
+                            <MudTh Style="text-align:center;width:150px">User Name</MudTh>
+                            <MudTh Style="text-align:center;width:200px">Name</MudTh>
+                            <MudTh Style="text-align:center;width:100px">User Code</MudTh>
+                            <MudTh Style="text-align:center;width:200px">Email</MudTh>
+                            <MudTh Style="text-align:center;width:250px">Page Privileges</MudTh>
+                            <MudTh Style="text-align:center;width:250px">Work Center</MudTh>
+                            <MudTh Style="text-align:center;width:200px">Sales User</MudTh>
+                            <MudTh Style="text-align:center;width:200px">Actions</MudTh>
                         </HeaderContent>
                         <RowTemplate Context="appUsers">
-                                <MudTd Class="table-data-alignment">@appUsers.UserName</MudTd>
-                                <MudTd Class="table-data-alignment">@appUsers.Name</MudTd>
-                                <MudTd Class="table-data-alignment">@appUsers.UserCode</MudTd>
-                                <MudTd Class="table-data-alignment">@appUsers.Email</MudTd>
-                                <MudTd Class="table-data-alignment">@appUsers.PageNames</MudTd>
-                                <MudTd Class="table-data-alignment">@appUsers.SelectedWorkCenter</MudTd>
-                              
-                                <MudTd Class="table-data-alignment">
-                                    <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditUser(appUsers))" />
-                                    <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(appUsers))" />
-                                </MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.UserName</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.Name</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.UserCode</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.Email</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.PageNames</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.SelectedWorkCenter</MudTd>
+                            <MudTd Class="table-data-alignment">@appUsers.IsSalesUser</MudTd>
+                            <MudTd Class="table-data-alignment">
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditUser(appUsers))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(appUsers))" />
+                            </MudTd>
                         </RowTemplate>
                         <PagerContent>
                             <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
@@ -80,12 +81,13 @@ else
     }
 </style>
 
-    @code {
+@code {
 
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public UserAddDto user { get; set; } = new UserAddDto();
 
     private IEnumerable<AppUser> appUsers = new List<AppUser>();
+    public AppUser appUser { get; set; } = new AppUser();
     private IEnumerable<AppUserRole> UserRoles = new List<AppUserRole>();
     private Dictionary<int, string> userRolesDictionary = new Dictionary<int, string>();
 
@@ -112,8 +114,8 @@ else
                 var userResult = await userResponse.Content.ReadFromJsonAsync<IEnumerable<AppUser>>();
                 if (userResult != null)
                 {
-                    appUsers = userResult.ToList().OrderByDescending( u => u.Id);
-                    
+                    appUsers = userResult.ToList().OrderByDescending(u => u.Id);
+
                     foreach (var user in appUsers)
                     {
                         userRolesDictionary[user.Id] = await GetUserRoles(user.Id);
@@ -142,6 +144,7 @@ else
         }
         return "No roles assigned";
     }
+
 
     async Task AddUser()
     {

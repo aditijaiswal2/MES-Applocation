@@ -41,27 +41,40 @@
                 </MudSelect>
             </div>
 
+
+
             <div class="mb-4">
                 @if (appUsers?.PageNames != null && appUsers.PageNames.Contains("Rotors Grinding"))
                 {
-                <MudSelect Variant="Variant.Outlined" Label="Update Work Center" @bind-Value="appUsers.SelectedWorkCenter">
-                    @if (MESWorkcenters != null)
-                    {
-                        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                    <MudSelect Variant="Variant.Outlined" Label="Update Work Center" @bind-Value="appUsers.SelectedWorkCenter">
+                        @if (MESWorkcenters != null)
                         {
-                            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                            {
+                                <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            }
                         }
-                    }
-                </MudSelect>
+                    </MudSelect>
 
                 }
 
-              @*   <MudSelect Variant="Variant.Outlined" Label="Select Work Center" @bind-Value="user.SelectedWorkCenter">
+                @*   <MudSelect Variant="Variant.Outlined" Label="Select Work Center" @bind-Value="user.SelectedWorkCenter">
                     @foreach (var pr in WC)
                     {
                         <MudSelectItem Value="@pr">@pr</MudSelectItem>
                     }
                 </MudSelect> *@
+            </div>
+
+            <div class="mb-4">
+                @if (appUsers?.PageNames != null && appUsers.PageNames.Contains("Rotors Sales"))
+                {
+                    <MudCheckBox T="bool"
+                                 Color="Color.Primary"
+                                 Checked="@appUsers.IsSalesUser"
+                                 CheckedChanged="OnSalesUserCheckedChanged"
+                                 Label="Is Sales User" />
+                }
             </div>
         </DialogContent>
         <DialogActions>
@@ -96,10 +109,10 @@
 
 
      };
-   //  private string[] WC =
-   //     {
-   // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
-   //  };
+    //  private string[] WC =
+    //     {
+    // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
+    //  };
 
     private IEnumerable<string> MaxCharacters(string ch)
     {
@@ -113,7 +126,7 @@
 
 
     protected override async Task OnInitializedAsync()
-   // protected override void OnInitialized()
+    // protected override void OnInitialized()
     {
         user.Role = SelectedRole;
 
@@ -134,12 +147,40 @@
         }
     }
 
+    private void OnSalesUserCheckedChanged(bool isChecked)
+    {
+        appUsers.IsSalesUser = isChecked;
+
+        // Optional: Do other things based on the checkbox state
+        if (isChecked)
+        {
+            // Snackbar.Add("Sales user enabled.", Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add("Sales user disabled.", Severity.Info);
+        }
+    }
+
+
     private async Task Save()
     {
         try
         {
             Snackbar.Clear();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+            // If "Rotors Grinding" is not selected, clear SelectedWorkCenter
+            if (appUsers.PageNames == null || !appUsers.PageNames.Contains("Rotors Grinding"))
+            {
+                appUsers.SelectedWorkCenter = null;
+            }
+
+            // If "Rotors Sales" is not selected, set IsSalesUser to null
+            if (appUsers.PageNames == null || !appUsers.PageNames.Contains("Rotors Sales"))
+            {
+                appUsers.IsSalesUser = false;
+            }
 
             appUsers.Routes = string.Join(", ", appUsers.PageNames.Split(',').Select(page => pagePrevlgs[page.Trim()]));
 
@@ -150,6 +191,7 @@
                     Usercode = appUsers.UserCode,
                     Email = appUsers.Email,
                     Role = "User",
+                    IsSalesUser = appUsers.IsSalesUser,
                     PageNames = appUsers.PageNames,
                     SelectedWorkCenter = appUsers.SelectedWorkCenter,
                     Routes = appUsers.Routes

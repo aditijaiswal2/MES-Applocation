@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,7 @@ namespace MES.Server.Migrations
                     UserCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     isDeleted = table.Column<int>(type: "int", nullable: false),
                     PageNames = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSalesUser = table.Column<bool>(type: "bit", nullable: false),
                     SelectedWorkCenter = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Routes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
