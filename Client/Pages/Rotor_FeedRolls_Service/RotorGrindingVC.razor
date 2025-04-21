@@ -61,19 +61,19 @@
 
                                     if (isGrindingInProgress)
                                     {
-                                        <MudChip Color="Color.Warning" Style="min-width: 100px;" Label="true">
-                                            Progressing
+                                        <MudChip Color="Color.Success" Style="min-width: 100px;" Label="true">
+                                            In Process
                                         </MudChip>
                                     }
                                     else
                                     {
                                         <MudChip Color="@(data.TargetDate < DateTime.Today ? Color.Error
-                                            : data.TargetDate > DateTime.Today ? Color.Success
+                                            : data.TargetDate > DateTime.Today ? Color.Tertiary
                                             : Color.Primary)"
-                                                 Style="min-width: 100px;" Label="true">
+                                        Style="min-width: 100px;" Label="true">
                                             @(data.TargetDate < DateTime.Today ? "Overdue"
-                                            : data.TargetDate > DateTime.Today ? "Upcoming"
-                                            : "Due Today")
+                                                : data.TargetDate > DateTime.Today ? "Upcoming"
+                                                : "Due Today")
                                         </MudChip>
                                     }
                                 }
@@ -118,6 +118,7 @@
     private List<RotorGrindingSavedData> rotorGrindingSavedDatas = new();
     private string? StatusIndicator { get; set; }
     private List<RotorDamageGrindingDataFromGrinding> RotorDamageDuringgrindingData = new();
+    private List<RotorDamageGrindingSubmitedData> RotorGrindingSubitedDatas = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -155,7 +156,7 @@
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingDataFromGrinding>();
                 }
             }
-            
+
 
             // get all saved rotor grinding data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
@@ -170,11 +171,12 @@
                     rotorGrindingSavedDatas = JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(productionDataJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSavedData>();
 
-                   
-                }
-            }
 
-             // Get all existing Rotor grinding Data
+                }
+            }                     
+
+
+            // Get all existing Rotor grinding Data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
 
@@ -208,10 +210,99 @@
                     string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)) &&
                        !RotorDamageDuringgrindingData.Any(d =>
                     string.Equals(d.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase)))
-                   .ToList();
-                StateHasChanged();
+                   .ToList();             
 
             }
+
+            // Get all existing damage grinding submited data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var DGDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllDDGSubmitedData);
+
+            if (DGDatasResponse.IsSuccessStatusCode)
+            {
+                var dgdDataJson = await DGDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(dgdDataJson))
+                {
+                    RotorGrindingSubitedDatas = JsonSerializer.Deserialize<List<RotorDamageGrindingSubmitedData>>(dgdDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingSubmitedData>();
+
+                    var convertedProductionData = RotorGrindingSubitedDatas.Select(data => new RotorProductionData
+                        {
+                            SerialNumber = data.SerialNumber,
+                            Module = data.Module,
+                            SalesOrderNumber = data.SalesOrderNumber,
+                            WorkOrder = data.WorkOrder,
+                            MatNumber = data.MatNumber,
+                            Customer = data.Customer,
+                            Location = data.Location,
+                            Received = data.Received,
+                            Inspected = data.Inspected,
+                            RotorsNumber = data.RotorsNumber,
+                            Initials = data.Initials,
+                            Make = data.Make,
+                            Dia = data.Dia,
+                            Len = data.Len,
+                            Fits = data.Fits,
+                            Materials = data.Materials,
+                            Others = data.Others,
+                            RotorsDia = data.RotorsDia,
+                            RotorStyle = data.RotorStyle,
+                            Type = data.Type,
+                            BearingRemoved = data.BearingRemoved,
+                            Bearing = data.Bearing,
+                            BearingSeals = data.BearingSeals,
+                            CeramicSeals = data.CeramicSeals,
+                            Right = data.Right,
+                            yRight = data.yRight,
+                            Left = data.Left,
+                            yLeft = data.yLeft,
+                            BasicSharpening = data.BasicSharpening,
+                            IfYBasicSharpening = data.IfYBasicSharpening,
+                            WedgelockAlignmentMarks = data.WedgelockAlignmentMarks,
+                            CenterGrinding = data.CenterGrinding,
+                            IfYCenterGrinding = data.IfYCenterGrinding,
+                            Aligned = data.Aligned,
+                            PlasticSleaves = data.PlasticSleaves,
+                            Welding = data.Welding,
+                            WeldingNum = data.WeldingNum,
+                            BedKnife = data.BedKnife,
+                            BoxReceivedWithSaddles = data.BoxReceivedWithSaddles,
+                            ReProfile = data.ReProfile,
+                            SandBlasting = data.SandBlasting,
+                            ManualLabor = data.ManualLabor,
+                            Bottom = data.Bottom,
+                            Top = data.Top,
+                            AddQty = data.AddQty,
+                            TirLeftJournal = data.TirLeftJournal,
+                            TirRightJournal = data.TirRightJournal,
+                            SaddlePartNumber = data.SaddlePartNumber,
+                            DateTime = data.DateTime,
+                            RotorCategorization = data.RotorCategorization,
+                            ComponentType = data.ComponentType,
+                            Users = data.Users,
+                            TargetDate = data.TargetDate,
+                            CustomerInstructions = data.CustomerInstructions,
+                            CustomerImportance = data.CustomerImportance,
+                            SubmitDate = data.SubmitDate,
+                            SubmitedBy = data.SubmitedBy,
+                            AdvancedSharpingStatus = data.AdvancedSharpingStatus,
+                            Workcenters = data.Workcenters,
+                            ProductionSubmitBy = data.DamageGrindingSubmitBy,
+                            ProductionSubmitDate = data.DamageGrindingSubmitDate
+
+                     })
+                            // Exclude items that already exist in RotorgrindingDatas based on SerialNumber
+                            .Where(data => !RotorgrindingDatas.Any(r => string.Equals(r.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                            .ToList();
+
+                                // Add the filtered data to RotorProductionDatas
+                                RotorProductionDatas.AddRange(convertedProductionData);
+
+                }
+            }
+
+            StateHasChanged();
 
         }
         catch (Exception ex)
