@@ -22,7 +22,7 @@ namespace MES.Shared.DTOs
         public string Email { get; set; }
 
         public string PageNames { get; set; }
-        public string SelectedWorkCenter { get; set; }
+        public string? SelectedWorkCenter { get; set; }
         public string Routes { get; set; }
 
 

@@ -34,7 +34,7 @@
                           Label="Email" @bind-Value="user.Email" Variant="Variant.Outlined" class="mb-4" />
             <div class="mb-4">
 
-                <MudSelect Variant="Variant.Outlined" Label="Page Priviliges" MultiSelection="true" @bind-Value="user.PageNames">
+                <MudSelect T="string" Variant="Variant.Outlined" Label="Page Priviliges" MultiSelection="true" @bind-Value="user.PageNames">
 
                     @foreach (var pr in pages)
                     {
@@ -44,7 +44,8 @@
             </div>
 
             <div class="mb-4">
-
+                  @if (user?.PageNames != null && user.PageNames.Contains("Rotors Grinding"))
+                {
                 <MudSelect Variant="Variant.Outlined" Label="Work Center" @bind-Value="user.SelectedWorkCenter">
                     @if (MESWorkcenters != null)
                     {
@@ -54,6 +55,7 @@
                         }
                     }
                 </MudSelect>
+                }
             </div>
 
         </DialogContent>

@@ -31,7 +31,7 @@
             <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="Assigned Page Privileges " @bind-Value="@appUsers.PageNames" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
             <div class="mb-4">
-                <MudSelect Variant="Variant.Outlined" @bind-Value="@appUsers.PageNames" Label="Update Page Privileges" MultiSelection="true">
+                <MudSelect T="string" Variant="Variant.Outlined" @bind-Value="@appUsers.PageNames" Label="Update Page Privileges" MultiSelection="true">
 
                     @foreach (var pr in pages)
                     {
@@ -42,7 +42,8 @@
             </div>
 
             <div class="mb-4">
-
+                @if (appUsers?.PageNames != null && appUsers.PageNames.Contains("Rotors Grinding"))
+                {
                 <MudSelect Variant="Variant.Outlined" Label="Update Work Center" @bind-Value="appUsers.SelectedWorkCenter">
                     @if (MESWorkcenters != null)
                     {
@@ -53,7 +54,7 @@
                     }
                 </MudSelect>
 
-
+                }
 
               @*   <MudSelect Variant="Variant.Outlined" Label="Select Work Center" @bind-Value="user.SelectedWorkCenter">
                     @foreach (var pr in WC)

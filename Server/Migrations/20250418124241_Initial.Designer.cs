@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250418100858_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250418124241_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,7 +141,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SelectedWorkCenter")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
