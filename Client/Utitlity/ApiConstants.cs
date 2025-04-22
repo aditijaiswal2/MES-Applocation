@@ -64,6 +64,7 @@
         // Rotor Production savedData
         public const string SaveproductionsavedData = $"{BaseUrl}/RotorProductionSaveData/AddProductionSaveData";
         public const string GetSavedproductionData = $"{BaseUrl}/RotorProductionSaveData/GetRecentProductionSaveData";
+        public const string UpdateRotorCategorizationType = $"{BaseUrl}/RotorProductionSaveData/updateRotorCategorizationType";
 
         // new rotor data
         public const string AddNewRotorData = $"{BaseUrl}/NewRotorDetails/SaveNewRotor";

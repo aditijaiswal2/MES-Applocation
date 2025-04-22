@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc" && route != "/ddgr")
+            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -37,7 +37,7 @@
         }
 
 
-        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/rsales") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/rwsc"))
+        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/svc") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
             <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
@@ -46,9 +46,9 @@
                     @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
                     <MudNavLink Href="/rii" Icon="@Icons.Material.Filled.BrandingWatermark" IconColor="Color.Primary" Class="custom-navlink">Incoming Inspection</MudNavLink>
                 }
-                @if (UserData.Router.Contains("/rsales"))
+                @if (UserData.Router.Contains("/svc"))
                 {
-                    <MudNavLink Href="/rsales" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
+                    <MudNavLink Href="/svc" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary" Class="custom-navlink">Sales</MudNavLink>
                 }  @if (UserData.Router.Contains("/rps"))
                 {
                     <MudNavLink Href="/rps" Icon="@Icons.Material.Filled.ProductionQuantityLimits" IconColor="Color.Primary" Class="custom-navlink">Production Scheduling</MudNavLink>
@@ -66,10 +66,10 @@
                 {
                     <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
                 }
-                @if (UserData.Router.Contains("/rwsc"))
+               @*  @if (UserData.Router.Contains("/rwsc"))
                 {
                     <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
-                }
+                } *@
             </MudNavGroup>
         }
 
@@ -137,7 +137,7 @@
                 return Icons.Material.Filled.BusinessCenter;
             case "/rii":
                 return Icons.Material.Filled.BrandingWatermark;
-            case "/rsales":
+            case "/svc":
                 return Icons.Material.Filled.Dashboard;
             case "/rps":
                 return Icons.Material.Filled.ProductionQuantityLimits;
@@ -148,8 +148,7 @@
                 return Icons.Material.Filled.AutoAwesomeMosaic;
             case "/rfi":
                 return Icons.Material.Filled.Dehaze;
-            case "/rwsc":
-                return Icons.Material.Filled.ClearAll;
+           
          
            
             default:
@@ -171,7 +170,7 @@
             case "/rii":
                 return "Rotors Incoming Inspection";
 
-            case "/rsales":
+            case "/svc":
                 return "Rotors Sales";
 
             case "/rps":
@@ -186,8 +185,7 @@
             case "/rfi":
                 return "Rotors Final Inspection";
 
-            case "/rwsc":
-                return "Rotors Waiting For Sales Clearance";
+           
 
             default:
                 return "";

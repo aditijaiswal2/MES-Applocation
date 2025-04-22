@@ -133,6 +133,28 @@ namespace MES.Server.Controllers
             }
         }
 
+        // update the incoming scrap data based on the serial number 
+        [HttpPut("updateRotorCategorizationType")]
+        public async Task<IActionResult> UpdateRotorCategorizationType([FromBody] RotorSalesData rotorSalesData)
+        {
+            var rotor = await _context.RotorSalesData
+                .FirstOrDefaultAsync(r => r.SerialNumber == rotorSalesData.SerialNumber);
+
+            if (rotor == null)
+            {
+                return NotFound("Rotor with specified serial number not found.");
+            }
+
+            rotor.RotorCategorization = "Deleted Scrap";
+
+            _context.RotorSalesData.Update(rotor);
+            await _context.SaveChangesAsync();
+
+            return Ok("Rotor categorization updated to 'Deleted Scrap'.");
+        }
+
+
+
 
     }
 }
