@@ -93,6 +93,9 @@
         public const string AddDDGSubmitedData = $"{BaseUrl}/RotorDamageGrindingSubmited/AddDDGPSumbitedData";
         public const string GetAllDDGSubmitedData = $"{BaseUrl}/RotorDamageGrindingSubmited/GetAllDDGSubmitedData";
 
+        // Sales AttachedFile 
+        public const string AddSalesAttachedFile = $"{BaseUrl}/SalesAttachedFile/addpi";
+        public const string GetSalesAttachedFileBySerialNumber = $"{BaseUrl}/SalesAttachedFile/GFile";
 
     }
 }

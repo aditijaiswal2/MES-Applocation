@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -924,6 +924,19 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SalesAttachedFile",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalesAttachedFile", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShipmentImage",
                 columns: table => new
                 {
@@ -1080,6 +1093,27 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Filedata",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SalesAttachedFileId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Filedata", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Filedata_SalesAttachedFile_SalesAttachedFileId",
+                        column: x => x.SalesAttachedFileId,
+                        principalTable: "SalesAttachedFile",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Images",
                 columns: table => new
                 {
@@ -1149,6 +1183,11 @@ namespace MES.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Filedata_SalesAttachedFileId",
+                table: "Filedata",
+                column: "SalesAttachedFileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Imagedatas_IncomingImageId",
                 table: "Imagedatas",
                 column: "IncomingImageId");
@@ -1176,6 +1215,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Filedata");
 
             migrationBuilder.DropTable(
                 name: "Imagedatas");
@@ -1239,6 +1281,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "SalesAttachedFile");
 
             migrationBuilder.DropTable(
                 name: "IncomingImages");

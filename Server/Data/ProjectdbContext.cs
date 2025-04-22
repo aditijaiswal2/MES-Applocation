@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MES.Shared.Models.Rotors;
+using iTextSharp.text.rtf.graphic;
 
 
 namespace MES.Server.Data
@@ -44,16 +45,18 @@ namespace MES.Server.Data
         public DbSet<RotorDamageGrindingDataFromGrinding>RotorDamageGrindingDataFromGrinding { get; set; }
         public DbSet<RotorDamageGrindingSaveData> RotorDamageGrindingSaveData { get; set; }
         public DbSet<RotorDamageGrindingSubmitedData> RotorDamageGrindingSubmitedData { get; set; }
+        public DbSet<SalesAttachedFile> SalesAttachedFile { get; set; }
+        public DbSet<MES.Shared.Models.Rotors.Filedata> Filedata { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
 
             modelBuilder.Entity<AppUser>()
-    .HasMany(ur => ur.UserRoles)
-    .WithOne(u => u.User)
-    .HasForeignKey(ur => ur.UserId)
-    .IsRequired()
-    .OnDelete(DeleteBehavior.Restrict);
+            .HasMany(ur => ur.UserRoles)
+            .WithOne(u => u.User)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AppRole>()
                 .HasMany(ur => ur.UserRoles)
@@ -63,7 +66,7 @@ namespace MES.Server.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<IncomingImages>()
-.HasKey(i => i.Id);
+            .HasKey(i => i.Id);
 
             modelBuilder.Entity<MES.Shared.Models.Rotors.Imagedata>()
                 .HasKey(i => i.ID);
@@ -81,9 +84,19 @@ namespace MES.Server.Data
                 .HasOne(i => i.IncomingImages)
                 .WithMany(ii => ii.Images)
                 .HasForeignKey(i => i.IncomingImageId);
-        
 
 
+            modelBuilder.Entity<SalesAttachedFile>()
+            .HasKey(i => i.Id);
+
+            modelBuilder.Entity<MES.Shared.Models.Rotors.Filedata>()
+                .HasKey(i => i.ID);
+
+            modelBuilder.Entity<MES.Shared.Models.Rotors.Filedata>()
+                .HasOne(i => i.SalesAttachedFile)
+                .WithMany(its => its.File)
+                .HasForeignKey(i => i.SalesAttachedFileId)
+                .IsRequired();
 
             base.OnModelCreating(modelBuilder);
 

@@ -1,4 +1,5 @@
 ﻿@using MES.Client.Utitlity
+@using MES.Shared.DTOs
 @using MES.Shared.Models.Rotors
 @using System.Text
 @using static MES.Client.Pages.LoginVC
@@ -7,6 +8,7 @@
 @inject ISnackbar Snackbar
 @inject IHttpClientFactory _httpClient
 @inject IDialogCompletionService CompletionService
+@inject IJSRuntime JS;
 
 <div>
     <MudDialog>
@@ -22,14 +24,25 @@
             {
                 <MudGrid>
 
+                    <MudItem md="12" sm="12" xs="12" class="center">
+                        <MudButton Variant="Variant.Filled"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   OnClick="ViewAttachedFile">
+                            View Attached File
+                        </MudButton>
+                    </MudItem>
+
+
+
                     <MudItem md="12" sm="12" xs="12">
                         <MudDatePicker PickerVariant="PickerVariant.Dialog"
                         @bind-Date="StartDate"
                         Variant="Variant.Outlined"
                         Label="Select Start Date"
                         MinDate="@StartMinDate" />
+                    </MudItem>                    
 
-                    </MudItem>
                     <MudItem xs="4">
                         <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
                     </MudItem>
@@ -424,6 +437,46 @@
             Snackbar.Add($"Error save data: {ex.Message}", Severity.Error);
         }
     }
+
+    private async Task ViewAttachedFile()
+    {
+        if (string.IsNullOrEmpty(selectedData?.SerialNumber))
+        {
+            Snackbar.Add("Serial number is missing!", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.GetAsync($"{ApiConstants.GetSalesAttachedFileBySerialNumber}/{selectedData.SerialNumber}");           
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<SalesAttachedFileDto>();
+                var fileData = result?.File?.FirstOrDefault();
+
+                if (fileData != null && fileData.Data != null)
+                {
+                    // Call JavaScript to open the PDF in a new tab
+                    await JS.InvokeVoidAsync("openPdfFromByteArray", Convert.ToBase64String(fileData.Data));
+                }
+                else
+                {
+                    Snackbar.Add("No file data found.", Severity.Error);
+                }
+            }
+            else
+            {
+                Snackbar.Add("No file data found.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
 
     private async Task ClearAll()
     {

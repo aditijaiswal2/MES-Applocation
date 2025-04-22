@@ -3,6 +3,7 @@
 @using MES.Client.Dialog.RotorSalesImages
 @using MES.Client.Pages.Account;
 @using MES.Client.Utitlity
+@using MES.Shared.DTOs
 @using ReactorBlazorQRCodeScanner;
 @using Microsoft.JSInterop;
 @using MES.Shared.Models.Rotors;
@@ -15,6 +16,9 @@
 @using static MES.Client.Pages.LoginVC
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IDialogCompletionService CompletionService
+
+
+
 
 
 <MudGrid Spacing="3">
@@ -285,11 +289,24 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
+                       @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
+                        <MudButton Class="mr-2"
+                                   Variant="Variant.Filled"
+                                   Size="Size.Small"
+                                   Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                                   Disabled="@(isFileAttached)"
+                                   OnClick="AttacheFile">
+                            @(isFileAttached ? "Done" : "Attach File")
+                        </MudButton>
+
+
                         <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
 
                     </MudItem>
 
-
+                    <div id="pdfInputContainer">
+                        <InputFile OnChange="HandlePdfFileSelected" accept=".pdf" style="display:none" />
+                    </div>
 
 
 
@@ -334,6 +351,15 @@
     private IncomingInspection? hoveredInspection;
     private List<RotorSalesSavedData> rotorSalesSavedDatas = new();
     public IncomingImages? serialImages;
+    private ElementReference pdfFileInput;
+    private bool isFileAttached = false;
+
+    private SalesAttachedFileDto uploadedFileDto;
+    private byte[] uploadedFileBytes;
+    private IBrowserFile selectedPdfFile;
+    private string fileName;
+
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -586,19 +612,91 @@
         }
     }
 
+    private async Task AttacheFile()
+    {
+        await JS.InvokeVoidAsync("triggerFileInputClick");
+    }
+
+
+
+    private async Task HandlePdfFileSelected(InputFileChangeEventArgs e)
+    {
+        uploadedFileDto = null;
+        uploadedFileBytes = null;
+        selectedPdfFile = null;
+        fileName = string.Empty;
+
+        selectedPdfFile = e.File;
+
+        if (selectedPdfFile != null && selectedPdfFile.ContentType == "application/pdf")
+        {
+            try
+            {
+                using var stream = selectedPdfFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                uploadedFileBytes = ms.ToArray();
+                fileName = selectedPdfFile.Name;
+
+                uploadedFileDto = new SalesAttachedFileDto
+                    {
+                        SerialNumber = selectedInspection.SerialNumber,
+                        File = new List<FiledataDto>
+                {
+                    new FiledataDto
+                    {
+                        Data = uploadedFileBytes,
+                        SalesAttachedFileId = 0
+                    }
+                }
+                    };
+
+                var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(uploadedFileDto);
+
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+                var response = await HttpClient.PostAsync(ApiConstants.AddSalesAttachedFile, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("File uploaded and saved successfully.", Severity.Success);
+                    isFileAttached = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Snackbar.Add($"Upload failed: {error}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("Only PDF files are allowed.", Severity.Error);
+        }
+
+        StateHasChanged();
+    }
+
 
 
     private async Task ClearAll()
     {
-        // inspections = new List<IncomingInspection>();
-        // rotorSalesDatas = new List<RotorSalesData>();
-        // tempSubmission = new InspectionSubmission();
-        selectedInspection = null;
-        //fromDate = null;
+        
+        selectedInspection = null;        
         SelectedPriority = string.Empty;
         CustomerInstructions = string.Empty;
         errorMessage = string.Empty;
         isLoading = false;
+        uploadedFileDto = null;
+        uploadedFileBytes = null;
+        selectedPdfFile = null;
+        fileName = string.Empty;
+        isFileAttached = false;
 
         StateHasChanged();
     }

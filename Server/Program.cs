@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddRazorPages();
 builder.Services.AddIdentity<AppUser, AppRole>()
@@ -50,7 +51,10 @@ builder.Services.AddTransient<IIncomingInspection, IncomingInspectionRepository>
 builder.Services.AddTransient<IncomingInspectionRepository>();
 builder.Services.AddTransient<IImageRepository, ImageRepository>();
 builder.Services.AddTransient<ImageRepository>();
+builder.Services.AddTransient<IFileRepository, FileRepository>();
+builder.Services.AddTransient<FileRepository>();
 builder.Services.AddSingleton<HttpClient>();
+
 
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>

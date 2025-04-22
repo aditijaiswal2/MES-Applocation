@@ -352,6 +352,32 @@ namespace MES.Server.Migrations
                     b.ToTable("Receivings");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.Filedata", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SalesAttachedFileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("SalesAttachedFileId");
+
+                    b.ToTable("Filedata");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
                 {
                     b.Property<int>("ID")
@@ -2643,6 +2669,22 @@ namespace MES.Server.Migrations
                     b.ToTable("RotorSalesSavedData");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.SalesAttachedFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SalesAttachedFile");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>
                 {
                     b.Property<int>("Id")
@@ -2781,6 +2823,17 @@ namespace MES.Server.Migrations
                     b.Navigation("ShipmentImage");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.Filedata", b =>
+                {
+                    b.HasOne("MES.Shared.Models.Rotors.SalesAttachedFile", "SalesAttachedFile")
+                        .WithMany("File")
+                        .HasForeignKey("SalesAttachedFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SalesAttachedFile");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
                 {
                     b.HasOne("MES.Shared.Models.Rotors.IncomingImages", "IncomingImages")
@@ -2841,6 +2894,11 @@ namespace MES.Server.Migrations
             modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingImages", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Rotors.SalesAttachedFile", b =>
+                {
+                    b.Navigation("File");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>
