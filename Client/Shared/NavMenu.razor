@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "adduser" && route != "/wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc" && route != "/ddgr")
+            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/rsales" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/rwsc" && route != "/ddgr")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -131,7 +131,7 @@
         switch (route)
         {
 
-            case "/index":
+            case "/rec":
                 return Icons.Material.Outlined.AssignmentReturned;
             case "/wc":
                 return Icons.Material.Filled.BusinessCenter;
@@ -150,8 +150,7 @@
                 return Icons.Material.Filled.Dehaze;
             case "/rwsc":
                 return Icons.Material.Filled.ClearAll;
-            // case "/adduser":
-            //     return Icons.Material.Filled.MyLocation;
+         
            
             default:
                 return "";
@@ -163,32 +162,8 @@
         switch (route)
         {
 
-            case "/index":
+            case "/rec":
                 return "Receiving";
-
-            // case "/roter":
-            //     return "Rotor/Feed Rolls Service";
-
-            // case "/pumpR":
-            //     return "Pump Repair";
-
-            // case "/sasm":
-            //     return "System Assembly";
-
-            // case "/pasm":
-            //     return "Pelletizer Assembly";
-
-            // case "/plasm":
-            //     return "Pulverizer Assembly";
-
-            // case "/easm":
-            //     return "Ettlinger Assembly";
-
-            // case "/adduser":
-            //     return "Pump Repair";
-
-            // case "/ship":
-            //     return "ShipMent";
 
             case "/wc":
                 return "Manage Workcenters";
@@ -213,11 +188,6 @@
 
             case "/rwsc":
                 return "Rotors Waiting For Sales Clearance";
-
-            
-
-
-               
 
             default:
                 return "";

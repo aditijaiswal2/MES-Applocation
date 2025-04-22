@@ -1,0 +1,234 @@
+﻿@page "/rec"
+@using MES.Client.Dialog.QRPrint
+@using MES.Client.Dialog.Receiving
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+
+@using System.Text.Json;
+@using System.Text;
+
+@using Newtonsoft.Json;
+@inject IDialogService DialogService
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+
+<MudContainer Class="pa-2">
+    <MudGrid Class="d-flex justify-content-around">
+        @*  <MudItem md="12" sm="12" xs="12" class="mt-4 ml-2">
+                <MudText Typo="Typo.h6" Style="font-size: 16px;">USERS</MudText>
+            </MudItem> *@
+        <MudItem md="12" sm="12" xs="12" class="mb-2 ml-2" Style="margin-top:-10px">
+
+            <MudItem md="11" sm="12" xs="12">
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
+                           Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
+                    ADD
+                </MudButton>
+            </MudItem>
+
+            <br />
+            <MudItem md="12" sm="12" xs="12">
+                <div style="max-height: 500px; max-width:100%;">
+
+                    <MudTable Items="@receiveModule" Class="table table-bordered table-striped mt-2">
+                        <HeaderContent>
+                            <MudTh Style="text-align:center;width:150px">Serial Number</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Customer</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Module</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Action</MudTh>
+
+                        </HeaderContent>
+                        <RowTemplate Context="appUsers">
+                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SerialNumber</MudTd>
+                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.Date</MudTd>
+                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.Customer</MudTd>
+                            <MudTd Style="text-align:center;width:150px" Class="table-data-alignment">@appUsers.SelectedOption</MudTd>
+
+
+                            <MudTd Style="text-align:center">
+                                @*   <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
+                           *@ 
+                             <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
+
+                            </MudTd>
+                        </RowTemplate>
+
+
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { 5, 10, 50, 100, int.MaxValue }" />
+                        </PagerContent>
+                    </MudTable>
+                </div>
+
+            </MudItem>
+
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+@code {
+
+    private IEnumerable<Receiving> receiveModule = new List<Receiving>();
+
+    //private IEnumerable<ITSLocation> iTSLocations = new List<ITSLocation>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUser();
+    }
+
+    private async Task LoadUser()
+    {
+        try
+        {
+            // Clear any previous messages
+            Snackbar.Clear();
+
+
+
+            // Send HTTP request to fetch data from the API
+            // var response = await HttpClient.GetAsync("https://localhost:7172/api/ReceivingData/getrd");
+            var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                var locationResult = await response.Content.ReadFromJsonAsync<IEnumerable<Receiving>>();
+                if (locationResult != null)
+                {
+                    var now = DateTime.Now;
+                    receiveModule = locationResult
+                        .Where(r => (now - r.Date).TotalHours <= 24) // Assuming r.Date is DateTime
+                        .OrderByDescending(r => r.Id)
+                        .ToList();
+                }
+
+            }
+            else
+            {
+                Snackbar.Add($"Failed to fetch data: {response.ReasonPhrase}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error occurred: {ex.Message}", Severity.Warning);
+        }
+    }
+
+    private async Task NewReceive()
+    {
+        var parameters = new DialogParameters
+            {
+                 { "Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") },
+                { "SerialNumber", "MES00001" }, // Passing Serial Number
+                  { "OnReceiveAdded", EventCallback.Factory.Create<Receiving>(this, OnReceiveAdded) }
+               // Default selection
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete; // Ensure this is properly set
+        var dialog = await DialogService.ShowAsync<AddReceiveDialog>("Add New Receive", parameters, dialogOptions);
+    }
+
+    // Callback function to update the table dynamically
+    private void OnReceiveAdded(Receiving newReceive)
+    {
+        receiveModule = receiveModule.Prepend(newReceive).ToList(); // Add the new item to the list
+        StateHasChanged(); // Re-render the UI
+    }
+
+    private async Task DeleteLocation(Receiving receive)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Delete Confirmation",
+            "Are you sure you want to delete this record?",
+            "Yes", "No"
+        );
+
+        if (result == true)
+        {
+            try
+            {
+                // var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+
+                // var response = await HttpClient.DeleteAsync($"https://localhost:7172/api/ReceivingData/{receive.Id}");
+                var response = await HttpClient.DeleteAsync($"{ApiConstants.DeleteReceiving}/{receive.Id}");
+
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Record deleted successfully.", Severity.Success);
+                    await LoadUser(); // Reload data after deletion
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete: {response.ReasonPhrase}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error occurred: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    public async Task GenerateQR(Receiving receive)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        try
+        {
+
+            string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.SelectedOption}, Customer: {receive.Customer}, Date: {receive.Date}";
+
+
+            var jsonPart = JsonConvert.SerializeObject(receive);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+            // var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/locQR", content);
+            var response = await HttpClient.PostAsync(ApiConstants.AddQRCode, content);
+            byte[] qrCodeBytes = null;
+
+            if (response.IsSuccessStatusCode)
+            {
+                using (var stream = await response.Content.ReadAsStreamAsync())
+                using (var memoryStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memoryStream);
+                    qrCodeBytes = memoryStream.ToArray();
+                }
+
+                // Prepare QR data for the dialog
+                QrDTO receiveQr = new QrDTO()
+                    {
+                        SerialNumber = receive.SerialNumber,  // Match property names
+                        SelectedOption = receive.SelectedOption,
+                        Customer = receive.Customer,
+                        QRData = qrCodeBytes,
+                    };
+
+
+                var options = new DialogOptions { FullWidth = false };
+                var parameters = new DialogParameters { ["LocQR"] = receiveQr };
+
+                // Show QR in dialog
+                var dialog = await DialogService.ShowAsync<QRCodeDialog>("Show QR", parameters, options);
+            }
+            else
+            {
+                Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
+        }
+    }
+
+}﻿
+

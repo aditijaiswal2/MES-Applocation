@@ -63,9 +63,11 @@ namespace MES.Shared.DTOs
             public string RotorCategorization { get; set; }
             public string ComponentType { get; set; }
             public string Users { get; set; }
+            public List<string> SalesEmails { get; set; }
 
-           
-          
+
+
+
         }
 
     }

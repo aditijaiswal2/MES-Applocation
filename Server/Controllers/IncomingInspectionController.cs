@@ -167,35 +167,48 @@ namespace MES.Server.Controllers
         /// </summary>
         private async Task SendEmailWithAttachment(byte[] pdfBytes, IncomingInspectionDTO IncomingDataDTO)
         {
-            var user = HttpContext.User;
-            var fromEmail = user.Identity?.IsAuthenticated == true
-                ? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
-                : "aditi.jaiswal@axiscades.in";
-            var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("Axiscades", fromEmail));
-            email.To.Add(new MailboxAddress("Sales Team", "aditi.jaiswal@axiscades.in"));
-            email.Subject = $"{IncomingDataDTO.SerialNumber} - {IncomingDataDTO.Customer}";
-            email.Body = new TextPart(TextFormat.Plain) { Text = "Please find the attached inspection report." };
+            var fromEmail = "aditi.jaiswal@axiscades.in";
+            var emailSubject = $"{IncomingDataDTO.SerialNumber} - {IncomingDataDTO.Customer}";
 
-            var attachment = new MimePart("application", "pdf")
+            var bodyText = $@"Dear Sir/Madam,
+
+    Please find the attached inspection report.
+
+Regards,
+Incoming Inspection 
+{IncomingDataDTO.Users}"; 
+
+            var bodyPart = new TextPart(TextFormat.Plain) { Text = bodyText };
+
+          //  var emailBodyText = "Please find the attached inspection report.";
+
+            foreach (var recipientEmail in IncomingDataDTO.SalesEmails.Distinct())
             {
-                Content = new MimeContent(new MemoryStream(pdfBytes)),
-                ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                ContentTransferEncoding = ContentEncoding.Base64,
-                FileName = "InspectionReport.pdf"
-            };
+                var email = new MimeMessage();
+                email.From.Add(new MailboxAddress("MES", fromEmail));
+                email.To.Add(new MailboxAddress("Sales Team", recipientEmail));
+                email.Subject = emailSubject;
 
-            var multipart = new Multipart("mixed");
-            multipart.Add(email.Body);
-            multipart.Add(attachment);
-            email.Body = multipart;
+                var body = new TextPart(TextFormat.Plain) { Text = bodyText };
+                var attachment = new MimePart("application", "pdf")
+                {
+                    Content = new MimeContent(new MemoryStream(pdfBytes)),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = "InspectionReport.pdf"
+                };
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync("smtp.office365.com", 587, SecureSocketOptions.StartTls); // If using Outlook
-            await smtp.AuthenticateAsync("aditi.jaiswal@axiscades.in", "AxisMar@2025"); // Use correct password
+                var multipart = new Multipart("mixed");
+                multipart.Add(body);
+                multipart.Add(attachment);
+                email.Body = multipart;
 
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+                using var smtp = new SmtpClient();
+                await smtp.ConnectAsync("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(fromEmail, "AxisMar@2025"); // Replace with secure credential handling
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+            }
         }
 
         [HttpDelete("{id}")]

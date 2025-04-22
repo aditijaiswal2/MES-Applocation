@@ -299,5 +299,19 @@ namespace MES.Server.Controllers
         }
 
 
+        [HttpGet("getuserlist")]
+        public async Task<IActionResult> GetUsers([FromQuery] bool? sales)
+        {
+            var users = _context.Users.AsQueryable();
+
+            if (sales.HasValue)
+            {
+                users = users.Where(u => u.IsSalesUser == sales.Value);
+            }
+
+            var result = await users.ToListAsync();
+            return Ok(result);
+        }
+
     }
 }

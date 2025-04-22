@@ -129,8 +129,8 @@
         {
             islogin = true;
             loginModel.Username = loginModel.Username.ToLower();
-            var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/Account/login", loginModel);
-         //   var response = await HttpClient.PostAsJsonAsync(ApiConstants.AppLogin, loginModel);
+           // var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/Account/login", loginModel);
+            var response = await HttpClient.PostAsJsonAsync(ApiConstants.AppLogin, loginModel);
 
             if (response.IsSuccessStatusCode)
             {
