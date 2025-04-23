@@ -3,9 +3,11 @@
 @using MES.Client.Dialog
 @using MES.Client.Utitlity
 @using MES.Shared.Models
+@using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
+@using MES.Client.Dialog.Rotors
 
-
+@inject IDialogService DialogService
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
@@ -36,19 +38,105 @@
             }
 
         </MudItem>
-        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
             @if (!string.IsNullOrEmpty(qrCodeData))
             {
                 <div>
-                    @*  <MudText Class="d-flex justify-center align-center">Incoming Inspection</MudText>
-                    *@ <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
+                    <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
                         @foreach (var item in qrCodeData.Split(','))
                         {
                             <p class="qr-item">@item.Trim()</p>
                         }
                     </div>
+                   <div style="margin-top:10px">
+                        <MudButton OnClick="OpenPreviewDialogBox"
+                                   Class="mr-2"
+                                   Color="Color.Primary"
+                                   Variant="Variant.Filled">
+                            Incoming Inspection Report
+                        </MudButton>
 
-                </div>
+                        <MudButton Class="mr-2"
+                                   Color="Color.Secondary"
+                                   Variant="Variant.Filled">
+                            Production Order Report
+                        </MudButton>
+                    </div>
+                   <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
+                            <MudCardContent>
+                              
+                                <MudForm Class="w-100">
+
+                                    <MudGrid>
+                                       
+                                        <MudGrid Spacing="3">
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Workcenters" @bind-Value="serialNumberData.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Relief Land" @bind-Value="serialNumberData.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Tooth Face Left" @bind-Value="serialNumberData.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                        </MudGrid>
+
+                                        <MudGrid Spacing="3">
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Tooth Face Right" @bind-Value="serialNumberData.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Centers Right" @bind-Value="serialNumberData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                        </MudGrid>
+
+                                        <MudGrid Spacing="3">
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Visual Checks" @bind-Value="serialNumberData.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Inspected By" @bind-Value="serialNumberData.InspectedBy" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Notes" @bind-Value="serialNumberData.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                        </MudGrid>
+
+                                        <MudGrid Spacing="3">
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Grinding Start Date" @bind-Value="serialNumberData.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Grinding End Date" @bind-Value="serialNumberData.GrindingdataSubmitedByDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem>
+
+                                           @*  <MudItem xs="12" md="4" class="outlined-box pa-2">
+                                                <MudTextField Label="Delay Reason Tracking" @bind-Value="FinalInspectionData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            </MudItem> *@
+
+                                        </MudGrid>
+                                       </MudGrid>
+                                </MudForm>
+                            </MudCardContent>
+                   </MudCard>
+                    </div>
+              
             }
             else if (cameraError)
             {
@@ -96,7 +184,9 @@
     private bool isScanning;
     private bool isCancel = false;
     private bool cameraError = false;
-
+    private RotorGrindingData serialNumberData;
+    private RotorsFinalInspection FinalInspectionData;
+    private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
 
 
     private async Task StartScanning()
@@ -124,6 +214,52 @@
         StateHasChanged(); // Update the UI to show the camera or error message
     }
 
+    private async Task OpenPreviewDialogBox()
+    {
+
+        if (!string.IsNullOrEmpty(qrCodeData))
+        {
+            var qrDetails = qrCodeData.Split(',');
+
+            if (qrDetails.Length >= 3) // Ensure QR Code has expected fields
+            {
+                grinding.SerialNumber = ExtractValue(qrDetails[0]);
+                grinding.Module = ExtractValue(qrDetails[1]);
+
+            }
+            else
+            {
+                Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
+                return;
+            }
+        }
+        else
+        {
+            Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
+            return;
+        }
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseButton = true,
+                DisableBackdropClick = true
+            };
+
+        var parameters = new DialogParameters
+            {//selectedMaterial
+                ["InspectionData"] = grinding
+
+            };
+
+        var dialog = DialogService.Show<PreviewIncomingDialog>("INCOMING ROTOR INSPECTION", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            // handle result if needed
+        }
+    }
 
     private void StopScanning()
     {
@@ -133,17 +269,55 @@
         StateHasChanged();
     }
 
-    private void OnQrCodeScan(string code)
+    private async void OnQrCodeScan(string code)
     {
         qrCodeData = code;
         isScanning = false;
         isCancel = false;
-        _qrCodeScannerJsInterop.StopRecording();
+        _qrCodeScannerJsInterop?.StopRecording();
+
+        // Extract the serial number (assuming format is "SerialNumber:12345,...")
+        var serial = code.Split(',').FirstOrDefault(s => s.StartsWith("Serial Number:"))?.Split(':')[1];
+
+        if (!string.IsNullOrWhiteSpace(serial))
+        {
+            await FetchSerialNumberData(serial.Trim());
+        }
+
         StateHasChanged();
     }
 
 
+    private async Task FetchSerialNumberData(string serial)
+    {
+        try
+        {
+            var client = _httpClient.CreateClient("MES.ServerAPI"); // Ensure "MyAPI" is configured in Program.cs
+            // var response = await client.GetAsync($"https://localhost:7172/api/RotorGrinding/{serial}");
+            var response = await client.GetAsync($"{ApiConstants.GetDataFromGrinding}/{serial}");
 
+            if (response.IsSuccessStatusCode)
+            {
+                serialNumberData = await response.Content.ReadFromJsonAsync<RotorGrindingData>();
+            }
+            else
+            {
+                Snackbar.Add($"Serial number {serial} not found.", Severity.Warning);
+                serialNumberData = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Error fetching serial number data.", Severity.Error);
+            serialNumberData = null;
+        }
+    }
+
+    private string ExtractValue(string data)
+    {
+        var parts = data.Split(':'); // Check if the data has a label like "SerialNumber: 12345"
+        return parts.Length > 1 ? parts[1].Trim() : parts[0].Trim(); // Return value without label
+    }
 
     private void OnCameraPermissionFailed(string error)
     {

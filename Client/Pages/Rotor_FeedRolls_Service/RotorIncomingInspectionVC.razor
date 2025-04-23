@@ -1261,7 +1261,7 @@
 
             };
 
-        var dialog = DialogService.Show<PreviewDialog>("Preview", parameters, options);
+        var dialog = DialogService.Show<PreviewDialog>("INCOMING ROTOR INSPECTION", parameters, options);
         var result = await dialog.Result;
 
         if (!result.Cancelled)

@@ -23,11 +23,11 @@
 
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Serial Number</MudText>
-                    <MudText Typo="Typo.body1">@SelectedSerialNumber</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.SerialNumber</MudText>
                 </MudItem>
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Module</MudText>
-                    <MudText Typo="Typo.body1">@SelectedModule</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Module</MudText>
                 </MudItem>
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Sales Order</MudText>
@@ -106,7 +106,7 @@
 
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Materials</MudText>
-                    <MudText Typo="Typo.body1">@SelectedMaterial</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Materials</MudText>
                 </MudItem>
                 <MudItem md="4" xs="12" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Others</MudText>
@@ -122,17 +122,17 @@
 
                 <MudItem xs="12" md="4" class="outlined-box">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Rotor Style</MudText>
-                    <MudText Typo="Typo.body1">@SelectedRotorStyle</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.RotorStyle</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Type</MudText>
-                    <MudText Typo="Typo.body1">@SelectedType</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Type</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bearing Removed</MudText>
-                    <MudText Typo="Typo.body1">@Selectedberrem</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.BearingRemoved</MudText>
                 </MudItem>
             </MudGrid>
 
@@ -140,17 +140,17 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bearings</MudText>
-                    <MudText Typo="Typo.body1">@SelectedBearings</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Bearing</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bearing Seals</MudText>
-                    <MudText Typo="Typo.body1">@SelectedBearSeals</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.BearingSeals</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Ceramic Seals</MudText>
-                    <MudText Typo="Typo.body1">@SelectedCerSeals</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.CeramicSeals</MudText>
                 </MudItem>
             </MudGrid>
 
@@ -158,24 +158,22 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bearing Journal Dia (Right)</MudText>
-                    <MudText Typo="Typo.body1">@SelectedRL</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.RotorsDiaRight</MudText>
                     <MudText Typo="Typo.body1">Bearing Journal Dia (Right Details): @InspectionData.yRight</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bearing Journal Dia (Left)</MudText>
-                    <MudText Typo="Typo.body1">@SelectedLR</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.RotorsDiaLeft</MudText>
                     <MudText Typo="Typo.body1">Bearing Journal Dia (Left Details): @InspectionData.yLeft</MudText>
                 </MudItem>
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Basic Sharpening</MudText>
-                    <MudText Typo="Typo.body1">@Selectedbs</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.BasicSharpening</MudText>
 
-                    @if (Selectedbs == "Yes")
-                    {
-                        <MudText Typo="Typo.h6" Color="Color.Primary">Basic Sharpening Detail</MudText>
-                        <MudText Typo="Typo.body1">@Selectedybasicsharp</MudText>
-                    }
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Basic Sharpening Detail</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.IfYBasicSharpening</MudText>
+
                 </MudItem>
             </MudGrid>
 
@@ -183,22 +181,20 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Wedgelock Alignment Marks Present</MudText>
-                    <MudText Typo="Typo.body1">@Selectedpre</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.WedgelockAlignmentMarks</MudText>
                 </MudItem>
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Center Grinding</MudText>
-                    <MudText Typo="Typo.body1">@Selectedctr</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.CenterGrinding</MudText>
 
-                    @if (Selectedctr == "Yes")
-                    {
-                        <MudText Typo="Typo.h6" Color="Color.Primary">Center Grinding Details</MudText>
-                        <MudText Typo="Typo.body1">@Selectedycg</MudText>
-                    }
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Center Grinding Details</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.IfYCenterGrinding</MudText>
+
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Aligned</MudText>
-                    <MudText Typo="Typo.body1">@Selectedalign</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Aligned</MudText>
                 </MudItem>
             </MudGrid>
 
@@ -208,22 +204,20 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Plastic Sleeves</MudText>
-                    <MudText Typo="Typo.body1">@Selectedyps</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.PlasticSleaves</MudText>
                 </MudItem>
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Welding</MudText>
-                    <MudText Typo="Typo.body1">@Selectedwelding</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Welding</MudText>
 
-                    @if (Selectedwelding == "Yes")
-                    {
-                        <MudText Typo="Typo.h6" Color="Color.Primary">Welding Number</MudText>
-                        <MudText Typo="Typo.body1">@InspectionData.WeldingNum</MudText>
-                    }
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Welding Number</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.WeldingNum</MudText>
+
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Bed Knife in Box</MudText>
-                    <MudText Typo="Typo.body1">@Selectebkid</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.BedKnife</MudText>
                 </MudItem>
 
             </MudGrid>
@@ -238,13 +232,13 @@
                 </MudItem>
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Re-Profile</MudText>
-                    <MudText Typo="Typo.body1">@Selectedrp</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.ReProfile</MudText>
 
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Sand Blasting</MudText>
-                    <MudText Typo="Typo.body1">@Selectedsb</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.SandBlasting</MudText>
                 </MudItem>
 
             </MudGrid>
@@ -277,13 +271,13 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Box Received with Saddles (Down)</MudText>
-                    <MudText Typo="Typo.body1">@Selectedbt</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Bottom</MudText>
 
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Box Received with Saddles (Top)</MudText>
-                    <MudText Typo="Typo.body1">@Selectedtb</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.Top</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
@@ -304,12 +298,11 @@
 
                 <MudItem xs="12" md="4" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Rotor Categorize  </MudText>
-                    <MudText Typo="Typo.body1">@Selectedddrc</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.RotorCategorization</MudText>
                 </MudItem>
-
-                <MudItem xs="12" md="4" class="outlined-box">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">Sub-Module</MudText>
-                    <MudText Typo="Typo.body1">@Selecteddd</MudText>
+                <MudItem xs="12" md="4" class="outlined-box pa-2">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Component Type  </MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.ComponentType</MudText>
                 </MudItem>
 
             </MudGrid>
@@ -321,8 +314,8 @@
     </DialogContent>
 
     <DialogActions>
-        <MudButton OnClick="PrintDialog" Color="Color.Primary">Print</MudButton>
-        <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton>
+        @*  <MudButton OnClick="PrintDialog" Color="Color.Primary">Print</MudButton>
+        *@ <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -331,25 +324,24 @@
 
 
     .outlined-box .mud-text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
 
     .outlined-box {
-
-    border-radius: 8px;
-    padding: 16px;
+        border-radius: 8px;
+        padding: 16px;
     }
 
 
     #print-section {
-    background-color: #2a2a2a; /* Dark section background */
-    padding: 14px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    color: #ffffff; /* White text */
+        background-color: #2a2a2a; /* Dark section background */
+        padding: 14px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        color: #ffffff; /* White text */
     }
 
 </style>
@@ -358,36 +350,9 @@
 
 @code {
     [Parameter]
-    public IncomingInspection InspectionData { get; set; }
 
-    [Parameter]
-    public string SelectedMaterial { get; set; }
-    [Parameter] public string SelectedType { get; set; }
+    public RotorGrindingData InspectionData { get; set; }
 
-    [Parameter] public string SelectedRotorStyle { get; set; }
-    [Parameter] public string Selectedberrem { get; set; }
-    [Parameter] public string SelectedBearings { get; set; }
-    [Parameter] public string SelectedBearSeals { get; set; }
-    [Parameter] public string SelectedCerSeals { get; set; }
-    [Parameter] public string SelectedRL { get; set; }
-    [Parameter] public string SelectedLR { get; set; }
-    [Parameter] public string Selectedbs { get; set; }
-    [Parameter] public string Selectedybasicsharp { get; set; }
-    [Parameter] public string Selectedpre { get; set; }
-    [Parameter] public string Selectedctr { get; set; }
-    [Parameter] public string Selectedycg { get; set; }
-    [Parameter] public string Selectedalign { get; set; }
-    [Parameter] public string Selectedyps { get; set; }
-    [Parameter] public string Selectedwelding { get; set; }
-    [Parameter] public string Selectebkid { get; set; }
-    [Parameter] public string Selectedrp { get; set; }
-    [Parameter] public string Selectedsb { get; set; }
-    [Parameter] public string Selectedbt { get; set; }
-    [Parameter] public string Selectedtb { get; set; }
-    [Parameter] public string Selectedddrc { get; set; }
-    [Parameter] public string Selecteddd { get; set; }
-    [Parameter] public string SelectedSerialNumber { get; set; }
-    [Parameter] public string SelectedModule { get; set; }
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
     public QrDTO LocQR { get; set; }
@@ -411,39 +376,39 @@
         ("Dia", InspectionData.Dia),
         ("Len", InspectionData.Len),
         ("Fits", InspectionData.Fits),
-        ("Materials", SelectedMaterial),
+        ("Materials", InspectionData.Materials),
         ("Others", InspectionData.Others),
         ("Rotors Dia", InspectionData.RotorsDia),
-        ("Rotors Style", SelectedRotorStyle),
-        ("Type", SelectedType),
-        ("Bearing Removed", Selectedberrem),
-        ("Bearings", SelectedBearings),
-        ("Bearing Seals",SelectedBearSeals),
-        ("Ceramic Seals", SelectedCerSeals),
-        ("Bearing Journal Dia (Right)", SelectedRL),
+        ("Rotors Style", InspectionData.RotorsDia),
+        ("Type", InspectionData.Type),
+        ("Bearing Removed", InspectionData.BearingRemoved),
+        ("Bearings", InspectionData.Bearing),
+        ("Bearing Seals",InspectionData.BearingSeals),
+        ("Ceramic Seals", InspectionData.CeramicSeals),
+        ("Bearing Journal Dia (Right)", InspectionData.Right),
         ("Bearing Journal Dia Details (Right)", InspectionData.yRight),
-        ("Bearing Journal Dia (Left)", SelectedLR),
+        ("Bearing Journal Dia (Left)", InspectionData.Left),
         ("Bearing Journal Dia Details (Left)", InspectionData.yLeft),
-        ("Basic Sharpening", Selectedbs),
-        ("Basic Sharpening Details", Selectedybasicsharp),
-        ("Wedgelock Alignment Marks; Present", Selectedpre),
-         ("Center Grinding", Selectedctr),
-        ("Center Grinding Details", Selectedycg),
-        ("Aligned", Selectedalign),
-        ("Plastic Sleaves", Selectedyps),
-        ("Welding", Selectedwelding),
+        ("Basic Sharpening", InspectionData.BasicSharpening),
+        ("Basic Sharpening Details", InspectionData.IfYBasicSharpening),
+        ("Wedgelock Alignment Marks; Present", InspectionData.WedgelockAlignmentMarks),
+         ("Center Grinding", InspectionData.CenterGrinding),
+        ("Center Grinding Details", InspectionData.IfYCenterGrinding),
+        ("Aligned", InspectionData.Aligned),
+        ("Plastic Sleaves", InspectionData.PlasticSleaves),
+        ("Welding", InspectionData.Welding),
         ("No. of Welding", InspectionData.WeldingNum),
-        ("Bed Knife in box", Selectebkid),
+        ("Bed Knife in box", InspectionData.BedKnife),
         ("Replace Blades", InspectionData.BoxReceivedWithSaddles),
-        ("Re-Profile", Selectedrp),
-        ("Sand Blasting", Selectedsb),
+        ("Re-Profile", InspectionData.ReProfile),
+        ("Sand Blasting", InspectionData.SandBlasting),
         ("Manual Labor", InspectionData.ManualLabor),
-        ("Box Received with Saddles(Bottom)", Selectedbt),
-        ("Box Received with Saddles(Top)", Selectedtb),
+        ("Box Received with Saddles(Bottom)", InspectionData.Bottom),
+        ("Box Received with Saddles(Top)", InspectionData.Top),
         ("Add QTY", InspectionData.AddQty?.ToString()),
         ("Saddle Part Number", InspectionData.SaddlePartNumber),
-        ("Rotor Categorize", Selectedddrc),
-        ("Sub Module", Selecteddd),
+        ("Rotor Categorize", InspectionData.RotorCategorization),
+
     };
     }
 
@@ -455,76 +420,76 @@
         }
     }
 
-    async void PrintDialog()
-    {
-        var receive = new QRRequestDTO
-            {
-                SerialNumber = SelectedSerialNumber,
-                Module = SelectedModule,
-                Customer = InspectionData.Customer,
-                Date = DateTime.Now // or whatever date format you need
-            };
+    // async void PrintDialog()
+    // {
+    //     var receive = new QRRequestDTO
+    //         {
+    //             SerialNumber = SelectedSerialNumber,
+    //             Module = SelectedModule,
+    //             Customer = InspectionData.Customer,
+    //             Date = DateTime.Now // or whatever date format you need
+    //         };
 
-        await GenerateQR(receive);
-        //  await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
-
-
-    }
+    //     await GenerateQR(receive);
+    //     //  await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
 
 
-    public async Task GenerateQR(QRRequestDTO receive)
-    {
-        Snackbar.Clear();
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-
-        try
-        {
-
-            string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.Module}, Customer: {receive.Customer}, Date: {receive.Date}";
+    // }
 
 
-            var jsonPart = JsonConvert.SerializeObject(receive);
-            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+    // public async Task GenerateQR(QRRequestDTO receive)
+    // {
+    //     Snackbar.Clear();
+    //     Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
-            // Serialize receiving data
+    //     try
+    //     {
+
+    //         string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.Module}, Customer: {receive.Customer}, Date: {receive.Date}";
 
 
+    //         var jsonPart = JsonConvert.SerializeObject(receive);
+    //         var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
 
-            //   var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/IncomlocQR", content);
-            var response = await HttpClient.PostAsync(ApiConstants.AddprintQRCode, content);
-            byte[] qrCodeBytes = null;
+    //         // Serialize receiving data
 
 
 
-            if (response.IsSuccessStatusCode)
-            {
-                using (var stream = await response.Content.ReadAsStreamAsync())
-                using (var memoryStream = new MemoryStream())
-                {
-                    await stream.CopyToAsync(memoryStream);
-                    qrCodeBytes = memoryStream.ToArray();
-                }
+    //         //   var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/IncomlocQR", content);
+    //         var response = await HttpClient.PostAsync(ApiConstants.AddprintQRCode, content);
+    //         byte[] qrCodeBytes = null;
 
-                // Convert image to Base64 string
-                string base64Image = Convert.ToBase64String(qrCodeBytes);
-                string imageDataUrl = $"data:image/png;base64,{base64Image}";
 
-                // Define the text to show under the QR code
-                string labelText = $"SN: {receive.SerialNumber}";
 
-                // Call JS function to print image
-                await JSRuntime.InvokeVoidAsync("printincomingImage", imageDataUrl, labelText);
-            }
-            else
-            {
-                Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
-        }
-    }
+    //         if (response.IsSuccessStatusCode)
+    //         {
+    //             using (var stream = await response.Content.ReadAsStreamAsync())
+    //             using (var memoryStream = new MemoryStream())
+    //             {
+    //                 await stream.CopyToAsync(memoryStream);
+    //                 qrCodeBytes = memoryStream.ToArray();
+    //             }
+
+    //             // Convert image to Base64 string
+    //             string base64Image = Convert.ToBase64String(qrCodeBytes);
+    //             string imageDataUrl = $"data:image/png;base64,{base64Image}";
+
+    //             // Define the text to show under the QR code
+    //             string labelText = $"SN: {receive.SerialNumber}";
+
+    //             // Call JS function to print image
+    //             await JSRuntime.InvokeVoidAsync("printincomingImage", imageDataUrl, labelText);
+    //         }
+    //         else
+    //         {
+    //             Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
+    //     }
+    // }
 
     void CloseDialog()
     {

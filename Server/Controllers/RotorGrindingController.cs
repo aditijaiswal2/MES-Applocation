@@ -131,5 +131,17 @@ namespace MES.Server.Controllers
             return Ok(records);
         }
 
+        [HttpGet("{serialNumber}")]
+        public async Task<IActionResult> GetSerialData(string serialNumber)
+        {
+            var data = await _context.RotorGrindingData
+                .FirstOrDefaultAsync(x => x.SerialNumber == serialNumber);
+
+            if (data == null) return NotFound();
+
+            return Ok(data);
+        }
+
+
     }
 }
