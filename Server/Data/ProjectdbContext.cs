@@ -30,7 +30,9 @@ namespace MES.Server.Data
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
         public DbSet<IncomingImages> IncomingImages { get; set; }
         public DbSet<MES.Shared.Models.Rotors.Imagedata> Imagedatas { get; set; }
-
+        public DbSet<FinalInspection> finalInspections { get; set; }
+        public DbSet<MES.Shared.Models.Rotors.FinalImagedata> finalImagedatas { get; set; }
+        
         public DbSet<IncomingInspection> IncomingInspections { get; set; }
        // public DbSet<Imagedata> Imagedatas { get; set; }
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
@@ -79,6 +81,14 @@ namespace MES.Server.Data
                 .HasForeignKey(i => i.IncomingImageId)
                 .IsRequired();
 
+            modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
+               .HasKey(i => i.ID);
+
+            modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
+                .HasOne(i => i.FinalImages)
+                .WithMany(its => its.Images)
+                .HasForeignKey(i => i.IncomingImageId)
+                .IsRequired();
 
             base.OnModelCreating(modelBuilder);
 

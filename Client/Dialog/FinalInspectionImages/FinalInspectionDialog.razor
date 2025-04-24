@@ -1,0 +1,245 @@
+﻿@using MES.Client.Pages.Admin
+@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared;
+@using Newtonsoft.Json
+@using System.Text
+@using MES.Shared.DTOs
+@using MES.Shared.Entities
+@using System.Net
+@using System.ComponentModel.DataAnnotations;
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+ @inject IHttpClientFactory _httpClient
+
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.AcUnit" Class="mr-3 mb-n1" />
+                SERVICE ROTOR FINAL INSPECTION REPORT
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+             <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
+                        <MudCardContent>
+
+                            <MudGrid Class="w-100">
+
+                                    <MudGrid Spacing="3">
+
+                                        <MudItem xs="12" md="6">
+                                            <MudTextField Label="Sales Order" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                        </MudItem>
+
+                                        <MudItem xs="12" md="6">
+                                            <MudTextField Label="Customer PO#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                        </MudItem>
+                                     
+                                </MudGrid>
+
+                            <MudGrid Spacing="3">
+
+                                <MudItem xs="12" md="6">
+                                    <MudTextField Label="Customer" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                </MudItem>
+
+                                <MudItem xs="12" md="6">
+                                    <MudTextField Label="Dwg#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                </MudItem>
+
+                            </MudGrid>
+
+                        <MudGrid Spacing="3">
+
+                            <MudItem xs="12" md="4">
+                                <MudTextField Label="Description" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+
+                            <MudItem xs="12" md="4">
+                                <MudTextField Label="AG#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+
+                            <MudItem xs="12" md="4">
+                                <MudTextField Label="Material" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+
+                        </MudGrid>
+
+                        <MudGrid Spacing="3">
+
+                            <MudItem xs="12" md="12">
+                                <MudTextField Label="Special notes / comments" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                        </MudGrid>                       
+
+                        <MudGrid Spacing="3">
+
+                            <MudItem xs="12" md="12">
+                                <MudTextField Label="Dressed With New Bearings" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                        </MudGrid>
+
+                            </MudGrid>
+                        </MudCardContent>
+                <!-- Table Section -->
+                <MudGrid Spacing="3" Class="mt-4">
+                    <MudItem xs="12">
+                        <MudTable Items="@tableData" Elevation="1">
+                            <HeaderContent>
+                               
+                                <MudTh>Description</MudTh>
+                                <MudTh>Start</MudTh>
+                                <MudTh>Finish</MudTh>
+                                <MudTh>Date</MudTh>
+                                <MudTh>Name</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Description"></MudTd>
+                                <MudTd DataLabel="Start"></MudTd>
+                                <MudTd DataLabel="Finish"></MudTd>
+                                <MudTd DataLabel="Date"></MudTd>
+                                <MudTd DataLabel="Name"></MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudItem>
+                </MudGrid>
+
+                  <MudCardContent>
+
+                            <MudGrid Class="w-100">
+
+                                    <MudGrid Spacing="3">
+                                        <MudItem md="6" xs="12" class="outlined-box pa-2">
+                                            <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
+                                            <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                                        </MudItem>
+
+                            <MudItem md="6" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
+                                <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                            </MudItem>
+
+                                        <MudItem md="6" xs="12" class="outlined-box pa-2">
+                                            <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
+                                             <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                            </MudItem>
+
+                                </MudGrid>
+                            </MudGrid>
+                  </MudCardContent>
+
+                <MudGrid Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <MudItem xs="12" md="6" Class="text-center">
+                        <h5>For New Rotors and Spare Parts</h5>
+                        <p Class="text-center">Please Call</p>
+                        <h6>1.800.844.2927 or 330.677.2225</h6>
+                        <p>8:00 am - 5:00 pm, M-F</p>
+                    </MudItem>
+                </MudGrid>
+
+              </MudForm>
+           
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Add">Add</MudButton>
+            <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    private IEnumerable<AppRole> appRoles = new List<AppRole>();
+
+    private string tableData ;
+  
+
+
+    private string value { get; set; } = "Nothing selected";
+    private IEnumerable<string> options { get; set; } = new HashSet<string>();
+
+    public event EventHandler CompletedChanged;
+    public UserAddDto user = new UserAddDto();
+
+    private bool _isCompleted;
+    public bool IsCompleted
+    {
+        get => _isCompleted;
+        set
+        {
+            _isCompleted = value;
+            CompletedChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+    private void OnSalesUserCheckedChanged(bool isChecked)
+    {
+        user.IsSalesUser = isChecked;
+
+        // Optional: Do other things based on the checkbox state
+        if (isChecked)
+        {
+            // Snackbar.Add("Sales user enabled.", Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add("Sales user disabled.", Severity.Info);
+        }
+    }
+
+    private async Task Add()
+    {
+       
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoles();
+
+        // get Work Centers
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+           
+        }
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+            //var roleResponse = await HttpClient.GetAsync("https://localhost:7006/api/Role/getrole");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var roleResponse = await HttpClient.GetAsync(ApiConstants.GetRole);
+            if (roleResponse.IsSuccessStatusCode)
+            {
+                var roleResult = await roleResponse.Content.ReadFromJsonAsync<IEnumerable<AppRole>>();
+                if (roleResult != null)
+                {
+                    appRoles = roleResult.ToList();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+    }
+}

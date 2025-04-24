@@ -1,0 +1,561 @@
+﻿﻿@using System.ComponentModel.DataAnnotations;
+@using MES.Client.Utitlity;
+@using MES.Client.Pages.Rotor_FeedRolls_Service;
+@using MES.Shared.DTOs
+@using MES.Shared.Models.Rotors
+@using Newtonsoft.Json
+@using System.Text
+@using System.Linq
+@using MES.Shared.Models
+@using static MES.Shared.Models.Rotors.IncomingInspection
+@using static MES.Client.Pages.Rotor_FeedRolls_Service.RotorIncomingInspectionVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IDialogCompletionService CompletionService
+@inject IJSRuntime JSR
+@inject HttpClient HttpClient
+@inject IHttpClientFactory _httpClient
+
+<script>
+    <script src="js/camera.js" >
+</script>
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.AddAPhoto" Class="mr-2 mb-n1" />
+                Add Images
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <div class="button-container mt-2">
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" Accept=".png, .jpg, .jpeg" MaximumFileCount="6">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="@context.Id"
+                                   Size="Size.Large">
+                            Select
+                        </MudButton>
+
+                        @if (isMobile)
+                        {
+                            <MudButton HtmlTag="label" Style="padding:8px 11px;font-size:15px" Color="Color.Primary" Size="Size.Small">
+                                <span><i class="fas fa-camera"></i></span>
+                                <img src="images/image (1).png" alt="Camera Icon" />
+                                <span>CAPTURE</span>
+                                <InputFile class="custom-file-input" OnChange="HandleFileInput" accept="image/*" capture />
+                            </MudButton>
+
+
+                        }
+                        else
+                        {
+                            <MudButton StartIcon="@Icons.Material.Filled.PhotoCamera" Color="Color.Primary" Size="Size.Large" OnClick="@CaptureImage">Capture</MudButton>
+
+                        }
+
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </div>
+
+            <br />
+            <br />
+
+            <div class="gallery-container" style="border: 1px dotted #000;margin-top:-20px">
+                @if (selectedImagesFromSM.Any())
+                {
+                    <MudItem md="12" sm="12" xs="12">
+                        <MudGrid Class="d-flex mt-4" Spacing="2" Justify="Justify.Center">
+                            @foreach (var image in selectedImagesFromSM)
+                            {
+                                var imageSize = image.Images.FirstOrDefault(i => i.ID == image.Id);
+                                <MudCard Class="pa-2 custom-card-width mb-4 mr-2 mud-elevation-4 py-2 px-4 rounded white" Outlined="true">
+                                    <MudCardMedia Image="@($"data:image/png;base64,{Convert.ToBase64String(image.Images.First().Data)}")" Height="100" />
+
+                                    <MudItem Class="d-flex justify-content-between">
+                                        <div>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="@(() => DeleteImage(image))" />
+                                        </div>
+                                        <div style="padding-top:6px">
+                                            <MudText Style="color:black;font-size:11px"> Size : @imageSize.Data.Length KB</MudText>
+                                        </div>
+                                    </MudItem>
+                                </MudCard>
+                            }
+                            @if (selectedImageCount < 6)
+                            {
+                                <div style="display: flex; align-items: center; height: 150px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large" />
+                                </div>
+                            }
+                        </MudGrid>
+                    </MudItem>
+
+                }
+                else
+                {
+                    @if (selectedImageCount < 6)
+                    {
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 150px;">
+                            <div>
+                                <MudIcon Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large" />
+                            </div>
+                            <div class="placeholder-text">
+                                Images will display here!
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2 mt-4" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@AddImages">Upload</MudButton>
+            <MudButton Class="mr-4 mb-2 mt-4" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@ClearImage" Disabled="@(!selectedImagesFromSM.Any())">Clear</MudButton>
+        </DialogActions>
+    </MudDialog>
+</div>
+
+<style>
+    .custom-card-width {
+        width: 27%;
+    }
+
+    .button-container {
+        text-align: center;
+        margin-top: -30px;
+    }
+
+    .gallery-container {
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+    .placeholder-text {
+        text-align: center;
+        padding: 20px;
+        color: #888;
+    }
+
+    .custom-file-input {
+        display: none;
+    }
+
+    .file-input-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: #FFBE26;
+        margin-left: 330px;
+        margin-top: -33px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .file-input-icon {
+        margin-right: 8px;
+    }
+
+    .camera-icon {
+        width: 24px;
+        height: 24px;
+    }
+</style>
+
+
+@code {
+
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public List<string> SavedImages { get; set; } = new List<string>();
+    // [Parameter] public ProjectImgDTO projectImagesDTO { get; set; }
+
+    [Parameter]
+    public string SerialNumber { get; set; }
+    private bool isMobile;
+    private PartInfoDTO PartInfo { get; set; } = new PartInfoDTO();
+
+    private Dictionary<string, bool> SelectedImages { get; set; } = new Dictionary<string, bool>();
+
+    private int selectedITSImageID;
+    private bool EnableDeleteButton { get; set; } = false;
+    private string? selectedPartNumber;
+    private string frameUri;
+    private int selectedImageCount = 0;
+
+    private List<FinalInspection> selectedImagesFromSM = new List<FinalInspection>();
+    private List<string> oversizedImageNames = new List<string>();
+    private IList<IBrowserFile> files = new List<IBrowserFile>();
+
+    private IEnumerable<FinalInspection>? iTSImages;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        isMobile = await JSR.InvokeAsync<bool>("isMobileDevice");
+        selectedPartNumber = SerialNumber;
+
+    }
+
+    private async Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        if (files.Count + selectedImageCount > 6)
+        {
+            Snackbar.Add("You can upload only 6 images.", Severity.Warning);
+            return;
+        }
+
+        if (SavedImages.Count + selectedImagesFromSM.Count < 6)
+        {
+            foreach (var file in files)
+            {
+                if (file.Size <= Constants.IMAGE_MAX_SIZE)
+                {
+                    this.files.Add(file);
+                }
+                else
+                {
+                    oversizedImageNames.Add(file.Name);
+                }
+            }
+
+            if (oversizedImageNames.Any())
+            {
+                if (oversizedImageNames.Count == 1)
+                {
+                    Snackbar.Add($"The image '{oversizedImageNames.First()}' is greater than 20MB.", Severity.Warning);
+                }
+                else
+                {
+                    Snackbar.Add($"The following images are greater than 20MB: {string.Join(", ", oversizedImageNames)}", Severity.Warning);
+                }
+
+                oversizedImageNames.Clear();
+                return; // without return snackbar will not display but bellow 20 mb image not dipslaying.
+            }
+
+            var uploadTasks = new List<Task>();
+
+            foreach (var file in files)
+            {
+                uploadTasks.Add(UploadFile(file));
+            }
+
+            await Task.WhenAll(uploadTasks);
+
+            await CheckPartNumberImageCount();
+
+            selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
+        }
+        else
+        {
+            Snackbar.Add("You can upload only 6 images.", Severity.Warning);
+        }
+    }
+
+    private async Task UploadFile(IBrowserFile file)
+    {
+        try
+        {
+            Snackbar.Clear();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+            if (file.Size <= Constants.IMAGE_MAX_SIZE)
+            {
+                byte[] imageData;
+
+                if (file.Size <= Constants.IMAGE_SIZE_ONE_MB)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        await file.OpenReadStream().CopyToAsync(stream);
+                        imageData = stream.ToArray();
+                    }
+                }
+                else
+                {
+                    var resizedFile = await file.RequestImageFileAsync("image/jpeg", 1024, 1024);
+                    using (var stream = new MemoryStream())
+                    {
+                        await resizedFile.OpenReadStream().CopyToAsync(stream);
+                        imageData = stream.ToArray();
+                    }
+                }//SerialNumber = selectedPartNumber,
+
+                selectedImagesFromSM.Add(new FinalInspection { SerialNumber = selectedPartNumber, Images = new List<FinalImagedata> { new FinalImagedata { Data = imageData } } });
+            }
+            else
+            {
+                Snackbar.Add($"The selected image '{file.Name}' exceeds the maximum size limit : 20 MB.", Severity.Warning);
+            }
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Error Occurred {e.Message}", Severity.Error);
+        }
+    }
+
+    private async Task CaptureImage()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        if (SavedImages.Count + selectedImagesFromSM.Count < 20)
+        {
+            var options = new DialogOptions
+                {
+                    FullWidth = true,
+                    DisableBackdropClick = true,
+                    Position = DialogPosition.Center
+                };
+
+            var result = await DialogService.Show<FInalImageCaptureDialog>("Capture Image", options).Result;
+
+            if (!result.Cancelled)
+            {
+                string imageUri = result.Data.ToString();
+                byte[] bytes = Convert.FromBase64String(imageUri.Split(',')[1]);
+
+                if (bytes.Length > Constants.IMAGE_MAX_SIZE)
+                {
+                    Snackbar.Add($"The Captured image exceeds the maximum size limit : 20 MB.", Severity.Warning);
+                }
+                else
+                {
+                    byte[] imageStreamToBytes;
+
+                    using (var image = SixLabors.ImageSharp.Image.Load(bytes))
+                    {
+                        using (MemoryStream outputStream = new MemoryStream())
+                        {
+                            // var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 70 };
+                            var encoder = new SixLabors.ImageSharp.Formats.Png.PngEncoder();
+                            image.Save(outputStream, encoder);
+
+                            imageStreamToBytes = outputStream.ToArray();
+                        }
+                    }
+
+                    selectedImagesFromSM.Add(new FinalInspection { SerialNumber = selectedPartNumber, Images = new List<FinalImagedata> { new FinalImagedata { Data = imageStreamToBytes } } });
+                }
+
+                await CheckPartNumberImageCount();
+            }
+        }
+        else
+        {
+            Snackbar.Add("You can capture only 20 images.", Severity.Warning);
+        }
+    }
+
+    private async Task<bool> CheckPartNumberImageCount()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        if (string.IsNullOrEmpty(selectedPartNumber))
+        {
+            Snackbar.Add("Please select a Serial number first.", Severity.Warning);
+            EnableDeleteButton = false;
+            return false;
+        }
+
+        if (iTSImages != null && iTSImages.Any())
+        {
+            var existingPart = iTSImages.FirstOrDefault(image => image.SerialNumber == selectedPartNumber);
+
+            if (existingPart != null)
+            {
+                int existingImageCount = iTSImages.Sum(image => image.Images.Count);
+                int selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count; // Total count from both lists
+                int remainingLimit = 20 - existingImageCount;
+
+                if (selectedImageCount > remainingLimit)
+                {
+                    Snackbar.Add($"Part number {selectedPartNumber} can have a maximum of 20 images. You can add only {remainingLimit} more images.", Severity.Warning);
+
+                    EnableDeleteButton = true;
+
+                    selectedImagesFromSM.Clear();
+
+                    return false;
+                }
+
+                selectedITSImageID = existingPart.Id;
+
+            }
+            else
+            {
+
+                int selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count; // Total count from both lists
+
+                if (selectedImageCount > 20)
+                {
+                    Snackbar.Add($"Part number {selectedPartNumber} can have a maximum of 20 images. You can add only 20 images for a new part.", Severity.Warning);
+
+                    EnableDeleteButton = true;
+
+                    selectedImagesFromSM.Clear();
+
+                    return false;
+                }
+
+                selectedITSImageID = 0;
+            }
+
+            EnableDeleteButton = false;
+
+            return true;
+        }
+
+        return true;
+    }
+
+    private void ConvertSavedImagesToITSImages()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        //selectedImagesFromSM.Clear(); // Important: Clear previous entries
+
+        foreach (var imageUri in SavedImages)
+        {
+            try
+            {
+                var imageData = Convert.FromBase64String(imageUri.Split(',')[1]);
+
+                selectedImagesFromSM.Add(new FinalInspection
+                    {
+                        SerialNumber = selectedPartNumber,
+                        Images = new List<FinalImagedata> { new FinalImagedata { Data = imageData } }
+                    });
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add($"Error Occurred {e.Message}", Severity.Error);
+            }
+        }
+
+        StateHasChanged(); // 🔄 Force UI update to render image preview
+    }
+
+    private async Task AddImages()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        ConvertSavedImagesToITSImages();
+
+        if (selectedImagesFromSM.Count == 0)
+        {
+            Snackbar.Add("Please select at least one image before adding.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            var uploadDto = new FinalInspectionImageDTO   
+                {
+                // Project = projectImagesDTO.ProjectNumber?.Trim(),
+
+                    SerialNumber = SerialNumber?.Trim(),
+                // SerialNumber = int.TryParse(inspection.SerialNumber, out var sn) ? sn : 0,
+
+                    Images = selectedImagesFromSM.Select(image =>
+                    {
+                        var imageDataDto = new FinalImageDto { Data = image.Images.First().Data, IncomingImageId = selectedITSImageID };
+
+                        return imageDataDto;
+                    }).ToList()
+                };
+
+            Snackbar.Add("Images added successfully.", Severity.Success);
+            MudDialog.Close();
+            await localStorage.SetItemAsync<FinalInspectionImageDTO>("ProjectImageData", uploadDto);
+            CompletionService.IsCompleted = true;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occurred {ex.Message}", Severity.Error);
+        }
+
+    }
+
+    private void ClearImage()
+    {
+        selectedImagesFromSM.Clear();
+        selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
+    }
+
+    private void DeleteImage(FinalInspection imageToDelete)
+    {
+        selectedImagesFromSM.Remove(imageToDelete);
+        selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+
+    private async Task HandleFileInput(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        if (files.Count + selectedImageCount > 20)
+        {
+            Snackbar.Add("You can upload only 20 images.", Severity.Warning);
+            return;
+        }
+        if (files.Count == 1)
+        {
+            var file = files.First();
+            await ProcessFile(file);
+        }
+        else
+        {
+            Snackbar.Add("Please select only one image.", Severity.Warning);
+        }
+    }
+
+
+    private async Task ProcessFile(IBrowserFile file)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+
+        if (file.Size > Constants.IMAGE_MAX_SIZE)
+        {
+            Snackbar.Add($"The selected image '{file.Name}' exceeds the maximum size limit: 20 MB.", Severity.Warning);
+            return;
+        }
+
+        byte[] imageData;
+
+        var resizedFile = await file.RequestImageFileAsync("image/jpeg", 1024, 1024); // Adjust resolution as needed
+        using (var stream = new MemoryStream())
+        {
+            await resizedFile.OpenReadStream().CopyToAsync(stream);
+            imageData = stream.ToArray();
+        }
+
+        selectedImagesFromSM.Add(new FinalInspection { SerialNumber = selectedPartNumber, Images = new List<FinalImagedata> { new FinalImagedata { Data = imageData } } });
+
+
+        selectedImageCount = selectedImagesFromSM.Count + SavedImages.Count;
+        StateHasChanged();
+    }
+
+    private void DeleteCsiImage()
+    {
+        PartInfo.CsiPartImage = null;
+    }
+}

@@ -1,4 +1,4 @@
-using MES.Server.Contracts;
+ using MES.Server.Contracts;
 using MES.Server.Data;
 using MES.Server.Data.Repositories;
 using MES.Server.Services;
@@ -37,12 +37,7 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 524288000; // 500 MB
 });
 
-
-
-
-
 builder.Services.AddScoped<ITokenService, TokenService>();
-
 builder.Services.AddTransient<IReceivingDataRepository, ReceivingDataRepository>();
 builder.Services.AddTransient<ReceivingDataRepository>();
 builder.Services.AddTransient<IMESWorkCentersRepository, MESWorkCentersRepository>();
@@ -54,7 +49,6 @@ builder.Services.AddTransient<ImageRepository>();
 builder.Services.AddTransient<IFileRepository, FileRepository>();
 builder.Services.AddTransient<FileRepository>();
 builder.Services.AddSingleton<HttpClient>();
-
 
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>

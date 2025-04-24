@@ -378,6 +378,51 @@ namespace MES.Server.Migrations
                     b.ToTable("Filedata");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.FinalImagedata", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("FinalImagesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageFilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IncomingImageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("FinalImagesId");
+
+                    b.ToTable("finalImagedatas");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Rotors.FinalInspection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("finalInspections");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
                 {
                     b.Property<int>("ID")
@@ -3110,6 +3155,15 @@ namespace MES.Server.Migrations
                     b.Navigation("SalesAttachedFile");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.Rotors.FinalImagedata", b =>
+                {
+                    b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalImages")
+                        .WithMany("Images")
+                        .HasForeignKey("FinalImagesId");
+
+                    b.Navigation("FinalImages");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
                 {
                     b.HasOne("MES.Shared.Models.Rotors.IncomingImages", "IncomingImages")
@@ -3165,6 +3219,11 @@ namespace MES.Server.Migrations
             modelBuilder.Entity("MES.Shared.Entities.AppUser", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Rotors.FinalInspection", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingImages", b =>

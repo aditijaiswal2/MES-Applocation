@@ -64,6 +64,19 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "finalInspections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_finalInspections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IncomingImages",
                 columns: table => new
                 {
@@ -1162,6 +1175,27 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "finalImagedatas",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IncomingImageId = table.Column<int>(type: "int", nullable: false),
+                    FinalImagesId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_finalImagedatas", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_finalImagedatas_finalInspections_FinalImagesId",
+                        column: x => x.FinalImagesId,
+                        principalTable: "finalInspections",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Imagedatas",
                 columns: table => new
                 {
@@ -1278,6 +1312,11 @@ namespace MES.Server.Migrations
                 column: "SalesAttachedFileId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_finalImagedatas_FinalImagesId",
+                table: "finalImagedatas",
+                column: "FinalImagesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Imagedatas_IncomingImageId",
                 table: "Imagedatas",
                 column: "IncomingImageId");
@@ -1308,6 +1347,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Filedata");
+
+            migrationBuilder.DropTable(
+                name: "finalImagedatas");
 
             migrationBuilder.DropTable(
                 name: "Imagedatas");
@@ -1377,6 +1419,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "SalesAttachedFile");
+
+            migrationBuilder.DropTable(
+                name: "finalInspections");
 
             migrationBuilder.DropTable(
                 name: "IncomingImages");

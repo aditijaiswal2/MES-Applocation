@@ -82,6 +82,16 @@ namespace MES.Shared.Models.Rotors
         public DateTime? GrindingEndDate { get; set; }
         public string Notes { get; set; }
         public string DelayReasonTracking { get; set; }
+        public string CustomerPoNum { get; set; }
+        public string DWGNum { get; set; }
+        public string AGNum { get; set; }
+        public string SpecialNoteComment { get; set; }
+        public string Dressedwithnewbearing { get; set; }
+        public string? InspectorSing { get; set; }
+        public string ?InspectorComments { get; set; }
+        public string? Start { get; set; }
+        public string? Finish { get; set; }
+        public string Date { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
         public string GrindingSubmiteddBy { get; set; }
         public string FinalInspectionSubmiteddBy { get; set; }
