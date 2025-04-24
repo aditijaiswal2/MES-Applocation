@@ -14,10 +14,13 @@
 @inject HttpClient HttpClient
 @inject IDialogCompletionService CompletionService
  @inject IHttpClientFactory _httpClient
+@inject NavigationManager Navigation
+
 
 
 <div>
-    <MudDialog>
+    <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
+        
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.AcUnit" Class="mr-3 mb-n1" />
@@ -38,7 +41,7 @@
                                         </MudItem>
 
                                         <MudItem xs="12" md="6">
-                                            <MudTextField Label="Customer PO#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
                                         </MudItem>
                                      
                                 </MudGrid>
@@ -50,7 +53,7 @@
                                 </MudItem>
 
                                 <MudItem xs="12" md="6">
-                                    <MudTextField Label="Dwg#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined"/>
                                 </MudItem>
 
                             </MudGrid>
@@ -58,11 +61,11 @@
                         <MudGrid Spacing="3">
 
                             <MudItem xs="12" md="4">
-                                <MudTextField Label="Description" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined"/>
                             </MudItem>
 
                             <MudItem xs="12" md="4">
-                                <MudTextField Label="AG#" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined"/>
                             </MudItem>
 
                             <MudItem xs="12" md="4">
@@ -74,14 +77,14 @@
                         <MudGrid Spacing="3">
 
                             <MudItem xs="12" md="12">
-                                <MudTextField Label="Special notes / comments" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined"/>
                             </MudItem>
                         </MudGrid>                       
 
                         <MudGrid Spacing="3">
 
                             <MudItem xs="12" md="12">
-                                <MudTextField Label="Dressed With New Bearings" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined"/>
                             </MudItem>
                         </MudGrid>
 
@@ -89,25 +92,31 @@
                         </MudCardContent>
                 <!-- Table Section -->
                 <MudGrid Spacing="3" Class="mt-4">
-                    <MudItem xs="12">
-                        <MudTable Items="@tableData" Elevation="1">
-                            <HeaderContent>
-                               
-                                <MudTh>Description</MudTh>
-                                <MudTh>Start</MudTh>
-                                <MudTh>Finish</MudTh>
-                                <MudTh>Date</MudTh>
-                                <MudTh>Name</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd DataLabel="Description"></MudTd>
-                                <MudTd DataLabel="Start"></MudTd>
-                                <MudTd DataLabel="Finish"></MudTd>
-                                <MudTd DataLabel="Date"></MudTd>
-                                <MudTd DataLabel="Name"></MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                    </MudItem>
+                    <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
+                        <HeaderContent>
+                            <MudTh>Description</MudTh>
+                            <MudTh>Start</MudTh>
+                            <MudTh>Finish</MudTh>
+                            <MudTh>Date</MudTh>
+                            <MudTh>Name</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Description">@context.Description</MudTd>
+                            <MudTd DataLabel="Start">
+                                <MudTextField @bind-Value="context.Start"  />
+                            </MudTd>
+                            <MudTd DataLabel="Finish">
+                                <MudTextField @bind-Value="context.Finish" />
+                            </MudTd>
+                            <MudTd DataLabel="Date">
+                                <MudDatePicker @bind-Date="context.Date"/>
+                            </MudTd>
+                            <MudTd DataLabel="Name">
+                                <MudTextField @bind-Value="context.Name"/>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+
                 </MudGrid>
 
                   <MudCardContent>
@@ -117,17 +126,17 @@
                                     <MudGrid Spacing="3">
                                         <MudItem md="6" xs="12" class="outlined-box pa-2">
                                             <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
-                                            <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                                <MudTextField @bind-Value="FinalInspectionData.InspectorSing" Variant="Variant.Text" />
                                         </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                                <MudTextField @bind-Value="FinalInspectionData.InspectorComments" Variant="Variant.Text" />
                             </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
-                                <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                                <MudTextField @bind-Value="FinalInspectionData.Oktoship" Variant="Variant.Text" />
                             </MudItem>                                      
 
                                 </MudGrid>
@@ -154,61 +163,52 @@
 
 @code {
     [Parameter]
-
     public RotorGrindingData InspectionData { get; set; }
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
+    private List<RotorsFinalInspection> tableData = new();
+
+  //  private RotorsFinalInspection FinalInspectionData;
+    private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
+
     private IEnumerable<AppRole> appRoles = new List<AppRole>();
-
-    private string tableData ;
-  
-
-
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new HashSet<string>();
-
-    public event EventHandler CompletedChanged;
-    public UserAddDto user = new UserAddDto();
-
-    private bool _isCompleted;
-    public bool IsCompleted
-    {
-        get => _isCompleted;
-        set
-        {
-            _isCompleted = value;
-            CompletedChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
 
     private void Cancel()
     {
         MudDialog?.Cancel();
     }
-    private void OnSalesUserCheckedChanged(bool isChecked)
-    {
-        user.IsSalesUser = isChecked;
-
-        // Optional: Do other things based on the checkbox state
-        if (isChecked)
-        {
-            // Snackbar.Add("Sales user enabled.", Severity.Info);
-        }
-        else
-        {
-            Snackbar.Add("Sales user disabled.", Severity.Info);
-        }
-    }
 
     private async Task Add()
     {
-       
+        var finalInspectionDataModel = new RotorFinalInspectionDTO
+            {
+                InspectionData = InspectionData,
+                FinalInspectionData = FinalInspectionData,
+                TableData = tableData
+            };
+
+        MudDialog?.Close(DialogResult.Ok(finalInspectionDataModel));
     }
+
 
     protected override async Task OnInitializedAsync()
     {
+        tableData = new List<RotorsFinalInspection>
+    {
+        new RotorsFinalInspection { Description = "Flute Diameter", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Land Width", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "T.I.R", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Taper", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Locknut Threads", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Is the Rotor clean?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Relief Angle", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Journals O.K.?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Wedgelock assembly", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
+ };
+
         await LoadRoles();
 
         // get Work Centers
@@ -247,4 +247,6 @@
             Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
         }
     }
+
+
 }

@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using MES.Client;
 using MES.Client.Utitlity;
+using MES.Shared.DTOs;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -17,6 +18,7 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddSingleton<IDialogCompletionService, CompletionService>();
 
 builder.Services.AddBlazoredLocalStorage();
+
 
 #region UI Service
 builder.Services.AddMudServices();

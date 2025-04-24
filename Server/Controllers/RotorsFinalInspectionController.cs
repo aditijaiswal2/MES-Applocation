@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MES.Shared.Models.Rotors;
 using MES.Server.Data;
+using MES.Shared.DTOs;
 
 namespace YourAppNamespace.Controllers
 {
@@ -90,5 +91,17 @@ namespace YourAppNamespace.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("AddAllData")]
+        public async Task<IActionResult> PostFinalInspection([FromBody] RotorFinalInspectionDTO model)
+        {
+            if (model == null)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            return Ok(new { message = "Inspection data saved successfully" });
+        }
     }
 }
+

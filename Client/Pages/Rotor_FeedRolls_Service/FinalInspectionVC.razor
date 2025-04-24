@@ -61,7 +61,7 @@
 
                         <MudButton Class="mr-2"
                         Color="Color.Secondary"
-                                   Variant="Variant.Filled" OnClick="ViewAttachedFile">
+                        Variant="Variant.Filled" OnClick="ViewAttachedFile">
                             Production Order Report
                         </MudButton>
                     </div>
@@ -177,15 +177,15 @@
                                         <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
                                             <div style="display: flex; justify-content: flex-end;">
                                                 <MudButton OnClick="OpenFinalDialogBox"
-                                                           Class="mr-2"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled">
+                                                Class="mr-2"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled">
                                                     Final Inspection Report
                                                 </MudButton>
                                                 <MudButton OnClick="Submitdata"
-                                                           Class="mr-2"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled">
+                                                Class="mr-2"
+                                                Color="Color.Primary"
+                                                Variant="Variant.Filled">
                                                     Submit
                                                 </MudButton>
                                             </div>
@@ -207,31 +207,7 @@
     </MudGrid>
 </MudContainer>
 
-<style>
-    .bordered-container {
-    width: 100%;
-    max-width: 100%;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 30px;
-    margin-bottom: 16px;
-    box-sizing: border-box;
-    }
 
-
-    .qr-item {
-    margin: 1.5rem;
-    font-size: 16px;
-    white-space: nowrap; /* Ensures text stays in one line */
-    }
-
-
-    .full-width-grid {
-    width: 100%;
-    margin: 0;
-    }
-
-</style>
 
 @code {
 
@@ -244,12 +220,15 @@
     private DateTime? fromDate = DateTime.Today; // Default to today
     private bool isScanning;
     private string? SelectedProject { get; set; }
+    private RotorFinalInspectionDTO _finalResult;
+
     private bool isCancel = false;
     private bool cameraError = false;
     private RotorGrindingData serialNumberData;
     private RotorsFinalInspection FinalInspectionData;
     public RotorProductionData selectedData { get; set; }
     private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
+    private RotorsFinalInspection FinalInspection { get; set; } = new RotorsFinalInspection();
 
     public FinalInspectionImageDTO? ProjectimagesData { get; set; }
     private List<FinalInspection> selectedImagesFromSM = new List<FinalInspection>();
@@ -279,20 +258,149 @@
         StateHasChanged(); // Update the UI to show the camera or error message
     }
 
+    
+
+    private async Task Submitdata()
+    {
+        try
+        {
+            FinalInspection.SerialNumber = serialNumberData.SerialNumber;
+            FinalInspection.Module = serialNumberData.Module;
+            FinalInspection.SalesOrderNumber = serialNumberData.SalesOrderNumber;
+            FinalInspection.WorkOrder = serialNumberData.WorkOrder;
+            FinalInspection.MatNumber = serialNumberData.MatNumber;
+            FinalInspection.Customer = serialNumberData.Customer;
+            FinalInspection.Location = serialNumberData.Location;
+            FinalInspection.Received = serialNumberData.Received;
+            FinalInspection.Inspected = serialNumberData.Inspected;
+            FinalInspection.Len = serialNumberData.Len;
+            FinalInspection.RotorsNumber = serialNumberData.RotorsNumber;
+            FinalInspection.Initials = serialNumberData.Initials;
+            FinalInspection.Make = serialNumberData.Make;
+            FinalInspection.Dia = serialNumberData.Dia;
+            FinalInspection.RotorStyle = serialNumberData.RotorStyle;
+            FinalInspection.Fits = serialNumberData.Fits;
+            FinalInspection.Materials = serialNumberData.Materials;
+            FinalInspection.Others = serialNumberData.Others;
+            FinalInspection.RotorsDia = serialNumberData.RotorsDia;
+            FinalInspection.Type = serialNumberData.Type;
+            FinalInspection.BearingRemoved = serialNumberData.BearingRemoved;
+            FinalInspection.Bearing = serialNumberData.Bearing;
+            FinalInspection.BearingSeals = serialNumberData.BearingSeals;
+            FinalInspection.CeramicSeals = serialNumberData.CeramicSeals;
+            FinalInspection.Right = serialNumberData.Right;
+            FinalInspection.yRight = serialNumberData.yRight;
+            FinalInspection.yLeft = serialNumberData.yLeft;
+            FinalInspection.Left = serialNumberData.Left;
+            FinalInspection.BasicSharpening = serialNumberData.BasicSharpening;
+            FinalInspection.IfYBasicSharpening = serialNumberData.IfYBasicSharpening;
+            FinalInspection.WedgelockAlignmentMarks = serialNumberData.WedgelockAlignmentMarks;
+            FinalInspection.CenterGrinding = serialNumberData.CenterGrinding;
+            FinalInspection.IfYCenterGrinding = serialNumberData.IfYCenterGrinding;
+            FinalInspection.Aligned = serialNumberData.Aligned;
+            FinalInspection.PlasticSleaves = serialNumberData.PlasticSleaves;
+            FinalInspection.Welding = serialNumberData.Welding;
+            FinalInspection.WeldingNum = serialNumberData.WeldingNum;
+            FinalInspection.BedKnife = serialNumberData.BedKnife;
+            FinalInspection.BoxReceivedWithSaddles = serialNumberData.BoxReceivedWithSaddles;
+            FinalInspection.ReProfile = serialNumberData.ReProfile;
+            FinalInspection.SandBlasting = serialNumberData.SandBlasting;
+            FinalInspection.ManualLabor = serialNumberData.ManualLabor;
+            FinalInspection.Bottom = serialNumberData.Bottom;
+            FinalInspection.Top = serialNumberData.Top;
+            FinalInspection.AddQty = serialNumberData.AddQty;
+            FinalInspection.TirLeftJournal = serialNumberData.TirLeftJournal;
+            FinalInspection.TirRightJournal = serialNumberData.TirRightJournal;
+            FinalInspection.SaddlePartNumber = serialNumberData.SaddlePartNumber;
+            FinalInspection.RotorCategorization = serialNumberData.RotorCategorization;
+            FinalInspection.ComponentType = serialNumberData.ComponentType;
+            FinalInspection.Users = serialNumberData.Users;
+            FinalInspection.TargetDate = serialNumberData.TargetDate;
+            FinalInspection.CustomerInstructions = serialNumberData.CustomerInstructions;
+            FinalInspection.CustomerImportance = serialNumberData.CustomerImportance;
+            FinalInspection.SubmitDate = serialNumberData.SubmitDate;
+            FinalInspection.SubmitedBy = serialNumberData.SubmitedBy;
+            FinalInspection.AdvancedSharpingStatus = serialNumberData.AdvancedSharpingStatus;
+            FinalInspection.Workcenters = serialNumberData.Workcenters;
+            FinalInspection.ProductionSubmitDate = serialNumberData.ProductionSubmitDate;
+            FinalInspection.ProductionSubmitBy = serialNumberData.ProductionSubmitBy;
+            FinalInspection.RotorsDiaLeft = serialNumberData.RotorsDiaLeft;
+            FinalInspection.RotorsDiaRight = serialNumberData.RotorsDiaRight;
+            FinalInspection.ReliefLand = serialNumberData.ReliefLand;
+            FinalInspection.ToothFaceLeft = serialNumberData.ToothFaceLeft;
+            FinalInspection.ToothFaceRight = serialNumberData.ToothFaceRight;
+            FinalInspection.CentersLeft = serialNumberData.CentersLeft;
+            FinalInspection.CentersRight = serialNumberData.CentersRight;
+            FinalInspection.VisualChecks = serialNumberData.VisualChecks;
+            FinalInspection.InspectedBy = serialNumberData.InspectedBy;
+            FinalInspection.GrindingStartDate = serialNumberData.GrindingStartDate;
+            FinalInspection.GrindingEndDate = serialNumberData.GrindingdataSubmitedByDate;
+            FinalInspection.Notes = serialNumberData.Notes;
+            FinalInspection.DelayReasonTracking = serialNumberData.DelayReasonTracking;
+            FinalInspection.GrindingSubmiteddBy = serialNumberData.GrindingdataSubmiteddBy;
+            // FinalInspection.CustomerPoNum =;
+            // FinalInspection.DWGNum = ;
+            // FinalInspection.AGNum = ;
+            // FinalInspection.SpecialNoteComment = ;
+            // FinalInspection.Dressedwithnewbearing = ;
+            // FinalInspection.InspectorSing = ;
+            // FinalInspection.Description = ;
+            // FinalInspection.Oktoship = ;
+            // FinalInspection.InspectorComments = ;
+            // FinalInspection.Start = ;
+            // FinalInspection.Finish = ;
+            // FinalInspection.Name = ;
+            // FinalInspection.Date = ;
+          //  FinalInspection.FinalInspectionSubmiteddBy = ;
+            FinalInspection.FinalInspectionSubmitedByDate = DateTime.Now;
+
+            var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/RotorsFinalInspection/AddFinalInspection", FinalInspection);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Final Inspection data saved successfully!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Failed to save data.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"An error occurred: {ex.Message}", Severity.Error);
+        }
+    }
+
     private async Task OpenFinalDialogBox()
     {
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseButton = true,
+                DisableBackdropClick = true
+            };
+
+
         var parameters = new DialogParameters
             {//selectedMaterial
                 ["InspectionData"] = serialNumberData
 
             };
-        var options = new DialogOptions { FullWidth = true };
-        var dialog = await DialogService.ShowAsync<FinalInspectionDialog>("FINAL INSPECTION REPORT", parameters, DialogSettings.DialogOptionsAddEditDelete);
+        // var options = new DialogOptions { FullWidth = true };
+        var dialog = await DialogService.ShowAsync<FinalInspectionDialog>("FINAL INSPECTION REPORT", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled && result.Data is RotorFinalInspectionDTO returnData)
+        {
+            _finalResult = returnData;
+
+            // Now you can use `_finalResult` to bind to UI or perform logic
+            Snackbar.Add("Final inspection data received!", Severity.Success);
+        }
 
     }
-
-    private async Task Submitdata()
-    { }
 
     private async Task ViewAttachedFile()
     {
@@ -376,7 +484,13 @@
 
         if (!result.Cancelled)
         {
-            // handle result if needed
+            // Update FinalInspection with dialog data (optional)
+            if (result.Data is RotorsFinalInspection updatedInspection)
+            {
+                FinalInspection = updatedInspection;
+            }
+
+           
         }
     }
 
@@ -507,3 +621,30 @@
     }
 
 }
+
+
+<style>
+    .bordered-container {
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+
+    .qr-item {
+        margin: 1.5rem;
+        font-size: 16px;
+        white-space: nowrap; /* Ensures text stays in one line */
+    }
+
+
+    .full-width-grid {
+        width: 100%;
+        margin: 0;
+    }
+
+</style>

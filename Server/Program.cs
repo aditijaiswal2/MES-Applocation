@@ -1,7 +1,8 @@
- using MES.Server.Contracts;
+using MES.Server.Contracts;
 using MES.Server.Data;
 using MES.Server.Data.Repositories;
 using MES.Server.Services;
+using MES.Shared.DTOs;
 using MES.Shared.Entities;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
@@ -22,21 +23,6 @@ builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ProjectdbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<IISServerOptions>(options =>
-{
-    options.MaxRequestBodySize = 524288000; // 500 MB
-});
-
-builder.Services.Configure<KestrelServerOptions>(options =>
-{
-    options.Limits.MaxRequestBodySize = 524288000; // 500 MB
-});
-
-builder.Services.Configure<FormOptions>(options =>
-{
-    options.MultipartBodyLengthLimit = 524288000; // 500 MB
-});
-
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddTransient<IReceivingDataRepository, ReceivingDataRepository>();
 builder.Services.AddTransient<ReceivingDataRepository>();
@@ -49,7 +35,6 @@ builder.Services.AddTransient<ImageRepository>();
 builder.Services.AddTransient<IFileRepository, FileRepository>();
 builder.Services.AddTransient<FileRepository>();
 builder.Services.AddSingleton<HttpClient>();
-
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));
