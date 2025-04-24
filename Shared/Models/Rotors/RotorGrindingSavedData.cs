@@ -81,6 +81,7 @@ namespace MES.Shared.Models.Rotors
         public DateTime? GrindingStartDate { get; set; }
         public string Notes { get; set; }
         public string DelayReasonTracking { get; set; }
+        public string AdditionalSalesComments { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
         public string GrindingdataSavedBy { get; set; }
         public string GrindingdataSavedByDate { get; set; }

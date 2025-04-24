@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250424041422_Initial")]
-    partial class Initial
+    [Migration("20250424054336_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -679,6 +679,10 @@ namespace MES.Server.Migrations
 
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
+
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");
@@ -1371,6 +1375,10 @@ namespace MES.Server.Migrations
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -1639,6 +1647,10 @@ namespace MES.Server.Migrations
 
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
+
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");

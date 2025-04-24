@@ -29,7 +29,7 @@
                                    Size="Size.Small"
                                    Color="Color.Primary"
                                    OnClick="ViewAttachedFile">
-                            View Attached File
+                            View Production Order
                         </MudButton>
                     </MudItem>
 
@@ -37,38 +37,38 @@
 
                     <MudItem md="12" sm="12" xs="12">
                         <MudDatePicker PickerVariant="PickerVariant.Dialog"
-                        @bind-Date="StartDate"
-                        Variant="Variant.Outlined"
-                        Label="Select Start Date"
-                        MinDate="@StartMinDate" />
-                    </MudItem>                    
+                                       @bind-Date="StartDate"
+                                       Variant="Variant.Outlined"
+                                       Label="Select Start Date"
+                                       MinDate="@StartMinDate" />
+                    </MudItem>
 
-                    <MudItem xs="4">
+                    <MudItem xs="6">
                         <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
                     </MudItem>
 
-                    <MudItem xs="4">
+                    <MudItem xs="6">
                         <MudTextField Label="Rotor Dia.Right" @bind-Value="@GetRotorProcess.RotorsDiaRight" Variant="Variant.Outlined" />
+                    </MudItem>                    
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Tooth Face Left" @bind-Value="@GetRotorProcess.ToothFaceLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Tooth Face Right" @bind-Value="@GetRotorProcess.ToothFaceRight" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
                     </MudItem>
 
                     <MudItem xs="4">
                         <MudTextField Label="Relief Land" @bind-Value="@GetRotorProcess.ReliefLand" Variant="Variant.Outlined" />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Tooth Face Left" @bind-Value="@GetRotorProcess.ToothFaceLeft" Variant="Variant.Outlined" />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Tooth Face Right" @bind-Value="@GetRotorProcess.ToothFaceRight" Variant="Variant.Outlined" />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
                     </MudItem>
 
                     <MudItem xs="4">
@@ -92,13 +92,16 @@
                     </MudItem>
 
                     <MudItem md="6" sm="12" xs="12">
-
                         <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem md="12" sm="12" xs="12">
+                        <MudTextField Label="Additional Sales Comments" @bind-Value="@GetRotorProcess.AdditionalSalesComments" Variant="Variant.Outlined" />
                     </MudItem>
 
                     <div style="margin-top:-4px;margin-bottom:1.5rem;margin-left:-12px">
                         <MudCheckBox @bind-Value="@IsMoveoutsideoperation" Color="Color.Success">Move to outside operation</MudCheckBox>
-                    </div>           
+                    </div>
 
                 </MudGrid>
                 <br />
@@ -128,10 +131,10 @@
 
 <style>
     .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
     }
 
 </style>
@@ -200,6 +203,7 @@
                 Notes = GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
                 DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
                 GrindingdataSavedBy = useradd,
                 GrindingdataSavedByDate = DateTime.Now.ToString(),
                 IsMoveoutsideoperation = IsMoveoutsideoperation
@@ -255,7 +259,7 @@
             useradd = userData.UserName;
         }
 
-       
+
 
         var submissionData = new GrindingInspectionSubmission
             {
@@ -268,10 +272,11 @@
                 CentersLeft = GetRotorProcess.CentersLeft,
                 CentersRight = GetRotorProcess.CentersRight,
                 VisualChecks = GetRotorProcess.VisualChecks,
-                InspectedBy = GetRotorProcess.InspectedBy,               
+                InspectedBy = GetRotorProcess.InspectedBy,
                 Notes = GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
                 DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
                 GrindingdataSavedBy = useradd,
                 GrindingdataSavedByDate = DateTime.Now.ToString(),
                 IsMoveoutsideoperation = IsMoveoutsideoperation
@@ -287,8 +292,8 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorGrindingData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data submitted successfully!", Severity.Success);
-                ClearAll();               
+                Snackbar.Add("Grinding Data submitted successfully!", Severity.Success);
+                ClearAll();
                 StateHasChanged();
                 CompletionService.IsCompleted = true;
                 MudDialog?.Close();
@@ -319,7 +324,7 @@
 
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
         var Response = await HttpClient.GetAsync($"{ApiConstants.GetRotorGrindingSavedDatabyserialnumber}/{selectedData.SerialNumber}");
-       
+
         if (Response.IsSuccessStatusCode)
         {
             var productionDataJson = await Response.Content.ReadAsStringAsync();
@@ -357,7 +362,7 @@
                     {
                         RotorgrindingDatas = JsonSerializer.Deserialize<List<RotorGrindingData>>(DataJson,
                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
-                      
+
                     }
                 }
 
@@ -376,9 +381,9 @@
                 }
 
 
-            }            
+            }
 
-        }      
+        }
 
 
 
@@ -404,7 +409,8 @@
                 InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
                 Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
-                DelayReasonTracking =string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
                 GrindingdataSavedBy = useradd,
                 GrindingdataSavedByDate = DateTime.Now.ToString(),
                 IsMoveoutsideoperation = IsMoveoutsideoperation
@@ -449,7 +455,7 @@
         try
         {
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var response = await HttpClient.GetAsync($"{ApiConstants.GetSalesAttachedFileBySerialNumber}/{selectedData.SerialNumber}");           
+            var response = await HttpClient.GetAsync($"{ApiConstants.GetSalesAttachedFileBySerialNumber}/{selectedData.SerialNumber}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -463,12 +469,12 @@
                 }
                 else
                 {
-                    Snackbar.Add("No file data found.", Severity.Error);
+                    Snackbar.Add("Production Order file not available for this rotor/feed role.", Severity.Error);
                 }
             }
             else
             {
-                Snackbar.Add("No file data found.", Severity.Error);
+                Snackbar.Add("Production Order file not available for this rotor/feed role.", Severity.Error);
             }
         }
         catch (Exception ex)
@@ -503,6 +509,7 @@
         public DateTime? GrindingStartDate { get; set; }
         public string Notes { get; set; }
         public string DelayReasonTracking { get; set; }
+        public string AdditionalSalesComments { get; set; }
         public string GrindingdataSavedBy { get; set; }
         public string GrindingdataSavedByDate { get; set; }
         public bool IsMoveoutsideoperation { get; set; }

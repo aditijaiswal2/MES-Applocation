@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FinalInspection\**" />
     <Compile Remove="Incoming Inspection\**" />
+    <Content Remove="FinalInspection\**" />
     <Content Remove="Incoming Inspection\**" />
+    <EmbeddedResource Remove="FinalInspection\**" />
     <EmbeddedResource Remove="Incoming Inspection\**" />
+    <None Remove="FinalInspection\**" />
     <None Remove="Incoming Inspection\**" />
   </ItemGroup>
 
@@ -43,7 +47,6 @@
 
   <ItemGroup>
     <Folder Include="IncomingInspection\" />
-    <Folder Include="FinalInspection\" />
   </ItemGroup>
 
 

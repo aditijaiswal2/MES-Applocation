@@ -677,6 +677,10 @@ namespace MES.Server.Migrations
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -1368,6 +1372,10 @@ namespace MES.Server.Migrations
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -1636,6 +1644,10 @@ namespace MES.Server.Migrations
 
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
+
+                    b.Property<string>("AdditionalSalesComments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");

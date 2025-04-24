@@ -32,7 +32,7 @@
                     <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                     @onmouseover="() => hoveredInspection = item"
                     @onmouseout="() => hoveredInspection = null">
-                        <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                        <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                     </MudListItem>
                 }
             </MudList>
@@ -490,19 +490,19 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorSalesSavedData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data Saved successfully!", Severity.Success);
+                Snackbar.Add(" Sales Data Saved successfully!", Severity.Success);
                 ClearAll();
                 StateHasChanged();
             }
             else
             {
-                Snackbar.Add($"Failed to save the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                Snackbar.Add($"Failed to save the sales data,Try again ! Status code: {response.StatusCode}", Severity.Error);
 
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error save data: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error save sales data: {ex.Message}", Severity.Error);
         }
 
 
@@ -553,20 +553,20 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorSalesData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                Snackbar.Add("Sales Data submitted successfully!", Severity.Success);
                 ClearAll();
                 await FetchAllInspections();
                 StateHasChanged();
             }
             else
             {
-                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                Snackbar.Add($"Failed to submit the sales data,Try again ! Status code: {response.StatusCode}", Severity.Error);
 
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error submitting sales data: {ex.Message}", Severity.Error);
         }
     }
 
@@ -598,12 +598,12 @@
                 }
                 else
                 {
-                    Snackbar.Add("No images available for this serial number.", Severity.Error);
+                    Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
                 }
             }
             else
             {
-                Snackbar.Add("No images available for this serial number.", Severity.Error);
+                Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
             }
         }
         catch (Exception ex)
@@ -659,7 +659,7 @@
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Snackbar.Add("File uploaded and saved successfully.", Severity.Success);
+                    Snackbar.Add("Production Order File uploaded successfully.", Severity.Success);
                     isFileAttached = true;
                     StateHasChanged();
                 }
@@ -686,6 +686,12 @@
 
     private async Task ClearAll()
     {
+        // if (selectedInspection != null)
+        // {
+        //     selectedInspection.SalesOrderNumber = null;
+        //     selectedInspection.WorkOrder = null;
+        //     selectedInspection.MatNumber = null;
+        // }
         
         selectedInspection = null;        
         SelectedPriority = string.Empty;

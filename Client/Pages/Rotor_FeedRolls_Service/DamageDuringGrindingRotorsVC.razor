@@ -29,7 +29,7 @@
                     <MudListItem Button="true" OnClick="() => SelectAdvanceInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                  @onmouseover="() => hoveredInspection = item"
                                  @onmouseout="() => hoveredInspection = null">
-                        <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                        <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                     </MudListItem>
                 }
             </MudList>

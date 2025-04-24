@@ -47,7 +47,7 @@
                                                 <MudListItem Button="true" OnClick="() => SelectsimpleInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                                              @onmouseover="() => hoveredInspection = item"
                                                              @onmouseout="() => hoveredInspection = null">
-                                                    <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                                                    <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                                                 </MudListItem>
                                             }
                                         </MudList>
@@ -335,7 +335,7 @@
                                                 <MudListItem Button="true" OnClick="() => SelectAdvanceInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                                              @onmouseover="() => hoveredInspection = item"
                                                              @onmouseout="() => hoveredInspection = null">
-                                                    <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                                                    <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                                                 </MudListItem>
                                             }
                                         </MudList>
@@ -656,7 +656,7 @@
                                         <MudListItem Button="true" OnClick="() => SelectFeedRoleInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                                      @onmouseover="() => hoveredInspection = item"
                                                      @onmouseout="() => hoveredInspection = null">
-                                            <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                                            <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -946,7 +946,7 @@
                                         <MudListItem Button="true" OnClick="() => SelectScrapInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
                                                      @onmouseover="() => hoveredInspection = item"
                                                      @onmouseout="() => hoveredInspection = null">
-                                            <MudText>@item.SerialNumber - @item.Module - @item.RotorsNumber</MudText>
+                                            <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -1429,7 +1429,7 @@
             var response = await HttpClient.PostAsync(ApiConstants.SaveproductionsavedData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data Saved successfully!", Severity.Success);
+                Snackbar.Add("Production Data Saved successfully!", Severity.Success);
                 ClearAll();
                 StateHasChanged();
             }
@@ -1487,7 +1487,7 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                Snackbar.Add("Production Data submitted successfully!", Severity.Success);
                 ClearAll();
                 _hasFetchedIncomingData = false;
                 await FetchAllInspections();
@@ -1583,7 +1583,7 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                Snackbar.Add("Production Data submitted successfully!", Severity.Success);
                 ClearAll();
                 _hasFetchedIncomingData = false;
                 await FetchAllInspections();
@@ -1658,7 +1658,7 @@
             var response = await HttpClient.PostAsync(ApiConstants.AddRotorProductionData, content);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Data submitted successfully!", Severity.Success);
+                Snackbar.Add(" Production Data submitted successfully!", Severity.Success);
                 ClearAll();
                 _hasFetchedIncomingData = false;
                 await FetchAllInspections();

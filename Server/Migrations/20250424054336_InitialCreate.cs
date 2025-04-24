@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -321,6 +321,7 @@ namespace MES.Server.Migrations
                     GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdditionalSalesComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
                     GrindingdataSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingdataSubmitedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -555,6 +556,7 @@ namespace MES.Server.Migrations
                     GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdditionalSalesComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
                     GrindingdataSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingdataSubmitedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -643,6 +645,7 @@ namespace MES.Server.Migrations
                     GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdditionalSalesComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
                     GrindingdataSavedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingdataSavedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false)

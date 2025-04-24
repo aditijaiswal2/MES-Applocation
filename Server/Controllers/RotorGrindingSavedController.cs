@@ -101,6 +101,7 @@ namespace MES.Server.Controllers
                     Notes = submission.Notes,
                     GrindingStartDate = submission.GrindingStartDate,
                     DelayReasonTracking = submission.DelayReasonTracking,
+                    AdditionalSalesComments = submission.AdditionalSalesComments,
                     IsMoveoutsideoperation = submission.IsMoveoutsideoperation,
                     GrindingdataSavedBy = submission.GrindingdataSavedBy,
                     GrindingdataSavedByDate = submission.GrindingdataSavedByDate
