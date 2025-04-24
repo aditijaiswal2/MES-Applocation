@@ -8,6 +8,7 @@
 @using MES.Shared.Entities
 @using System.Net
 @using System.ComponentModel.DataAnnotations;
+ @using MES.Shared.Models.Rotors
 
 @inject ISnackbar Snackbar
 @inject HttpClient HttpClient
@@ -33,7 +34,7 @@
                                     <MudGrid Spacing="3">
 
                                         <MudItem xs="12" md="6">
-                                            <MudTextField Label="Sales Order" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Sales Order" @bind-Value="InspectionData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                         </MudItem>
 
                                         <MudItem xs="12" md="6">
@@ -45,7 +46,7 @@
                             <MudGrid Spacing="3">
 
                                 <MudItem xs="12" md="6">
-                                    <MudTextField Label="Customer" @bind-Value="user.username" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Customer" @bind-Value="InspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                 </MudItem>
 
                                 <MudItem xs="12" md="6">
@@ -65,7 +66,7 @@
                             </MudItem>
 
                             <MudItem xs="12" md="4">
-                                <MudTextField Label="Material" @bind-Value="user.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                <MudTextField Label="Material" @bind-Value="InspectionData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                             </MudItem>
 
                         </MudGrid>
@@ -120,14 +121,14 @@
                                         </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
                                 <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
                             </MudItem>
 
-                                        <MudItem md="6" xs="12" class="outlined-box pa-2">
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                             <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
-                            </MudItem>
+                            <MudItem md="6" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
+                                <MudTextField @bind-Value="user.username" Variant="Variant.Text" />
+                            </MudItem>                                      
 
                                 </MudGrid>
                             </MudGrid>
@@ -143,8 +144,6 @@
                 </MudGrid>
 
               </MudForm>
-           
-
         </DialogContent>
         <DialogActions>
             <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Add">Add</MudButton>
@@ -154,7 +153,13 @@
 </div>
 
 @code {
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter]
+
+    public RotorGrindingData InspectionData { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
     private IEnumerable<AppRole> appRoles = new List<AppRole>();
 
     private string tableData ;

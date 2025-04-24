@@ -1016,6 +1016,16 @@ namespace MES.Server.Migrations
                     GrindingEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerPoNum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DWGNum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AGNum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpecialNoteComment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Dressedwithnewbearing = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InspectorSing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InspectorComments = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Start = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Finish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
                     GrindingSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FinalInspectionSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -1182,17 +1192,17 @@ namespace MES.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IncomingImageId = table.Column<int>(type: "int", nullable: false),
-                    FinalImagesId = table.Column<int>(type: "int", nullable: true)
+                    IncomingImageId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_finalImagedatas", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_finalImagedatas_finalInspections_FinalImagesId",
-                        column: x => x.FinalImagesId,
+                        name: "FK_finalImagedatas_finalInspections_IncomingImageId",
+                        column: x => x.IncomingImageId,
                         principalTable: "finalInspections",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1312,9 +1322,9 @@ namespace MES.Server.Migrations
                 column: "SalesAttachedFileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_finalImagedatas_FinalImagesId",
+                name: "IX_finalImagedatas_IncomingImageId",
                 table: "finalImagedatas",
-                column: "FinalImagesId");
+                column: "IncomingImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Imagedatas_IncomingImageId",

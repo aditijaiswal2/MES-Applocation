@@ -390,9 +390,6 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int?>("FinalImagesId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImageFilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -402,7 +399,7 @@ namespace MES.Server.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("FinalImagesId");
+                    b.HasIndex("IncomingImageId");
 
                     b.ToTable("finalImagedatas");
                 });
@@ -2722,6 +2719,10 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AGNum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
@@ -2782,6 +2783,18 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CustomerPoNum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DWGNum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
 
@@ -2792,12 +2805,19 @@ namespace MES.Server.Migrations
                     b.Property<string>("Dia")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Dressedwithnewbearing")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FinalInspectionSubmitedByDate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FinalInspectionSubmiteddBy")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Finish")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Fits")
@@ -2828,6 +2848,12 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("InspectedBy")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorComments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectorSing")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMoveoutsideoperation")
@@ -2923,6 +2949,13 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecialNoteComment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Start")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("SubmitDate")
@@ -3159,7 +3192,9 @@ namespace MES.Server.Migrations
                 {
                     b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalImages")
                         .WithMany("Images")
-                        .HasForeignKey("FinalImagesId");
+                        .HasForeignKey("IncomingImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FinalImages");
                 });
