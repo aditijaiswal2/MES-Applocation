@@ -140,9 +140,96 @@
                                         </MudItem>
 
                                         <MudItem xs="12" md="6">
-                                            <MudTextField Label="Notes" @bind-Value="serialNumberData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                            <MudTextField Label="Delay Reason Tracking" @bind-Value="serialNumberData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                         </MudItem>
                                     </MudGrid>
+
+                                       <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
+                        <MudCardContent>
+
+                            <MudGrid Class="w-100">
+
+                                    <MudGrid Spacing="3">
+
+                                        <MudItem xs="12" md="6">
+                                            <MudTextField Label="Sales Order" @bind-Value="serialNumberData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                        </MudItem>
+
+                                    <MudItem xs="12" md="6">
+                                        <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                     </MudGrid>
+
+                                                <MudGrid Spacing="3">
+
+                                                    <MudItem xs="12" md="6">
+                                                        <MudTextField Label="Customer" @bind-Value="serialNumberData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    </MudItem>
+
+                                                    <MudItem xs="12" md="6">
+                                                        <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+
+                                                </MudGrid>
+                                                <MudGrid Spacing="3">
+
+                                                    <MudItem xs="12" md="4">
+                                                        <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+
+                                                    <MudItem xs="12" md="4">
+                                                        <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+
+                                                    <MudItem xs="12" md="4">
+                                                        <MudTextField Label="Material" @bind-Value="serialNumberData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    </MudItem>
+
+                                                </MudGrid>
+                                                <MudGrid Spacing="3">
+
+                                                    <MudItem xs="12" md="12">
+                                                        <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+                                                </MudGrid>
+
+                                                <MudGrid Spacing="3">
+
+                                                    <MudItem xs="12" md="12">
+                                                        <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+                                                </MudGrid>
+                                </MudGrid>
+                            </MudCardContent>
+
+                                        <MudGrid Spacing="3" Class="mt-4">
+                                            <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
+                                                <HeaderContent>
+                                                    <MudTh>Description</MudTh>
+                                                    <MudTh>Start</MudTh>
+                                                    <MudTh>Finish</MudTh>
+                                                    <MudTh>Date</MudTh>
+                                                    <MudTh>Name</MudTh>
+                                                </HeaderContent>
+                                                <RowTemplate>
+                                                    <MudTd DataLabel="Description">@context.Description</MudTd>
+                                                    <MudTd DataLabel="Start">
+                                                        <MudTextField @bind-Value="context.Start" />
+                                                    </MudTd>
+                                                    <MudTd DataLabel="Finish">
+                                                        <MudTextField @bind-Value="context.Finish" />
+                                                    </MudTd>
+                                                    <MudTd DataLabel="Date">
+                                                        <MudDatePicker @bind-Date="context.Date" />
+                                                    </MudTd>
+                                                    <MudTd DataLabel="Name">
+                                                        <MudTextField @bind-Value="context.Name" />
+                                                    </MudTd>
+                                                </RowTemplate>
+                                            </MudTable>
+
+                                        </MudGrid>
+                        </MudForm>
 
                                     <MudGrid Class="full-width-grid">
                                         <MudItem xs="12" style="text-align: center; width: 100%;">
@@ -219,13 +306,15 @@
     private string qrCodeData;
     private DateTime? fromDate = DateTime.Today; // Default to today
     private bool isScanning;
+    private List<RotorsFinalInspection> tableData = new();
     private string? SelectedProject { get; set; }
     private RotorFinalInspectionDTO _finalResult;
+    private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
 
     private bool isCancel = false;
     private bool cameraError = false;
     private RotorGrindingData serialNumberData;
-    private RotorsFinalInspection FinalInspectionData;
+    private RotorsFinalInspection FinalInspectiondta;
     public RotorProductionData selectedData { get; set; }
     private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
     private RotorsFinalInspection FinalInspection { get; set; } = new RotorsFinalInspection();
