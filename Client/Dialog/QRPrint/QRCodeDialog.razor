@@ -14,21 +14,22 @@
             <MudButton OnClick="Cancel" Color="Color.Error" Size="Size.Small" StartIcon="@Icons.Material.Outlined.Cancel">Cancel</MudButton>
         </div>
     </TitleContent>
+
     <DialogContent>
-        <div style="width: 2in; height: 2in;  padding: 0.25in; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div class="mt-2">
-                @if (LocQR != null)
-                {
-                    <img src="@($"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}")" alt="QR Code" style="width: 1.5in; height: 1.5in;" />
-                }
-                <div style="text-align:center; font-size: 15px; margin-bottom:1rem">
-                    <p>@LocQR.SelectedOption</p>
-                    <p>@LocQR.Customer</p>
-                </div>
-            </div>
+        <div style="width: 2in; padding: 0.05in 0.25in 0.1in 0.25in; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            @if (LocQR != null)
+            {
+                <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px;">@LocQR.SelectedOption</p>
+
+                <!-- QR Image -->
+                <img src="@($"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}")" alt="QR Code" style="width: 1.5in; height: 1.5in;" />
+
+                <p style="text-align:center; font-size: 14px; margin-top: 7px; margin-bottom: 0px;">@LocQR.Customer</p>
+            }
         </div>
     </DialogContent>
 </MudDialog>
+
 
 @code {
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }

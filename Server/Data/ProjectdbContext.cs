@@ -51,6 +51,7 @@ namespace MES.Server.Data
         public DbSet<RotorDamageGrindingSubmitedData> RotorDamageGrindingSubmitedData { get; set; }
         public DbSet<SalesAttachedFile> SalesAttachedFile { get; set; }
         public DbSet<MES.Shared.Models.Rotors.Filedata> Filedata { get; set; }
+        public DbSet<RotorGrindingSecondaryWorkCentersData> RotorGrindingSecondaryWorkCentersData { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

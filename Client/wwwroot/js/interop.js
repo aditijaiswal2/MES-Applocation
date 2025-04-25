@@ -108,106 +108,72 @@ function printincomingImage(imageDataUrl, labelText) {
 
 
 function printImage(imageData, partOrLoc, customer) {
-    // Define the canvas size in pixels (2.4 inches at 96 DPI)
     const dpi = 96;
-    const canvasWidth = 2.4 * dpi; // 230.4 pixels
-    const canvasHeight = canvasWidth; // Square canvas: 2.4x2.4 inches
+    const canvasWidth = 2.4 * dpi;
+    const canvasHeight = 4 * dpi;
 
-    // Create a canvas element
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    // Load the image onto the canvas
     const img = new Image();
     img.src = imageData;
 
     img.onload = function () {
-        // Calculate dimensions for the QR code area
         const qrCodeSize = canvasWidth * 0.85;
         const qrCodeX = (canvasWidth - qrCodeSize) / 2;
-        const qrCodeY = (canvasHeight - qrCodeSize) / 2 - 10;
+        const qrCodeY = (canvasHeight - qrCodeSize) / 2;
 
-        // Draw the QR code image on the canvas
-        context.drawImage(img, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize);
-
-        // Add the partOrLoc text below the QR code
-        context.font = 'bold 16px Arial';
         context.textAlign = 'center';
         context.fillStyle = 'black';
+        context.font = '14px Arial';
 
-        if (partOrLoc || customer) {
-            const combinedText = `${partOrLoc || ""} ${customer || ""}`.trim();
-            context.textAlign = "center";
-            context.fillStyle = "black";
-            context.font = "14px Arial";
-
-            context.fillText(combinedText, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
+        // Top label - reduced gap
+        if (partOrLoc) {
+            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY - 5);
         }
 
+        // Draw QR code
+        context.drawImage(img, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize);
 
-        //if (partOrLoc, customer) {
-        //    context.fillText(partOrLoc, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
-        //    context.fillText(customer, canvasWidth / 2, qrCodeY + qrCodeSize + 20);
-        //}
+        // Function to wrap text
+        function wrapText(text, maxWidth) {
+            const words = text.split(' ');
+            let line = '';
+            const lines = [];
+            for (let i = 0; i < words.length; i++) {
+                const testLine = line + words[i] + ' ';
+                const testWidth = context.measureText(testLine).width;
+                if (testWidth > maxWidth && i > 0) {
+                    lines.push(line);
+                    line = words[i] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line);
+            return lines;
+        }
 
+        // Bottom label - reduced gap
+        if (customer) {
+            const maxWidth = canvasWidth - 40; // padding on both sides
+            const lines = wrapText(customer, maxWidth);
+            const startY = qrCodeY + qrCodeSize + 18;
+            lines.forEach((line, index) => {
+                context.fillText(line, canvasWidth / 2, startY + index * 18); // Adjust line height here
+            });
+        }
 
-        // Convert the canvas to an image for downloading
         const combinedImage = canvas.toDataURL('image/png');
 
-        // Trigger download
-        const link = document.createElement('a');
-        link.href = combinedImage;
-        link.download = 'QRCode.png';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Open new window for print
         const win = window.open('', '', 'height=800,width=800');
         win.document.write('<html><head><title>Print QR Code</title>');
-        win.document.write('<style>');
-        win.document.write(`
-        @media print {
-            @page {
-                margin: 0;
-                size: 2.4in 2.4in;
-            }
-            body, html {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
-                background: none !important;
-            }
-            .print-container {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            img {
-                max-width: 100%;
-                object-fit: contain;
-            }
-            .text {
-                font-size: 14px;
-                font-weight: bold;
-                margin-top: 5px;
-            }
-        }
-    `);
-        win.document.write('</style></head><body>');
+        win.document.write('<style>@media print { @page { margin: 0; size: auto; } body, html { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; } .print-container { display: flex; flex-direction: column; justify-content: center; align-items: center; } img { max-width: 100%; object-fit: contain; } }</style>');
+        win.document.write('</head><body>');
         win.document.write('<div class="print-container">');
         win.document.write(`<img src="${combinedImage}" alt="QR Code" />`);
-
         win.document.write('</div></body></html>');
         win.document.close();
 
@@ -217,8 +183,6 @@ function printImage(imageData, partOrLoc, customer) {
         }, 200);
     };
 
-
-    // Handle errors if the image fails to load
     img.onerror = function () {
         console.error('Error loading image');
     };

@@ -261,9 +261,18 @@
                             Variant="Variant.Outlined"
                             Label="Target Date Entry"
                             MinDate="DateTime.Today" />
-
-
                         </MudItem>
+
+                        <MudItem md="6" sm="12" xs="12">
+                            <MudTimePicker @bind-Time="PlannedHours"
+                            Label="Planned Hours"
+                            TimeFormat="HH:mm"
+                            AmPm="false"
+                            OpenTo="OpenTo.Hours"
+                            Variant="Variant.Outlined"
+                            PickerVariant="PickerVariant.Dialog" />
+                        </MudItem>
+
 
                         <MudItem md="6" sm="12" xs="12">
                             <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedPriority" AnchorOrigin="Origin.BottomCenter" Label="Customer Priority" OpenIcon="@Icons.Material.Filled.PriorityHigh" AdornmentColor="Color.Primary">
@@ -275,7 +284,7 @@
                         </MudItem>
 
 
-                        <MudItem md="12" sm="12" xs="12">
+                        <MudItem md="6" sm="12" xs="12">
                             <MudTextField Label="Customer Instructions"
                             @bind-Value="CustomerInstructions"
                             Variant="Variant.Outlined"
@@ -289,13 +298,13 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
-                       @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
+                        @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
                         <MudButton Class="mr-2"
-                                   Variant="Variant.Filled"
-                                   Size="Size.Small"
-                                   Color="@((isFileAttached ? Color.Success : Color.Primary))"
-                                   Disabled="@(isFileAttached)"
-                                   OnClick="AttacheFile">
+                        Variant="Variant.Filled"
+                        Size="Size.Small"
+                        Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                        Disabled="@(isFileAttached)"
+                        OnClick="AttacheFile">
                             @(isFileAttached ? "Done" : "Attach File")
                         </MudButton>
 
@@ -353,6 +362,8 @@
     public IncomingImages? serialImages;
     private ElementReference pdfFileInput;
     private bool isFileAttached = false;
+    private TimeSpan? PlannedHours { get; set; }
+
 
     private SalesAttachedFileDto uploadedFileDto;
     private byte[] uploadedFileBytes;
@@ -454,12 +465,15 @@
             SelectedPriority = latest.CustomerImportance ?? string.Empty;
             CustomerInstructions = latest.CustomerInstructions ?? string.Empty;
             fromDate = latest.TargetDate ?? DateTime.Today;
+            PlannedHours = latest.PlannedHours ?? (TimeSpan?)null;
+
         }
         else
         {
             SelectedPriority = string.Empty;
             CustomerInstructions = string.Empty;
             fromDate = DateTime.Today;
+            PlannedHours = null;
         }
     }
 
@@ -467,6 +481,29 @@
 
     private async Task Save()
     {
+         if (fromDate == null)
+        {
+            Snackbar.Add("Please select target date.", Severity.Error);
+            return;
+        }
+        if (PlannedHours == null)
+        {
+            Snackbar.Add("Please select Planned Hours.", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(SelectedPriority))
+        {
+            Snackbar.Add("Please select customer priority.", Severity.Error);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(CustomerInstructions))
+        {
+            Snackbar.Add("Please enter customer instructions.", Severity.Error);
+            return;
+        }
+
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
         string useradd = userData?.UserName ?? "User";
         if (userData != null)
@@ -477,6 +514,7 @@
                 {
                     SelectedInspection = selectedInspection,
                     TargetDate = fromDate,
+                    PlannedHours = PlannedHours,
                     CustomerPriority = SelectedPriority,
                     CustomerInstructions = CustomerInstructions,
                     SubmitedBy = useradd,
@@ -516,6 +554,11 @@
             Snackbar.Add("Please select target date.", Severity.Error);
             return;
         }
+        if (PlannedHours == null)
+        {
+            Snackbar.Add("Please select Planned Hours.", Severity.Error);
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(SelectedPriority))
         {
@@ -539,6 +582,7 @@
         {
                 SelectedInspection = selectedInspection,
                 TargetDate = fromDate,
+                PlannedHours = PlannedHours,
                 CustomerPriority = SelectedPriority,
                 CustomerInstructions = CustomerInstructions,
                 SubmitedBy = useradd,
@@ -692,7 +736,7 @@
         //     selectedInspection.WorkOrder = null;
         //     selectedInspection.MatNumber = null;
         // }
-        
+        PlannedHours = null;
         selectedInspection = null;        
         SelectedPriority = string.Empty;
         CustomerInstructions = string.Empty;
@@ -730,6 +774,7 @@
     {
         public IncomingInspection SelectedInspection { get; set; }
         public DateTime? TargetDate { get; set; }
+        public TimeSpan? PlannedHours { get; set; }
         public string CustomerPriority { get; set; }
         public string CustomerInstructions { get; set; }
         public DateTime? SubmitDate { get; set; }

@@ -109,6 +109,7 @@ namespace MES.Server.Controllers
                     Users = submission.SelectedInspection.Users,
                     DateTime = submission.SelectedInspection.DateTime,
                     TargetDate = submission.TargetDate,
+                    PlannedHours = submission.PlannedHours,
                     CustomerInstructions = submission.CustomerInstructions,
                     CustomerImportance = submission.CustomerPriority,
                     SubmitDate = submission.SubmitDate,

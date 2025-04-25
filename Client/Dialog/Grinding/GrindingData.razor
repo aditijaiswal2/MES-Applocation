@@ -1,5 +1,6 @@
 ﻿@using MES.Client.Utitlity
 @using MES.Shared.DTOs
+@using MES.Shared.Models
 @using MES.Shared.Models.Rotors
 @using System.Text
 @using static MES.Client.Pages.LoginVC
@@ -26,9 +27,9 @@
 
                     <MudItem md="12" sm="12" xs="12" class="center">
                         <MudButton Variant="Variant.Filled"
-                                   Size="Size.Small"
-                                   Color="Color.Primary"
-                                   OnClick="ViewAttachedFile">
+                        Size="Size.Small"
+                        Color="Color.Primary"
+                        OnClick="ViewAttachedFile">
                             View Production Order
                         </MudButton>
                     </MudItem>
@@ -37,10 +38,10 @@
 
                     <MudItem md="12" sm="12" xs="12">
                         <MudDatePicker PickerVariant="PickerVariant.Dialog"
-                                       @bind-Date="StartDate"
-                                       Variant="Variant.Outlined"
-                                       Label="Select Start Date"
-                                       MinDate="@StartMinDate" />
+                        @bind-Date="StartDate"
+                        Variant="Variant.Outlined"
+                        Label="Select Start Date"
+                        MinDate="@StartMinDate" />
                     </MudItem>
 
                     <MudItem xs="6">
@@ -103,6 +104,33 @@
                         <MudCheckBox @bind-Value="@IsMoveoutsideoperation" Color="Color.Success">Move to outside operation</MudCheckBox>
                     </div>
 
+                    <div style="margin-top:-4px;margin-bottom:1.5rem;margin-right:-12px">
+                        <MudCheckBox @bind-Value="@IsSecondaryWorkCenters" Color="Color.Success">
+                            Secondary WorkCenters
+                        </MudCheckBox>
+                    </div>
+
+                    @if (IsSecondaryWorkCenters)
+                    {
+                        <MudItem md="12" sm="12" xs="12">
+                            <MudSelect Variant="Variant.Outlined"
+                            @bind-Value="SelectedSecondaryWorkCenters"
+                            AnchorOrigin="Origin.BottomCenter"
+                            Label="Work Centers"
+                            OpenIcon="@Icons.Material.Filled.LocationCity"
+                            AdornmentColor="Color.Primary">
+                                @if (MESWorkcenters != null)
+                                {
+                                    @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                                    {
+                                        <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+
+
                 </MudGrid>
                 <br />
 
@@ -131,10 +159,10 @@
 
 <style>
     .center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
     }
 
 </style>
@@ -156,12 +184,28 @@
     public bool IsMoveoutsideoperation { get; set; } = false;
     private List<RotorGrindingSavedData> rotorGrindingSavedDatas = new();
     private List<RotorGrindingData> RotorgrindingDatas = new();
+    public bool IsSecondaryWorkCenters { get; set; } = false;
+    private string? SelectedSecondaryWorkCenters { get; set; }
+    private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
 
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // MinDate = DateTime.Today;
         StartMinDate = DateTime.Today;
+
+        // get Work Centers
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
+
+            if (locationResult != null)
+            {
+                MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
     }
 
     private bool IsAllFieldsFilled()
@@ -238,6 +282,70 @@
         }
     }
 
+    private async Task submitSecondaryWorkCenters()
+    {
+        if (SelectedSecondaryWorkCenters == null)
+        {
+            Snackbar.Add("Please select secondary workcenters.", Severity.Error);
+            return;
+        }
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+        var SWsubmissionData = new SecondaryWorkCentersSubmission
+            {
+                SelectedProductionInspection = selectedData,
+                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
+                ReliefLand = GetRotorProcess.ReliefLand,
+                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = GetRotorProcess.ToothFaceRight,
+                CentersLeft = GetRotorProcess.CentersLeft,
+                CentersRight = GetRotorProcess.CentersRight,
+                VisualChecks = GetRotorProcess.VisualChecks,
+                InspectedBy = GetRotorProcess.InspectedBy,
+                Notes = GetRotorProcess.Notes,
+                GrindingStartDate = StartDate,
+                DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
+                GrindingdataSavedBy = useradd,
+                GrindingdataSavedByDate = DateTime.Now.ToString(),
+                IsMoveoutsideoperation = IsMoveoutsideoperation,
+                IsSecondaryWorkCenters = IsSecondaryWorkCenters,
+                SecondaryWorkCenters = SelectedSecondaryWorkCenters,
+
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(SWsubmissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddSWSubmitedData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Rotor Secondary WorkCenters Submit successfully!", Severity.Success);
+                ClearAll();
+                StateHasChanged();
+                CompletionService.IsCompleted = true;
+                MudDialog?.Close();
+
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting data: {ex.Message}", Severity.Error);
+        }
+    }
+
     private async Task Submit()
     {
         if (StartDate == null)
@@ -249,6 +357,12 @@
         if (IsMoveoutsideoperation)
         {
             await submitIsMoveoutsideoperation();
+            return;
+        }
+
+        if (IsSecondaryWorkCenters)
+        {
+            await submitSecondaryWorkCenters();
             return;
         }
 
@@ -366,19 +480,45 @@
                     }
                 }
 
-                // Step 1: Get serials from both lists
-                var allGrindingSerials = new HashSet<string>(RotorgrindingDatas.Select(x => x.SerialNumber));
-                var savedSerials = rotorGrindingSavedDatas.Select(x => x.SerialNumber);
+                // Step 1: Get all existing serial numbers
+                var existingSerialNumbers = new HashSet<string>(
+                    RotorgrindingDatas
+                        .Where(x => !string.IsNullOrWhiteSpace(x.SerialNumber))
+                        .Select(x => x.SerialNumber)
+                );
 
-                // Step 2: Find if any saved serial is missing in grinding data
-                bool anySavedNotInGrinding = savedSerials.Any(serial => !allGrindingSerials.Contains(serial));
+                // Step 2: Get saved grinding data whose SerialNumbers are NOT in existing grinding data
+                var savedWithDifferentSerials = rotorGrindingSavedDatas
+                    .Where(x => !string.IsNullOrWhiteSpace(x.SerialNumber) && !existingSerialNumbers.Contains(x.SerialNumber))
+                    .ToList();
 
-                // Step 3: If yes, show the message
-                if (anySavedNotInGrinding)
+                // Step 3: Compare work centers
+                var selectedWorkCenter = selectedData?.Workcenters?.Trim().ToLowerInvariant();
+
+                bool isWorkCenterConflict = savedWithDifferentSerials
+                    .Any(x => x.Workcenters?.Trim().ToLowerInvariant() == selectedWorkCenter);
+
+                // Step 4: Show message if conflict
+                if (isWorkCenterConflict)
                 {
-                    Snackbar.Add("One of the rotors is already started. Please complete it before starting a new rotor.", Severity.Error);
+                    Snackbar.Add("One of the rotors is already started for this workcenter. Please complete it before starting a new rotor.", Severity.Error);
                     return;
                 }
+
+
+                // // Step 1: Get serials from both lists
+                // var allGrindingSerials = new HashSet<string>(RotorgrindingDatas.Select(x => x.SerialNumber));
+                // var savedSerials = rotorGrindingSavedDatas.Select(x => x.SerialNumber);
+
+                // // Step 2: Find if any saved serial is missing in grinding data
+                // bool anySavedNotInGrinding = savedSerials.Any(serial => !allGrindingSerials.Contains(serial));
+
+                // // Step 3: If yes, show the message
+                // if (anySavedNotInGrinding)
+                // {
+                //     Snackbar.Add("One of the rotors is already started. Please complete it before starting a new rotor.", Severity.Error);
+                //     return;
+                // }
 
 
             }
@@ -513,5 +653,29 @@
         public string GrindingdataSavedBy { get; set; }
         public string GrindingdataSavedByDate { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
+    }
+
+
+    public class SecondaryWorkCentersSubmission
+    {
+        public RotorProductionData SelectedProductionInspection { get; set; }
+        public string RotorsDiaLeft { get; set; }
+        public string RotorsDiaRight { get; set; }
+        public string ReliefLand { get; set; }
+        public string ToothFaceLeft { get; set; }
+        public string ToothFaceRight { get; set; }
+        public string CentersLeft { get; set; }
+        public string CentersRight { get; set; }
+        public string VisualChecks { get; set; }
+        public string InspectedBy { get; set; }
+        public DateTime? GrindingStartDate { get; set; }
+        public string Notes { get; set; }
+        public string DelayReasonTracking { get; set; }
+        public string AdditionalSalesComments { get; set; }
+        public string GrindingdataSavedBy { get; set; }
+        public string GrindingdataSavedByDate { get; set; }
+        public bool IsMoveoutsideoperation { get; set; }
+        public bool IsSecondaryWorkCenters { get; set; }
+        public string SecondaryWorkCenters { get; set; }
     }
 }

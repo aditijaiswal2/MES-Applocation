@@ -102,5 +102,10 @@
         public const string AddSalesAttachedFile = $"{BaseUrl}/SalesAttachedFile/addpi";
         public const string GetSalesAttachedFileBySerialNumber = $"{BaseUrl}/SalesAttachedFile/GFile";
 
+
+        // Rotor Secondary WorkCenters Submited Data
+        public const string AddSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/AddSWData";
+        public const string GetAllSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/GetAllSWData";
+
     }
 }
