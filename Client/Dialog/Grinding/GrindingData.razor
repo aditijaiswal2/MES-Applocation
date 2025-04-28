@@ -44,6 +44,14 @@
                         MinDate="@StartMinDate" />
                     </MudItem>
 
+                    <MudItem class="center" md="12" sm="12" xs="12">
+                        @if (StartDate != null)
+                        {
+                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">START</MudButton>
+                        }
+
+                    </MudItem>
+
                     <MudItem xs="6">
                         <MudTextField Label="Rotor Dia.Left" @bind-Value="@GetRotorProcess.RotorsDiaLeft" Variant="Variant.Outlined" />
                     </MudItem>
@@ -135,10 +143,10 @@
                 <br />
 
                 <MudItem Class="d-flex justify-end" md="12" sm="12" xs="12">
-                    @if (StartDate != null)
+                    @* @if (StartDate != null)
                     {
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
-                    }
+                    } *@
 
                     @if (IsAllFieldsFilled())
                     {

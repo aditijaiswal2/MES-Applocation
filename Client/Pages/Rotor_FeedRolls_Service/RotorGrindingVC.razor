@@ -22,7 +22,7 @@
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
                 <div class="table-container">
                     <MudTable Items="@RotorProductionDatas.DistinctBy(x => x.SerialNumber).ToList()" Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
-                              Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
+                    Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
@@ -39,7 +39,8 @@
                             <MudTh>Serial Number</MudTh>
                             <MudTh Style="text-align:center">Customer Name</MudTh>
                             <MudTh Style="text-align:center">Rotor Number</MudTh>
-                            <MudTh Style="text-align:center">Work Center</MudTh>
+                            <MudTh Style="text-align:center">Primary Work Center</MudTh>
+                            <MudTh Style="text-align:center">Secondary Work Center</MudTh>
                             <MudTh Style="text-align:center">Component Type</MudTh>
                             <MudTh Style="text-align:center">Target Date</MudTh>
                             <MudTh Style="text-align:center">Customer Priority</MudTh>
@@ -50,6 +51,13 @@
                             <MudTd Style="text-align:center">@data.Customer</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
                             <MudTd Style="text-align:center">@data.Workcenters</MudTd>
+                            <MudTd Style="text-align:center">
+                                @(
+                                        SecondaryWorkCentersData
+                                        .FirstOrDefault(x => x.SerialNumber?.Equals(data.SerialNumber, StringComparison.OrdinalIgnoreCase) == true)
+                                        ?.SecondaryWorkCenters ?? "N/A"
+                                        )
+                            </MudTd>
                             <MudTd Style="text-align:center">@data.ComponentType</MudTd>
                             <MudTd Style="text-align:center">@data.TargetDate?.ToString("MM/dd/yyyy")</MudTd>
                             <MudTd Style="text-align:center">@data.CustomerImportance</MudTd>
@@ -72,10 +80,10 @@
                                         <MudChip Color="@(data.TargetDate < DateTime.Today ? Color.Error
                                             : data.TargetDate > DateTime.Today ? Color.Tertiary
                                             : Color.Primary)"
-                                                 Style="min-width: 100px;" Label="true">
+                                        Style="min-width: 100px;" Label="true">
                                             @(data.TargetDate < DateTime.Today ? "Overdue"
-                                            : data.TargetDate > DateTime.Today ? "Upcoming"
-                                            : "Due Today")
+                                                : data.TargetDate > DateTime.Today ? "Upcoming"
+                                                : "Due Today")
                                         </MudChip>
                                     }
                                 }
@@ -122,6 +130,7 @@
     private List<RotorDamageGrindingDataFromGrinding> RotorDamageDuringgrindingData = new();
     private List<RotorDamageGrindingSubmitedData> RotorGrindingSubitedDatas = new();
     private List<RotorGrindingSecondaryWorkCentersData> SecondaryWorkCentersData = new();
+    private List<NewRotorData> NewRotorData = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,8 +153,9 @@
     private async Task LoadData()
     {
         try
-        {
-            // get all Secondary workcenters data 
+        {          
+
+            // get all Secondary workcenters data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorswResponse = await HttpClient.GetAsync(ApiConstants.GetAllSWSubmitedData);
 
@@ -155,12 +165,13 @@
 
                 if (!string.IsNullOrEmpty(swcDataJson))
                 {
-                    SecondaryWorkCentersData = JsonSerializer.Deserialize<List<RotorGrindingSecondaryWorkCentersData>>(swcDataJson,
+                    var allSecondaryWorkCenters = JsonSerializer.Deserialize<List<RotorGrindingSecondaryWorkCentersData>>(swcDataJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSecondaryWorkCentersData>();
-                    var latestDate = SecondaryWorkCentersData.Max(x => x.GrindingdataSubmitedByDate);
-                    SecondaryWorkCentersData = SecondaryWorkCentersData
-                        .Where(x => x.GrindingdataSubmitedByDate == latestDate)
-                        .ToList();
+
+                    SecondaryWorkCentersData = allSecondaryWorkCenters
+                    .GroupBy(x => x.SerialNumber)
+                    .Select(g => g.OrderByDescending(x => x.GrindingdataSubmitedByDate).First())
+                    .ToList();
 
                 }
             }
@@ -329,6 +340,97 @@
                 }
             }
 
+            // get all NEW rotor data from production
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var NEWDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllNewRotorData);
+
+            if (NEWDatasResponse.IsSuccessStatusCode)
+            {
+                var NEWDataJson = await NEWDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(NEWDataJson))
+                {
+                    NewRotorData = JsonSerializer.Deserialize<List<NewRotorData>>(NEWDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<NewRotorData>();
+
+                    var convertedNEWData = NewRotorData.Select(data => new RotorProductionData
+                        {
+                            SerialNumber = data.SerialNumber,
+                            Module = data.Module,
+                            SalesOrderNumber = data.SalesOrderNumber,
+                            WorkOrder = data.WorkOrder,
+                            MatNumber = data.MaterialNumber,
+                            Customer = data.CustomerName,
+                            Location = "N/A",
+                            Received = "N/A",
+                            Inspected = "N/A",
+                            RotorsNumber = data.RotorsNumber,
+                            Initials = "N/A",
+                            Make = "N/A",
+                            Dia = "N/A",
+                            Len = "N/A",
+                            Fits = "N/A",
+                            Materials = "N/A",
+                            Others = "N/A",
+                            RotorsDia = "N/A",
+                            RotorStyle = "N/A",
+                            Type = "N/A",
+                            BearingRemoved = "N/A",
+                            Bearing = "N/A",
+                            BearingSeals = "N/A",
+                            CeramicSeals = "N/A",
+                            Right = "N/A",
+                            yRight = "N/A",
+                            Left = "N/A",
+                            yLeft = "N/A",
+                            BasicSharpening = "N/A",
+                            IfYBasicSharpening = "N/A",
+                            WedgelockAlignmentMarks = "N/A",
+                            CenterGrinding = "N/A",
+                            IfYCenterGrinding = "N/A",
+                            Aligned = "N/A",
+                            PlasticSleaves = "N/A",
+                            Welding = "N/A",
+                            WeldingNum = "N/A",
+                            BedKnife = "N/A",
+                            BoxReceivedWithSaddles = "N/A",
+                            ReProfile = "N/A",
+                            SandBlasting = "N/A",
+                            ManualLabor = "N/A",
+                            Bottom = "N/A",
+                            Top = "N/A",
+                            AddQty = 0,
+                            TirLeftJournal = "N/A",
+                            TirRightJournal = "N/A",
+                            SaddlePartNumber = "N/A",
+                            DateTime = DateTime.Now,
+                            RotorCategorization = "N/A",
+                            ComponentType = data.ComponentType,
+                            Users = data.NewRotorDataSSubmitBy,
+                            TargetDate = data.TargetDate,
+                            CustomerInstructions = "N/A",
+                            CustomerImportance = data.CustomerImportance,
+                            SubmitDate = data.NewRotorDataSubmitDate,
+                            SubmitedBy = data.NewRotorDataSSubmitBy,
+                            AdvancedSharpingStatus = "N/A",
+                            Workcenters = data.Workcenters,
+                            ProductionSubmitBy = data.NewRotorDataSSubmitBy,
+                            ProductionSubmitDate = data.NewRotorDataSubmitDate
+
+                        })
+
+                             .Where(data => !RotorgrindingDatas.Any(r =>
+                                    string.Equals(r.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase)) &&
+                                       !RotorDamageDuringgrindingData.Any(d =>
+                                    string.Equals(d.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+
+
+                    // Add the filtered data to RotorProductionDatas
+                    RotorProductionDatas.AddRange(convertedNEWData.DistinctBy(data => data.SerialNumber));
+                }
+            }
+
             StateHasChanged();
 
         }
@@ -390,6 +492,27 @@
     {
         if (CompletionService.IsCompleted)
         {
+            // get all Secondary workcenters data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorswResponse = await HttpClient.GetAsync(ApiConstants.GetAllSWSubmitedData);
+
+            if (rotorswResponse.IsSuccessStatusCode)
+            {
+                var swcDataJson = await rotorswResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(swcDataJson))
+                {
+                    var allSecondaryWorkCenters = JsonSerializer.Deserialize<List<RotorGrindingSecondaryWorkCentersData>>(swcDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSecondaryWorkCentersData>();
+
+                    SecondaryWorkCentersData = allSecondaryWorkCenters
+                    .GroupBy(x => x.SerialNumber)
+                    .Select(g => g.OrderByDescending(x => x.GrindingdataSubmitedByDate).First())
+                    .ToList();
+
+                }
+            }
+
             // get all saved rotor grinding data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorgrindingsavedDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllSavedGrindingData);
@@ -545,6 +668,97 @@
                     // Add the filtered data to RotorProductionDatas
                     RotorProductionDatas.AddRange(convertedProductionData);
 
+                }
+            }
+
+            // get all NEW rotor data from production
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var NEWDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllNewRotorData);
+
+            if (NEWDatasResponse.IsSuccessStatusCode)
+            {
+                var NEWDataJson = await NEWDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(NEWDataJson))
+                {
+                    NewRotorData = JsonSerializer.Deserialize<List<NewRotorData>>(NEWDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<NewRotorData>();
+
+                    var convertedNEWData = NewRotorData.Select(data => new RotorProductionData
+                        {
+                            SerialNumber = data.SerialNumber,
+                            Module = data.Module,
+                            SalesOrderNumber = data.SalesOrderNumber,
+                            WorkOrder = data.WorkOrder,
+                            MatNumber = data.MaterialNumber,
+                            Customer = data.CustomerName,
+                            Location = "N/A",
+                            Received = "N/A",
+                            Inspected = "N/A",
+                            RotorsNumber = data.RotorsNumber,
+                            Initials = "N/A",
+                            Make = "N/A",
+                            Dia = "N/A",
+                            Len = "N/A",
+                            Fits = "N/A",
+                            Materials = "N/A",
+                            Others = "N/A",
+                            RotorsDia = "N/A",
+                            RotorStyle = "N/A",
+                            Type = "N/A",
+                            BearingRemoved = "N/A",
+                            Bearing = "N/A",
+                            BearingSeals = "N/A",
+                            CeramicSeals = "N/A",
+                            Right = "N/A",
+                            yRight = "N/A",
+                            Left = "N/A",
+                            yLeft = "N/A",
+                            BasicSharpening = "N/A",
+                            IfYBasicSharpening = "N/A",
+                            WedgelockAlignmentMarks = "N/A",
+                            CenterGrinding = "N/A",
+                            IfYCenterGrinding = "N/A",
+                            Aligned = "N/A",
+                            PlasticSleaves = "N/A",
+                            Welding = "N/A",
+                            WeldingNum = "N/A",
+                            BedKnife = "N/A",
+                            BoxReceivedWithSaddles = "N/A",
+                            ReProfile = "N/A",
+                            SandBlasting = "N/A",
+                            ManualLabor = "N/A",
+                            Bottom = "N/A",
+                            Top = "N/A",
+                            AddQty = 0,
+                            TirLeftJournal = "N/A",
+                            TirRightJournal = "N/A",
+                            SaddlePartNumber = "N/A",
+                            DateTime = DateTime.Now,
+                            RotorCategorization = "N/A",
+                            ComponentType = data.ComponentType,
+                            Users = data.NewRotorDataSSubmitBy,
+                            TargetDate = data.TargetDate,
+                            CustomerInstructions = "N/A",
+                            CustomerImportance = data.CustomerImportance,
+                            SubmitDate = data.NewRotorDataSubmitDate,
+                            SubmitedBy = data.NewRotorDataSSubmitBy,
+                            AdvancedSharpingStatus = "N/A",
+                            Workcenters = data.Workcenters,
+                            ProductionSubmitBy = data.NewRotorDataSSubmitBy,
+                            ProductionSubmitDate = data.NewRotorDataSubmitDate
+
+                        })                         
+
+                             .Where(data => !RotorgrindingDatas.Any(r =>
+                                    string.Equals(r.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase)) &&
+                                       !RotorDamageDuringgrindingData.Any(d =>
+                                    string.Equals(d.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+
+
+                    // Add the filtered data to RotorProductionDatas
+                    RotorProductionDatas.AddRange(convertedNEWData.DistinctBy(data => data.SerialNumber));
                 }
             }
 

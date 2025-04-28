@@ -2,6 +2,7 @@
 using MES.Shared.Models.Rotors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MES.Server.Controllers
 {
@@ -26,6 +27,31 @@ namespace MES.Server.Controllers
 
             return Ok(rotorData);
         }
+
+        [HttpGet("GetLatestSerialNumber")]
+        public async Task<IActionResult> GetLatestSerialNumber()
+        {
+            var latestRotor = await _context.NewRotorData
+                .OrderByDescending(r => r.NewRotorDataSubmitDate)  // or SerialNumber if needed
+                .FirstOrDefaultAsync();
+
+            if (latestRotor == null)
+                return Ok(""); // no data yet
+
+            return Ok(latestRotor.SerialNumber);
+        }
+
+        [HttpGet("GetAllNewRotorData")]
+        public async Task<ActionResult<IEnumerable<NewRotorData>>> GetAllNewRotorData()
+        {
+            var records = await _context.NewRotorData.ToListAsync();
+
+            if (records == null || !records.Any())
+                return NotFound("No New Rotor Data records found.");
+
+            return Ok(records);
+        }
+
 
     }
 }

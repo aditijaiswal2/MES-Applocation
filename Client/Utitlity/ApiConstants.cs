@@ -68,6 +68,8 @@
 
         // new rotor data
         public const string AddNewRotorData = $"{BaseUrl}/NewRotorDetails/SaveNewRotor";
+        public const string GetLatestSerialNumber = $"{BaseUrl}/NewRotorDetails/GetLatestSerialNumber";
+        public const string GetAllNewRotorData = $"{BaseUrl}/NewRotorDetails/GetAllNewRotorData";
 
         // Rotor Grinding Data
         public const string AddRotorGrindingData = $"{BaseUrl}/RotorGrinding/AddGrindingData";

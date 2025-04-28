@@ -649,12 +649,50 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ComponentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerImportance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WorkOrderNumber")
+                    b.Property<string>("MaterialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Module")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewRotorDataSSubmitBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("NewRotorDataSubmitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan?>("PlannedHours")
+                        .HasColumnType("time");
+
+                    b.Property<string>("RotorsNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalesOrderNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
