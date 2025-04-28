@@ -7,9 +7,11 @@
 @using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
 @using MES.Client.Dialog.Rotors
+@using Newtonsoft.Json
+@using System.Text
 @using MES.Shared.DTOs
 @using MES.Shared.DTOs.MES.Shared.DTOs.Rotors
-
+@using static MES.Client.Pages.LoginVC
 @inject IDialogService DialogService
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient HttpClient
@@ -42,7 +44,7 @@
 
         </MudItem>
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
-            @if (!string.IsNullOrEmpty(qrCodeData))
+            @if (!string.IsNullOrEmpty(qrCodeData) && !isSubmitted)
             {
                 <div>
                     <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
@@ -53,15 +55,15 @@
                     </div>
                     <div style="margin-top:10px">
                         <MudButton OnClick="OpenPreviewDialogBox"
-                        Class="mr-2"
-                        Color="Color.Primary"
-                        Variant="Variant.Filled">
+                                   Class="mr-2"
+                                   Color="Color.Primary"
+                                   Variant="Variant.Filled">
                             Incoming Inspection Report
                         </MudButton>
 
                         <MudButton Class="mr-2"
-                        Color="Color.Secondary"
-                        Variant="Variant.Filled" OnClick="ViewAttachedFile">
+                                   Color="Color.Secondary"
+                                   Variant="Variant.Filled" OnClick="ViewAttachedFile">
                             Production Order Report
                         </MudButton>
                     </div>
@@ -119,7 +121,7 @@
 
                                     <MudGrid Spacing="3">
 
-                                        <MudItem xs="12" md="4" >
+                                        <MudItem xs="12" md="4">
                                             <MudTextField Label="Centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                         </MudItem>
 
@@ -144,21 +146,21 @@
                                         </MudItem>
                                     </MudGrid>
 
-                                       <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
-                        <MudCardContent>
+                                    <MudForm Class="mt-4 p-4 w-100">
+                                        <MudCardContent>
 
-                            <MudGrid Class="w-100">
+                                            <MudGrid Class="w-100">
 
-                                    <MudGrid Spacing="3">
+                                                <MudGrid Spacing="3">
 
-                                        <MudItem xs="12" md="6">
-                                            <MudTextField Label="Sales Order" @bind-Value="serialNumberData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                        </MudItem>
+                                                    <MudItem xs="12" md="6">
+                                                        <MudTextField Label="Sales Order" @bind-Value="serialNumberData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    </MudItem>
 
-                                    <MudItem xs="12" md="6">
-                                        <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
-                                    </MudItem>
-                                     </MudGrid>
+                                                    <MudItem xs="12" md="6">
+                                                        <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                    </MudItem>
+                                                </MudGrid>
 
                                                 <MudGrid Spacing="3">
 
@@ -199,9 +201,9 @@
                                                         <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" />
                                                     </MudItem>
                                                 </MudGrid>
-                                </MudGrid>
-                            </MudCardContent>
-
+                                            </MudGrid>
+                                        </MudCardContent>
+                                        @* 
                                         <MudGrid Spacing="3" Class="mt-4">
                                             <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
                                                 <HeaderContent>
@@ -226,10 +228,10 @@
                                                         <MudTextField @bind-Value="context.Name" />
                                                     </MudTd>
                                                 </RowTemplate>
-                                            </MudTable>
+                                            </MudTable> 
 
-                                        </MudGrid>
-                        </MudForm>
+                                        </MudGrid>*@
+                                    </MudForm>
 
                                     <MudGrid Class="full-width-grid">
                                         <MudItem xs="12" style="text-align: center; width: 100%;">
@@ -264,15 +266,15 @@
                                         <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
                                             <div style="display: flex; justify-content: flex-end;">
                                                 <MudButton OnClick="OpenFinalDialogBox"
-                                                Class="mr-2"
-                                                Color="Color.Primary"
-                                                Variant="Variant.Filled">
-                                                    Final Inspection Report
+                                                           Class="mr-2"
+                                                           Color="Color.Primary"
+                                                           Variant="Variant.Filled">
+                                                    Preview
                                                 </MudButton>
                                                 <MudButton OnClick="Submitdata"
-                                                Class="mr-2"
-                                                Color="Color.Primary"
-                                                Variant="Variant.Filled">
+                                                           Class="mr-2"
+                                                           Color="Color.Primary"
+                                                           Variant="Variant.Filled">
                                                     Submit
                                                 </MudButton>
                                             </div>
@@ -310,7 +312,7 @@
     private string? SelectedProject { get; set; }
     private RotorFinalInspectionDTO _finalResult;
     private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
-
+    private bool isSubmitted = false;
     private bool isCancel = false;
     private bool cameraError = false;
     private RotorGrindingData serialNumberData;
@@ -321,6 +323,30 @@
 
     public FinalInspectionImageDTO? ProjectimagesData { get; set; }
     private List<FinalInspection> selectedImagesFromSM = new List<FinalInspection>();
+
+    private async Task OpenFinalDialogBox()
+    {
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                CloseButton = true,
+                DisableBackdropClick = true
+            };
+
+
+        var parameters = new DialogParameters
+            {//selectedMaterial
+                ["InspectionData"] = FinalInspectionData,
+                ["Grinding"] = serialNumberData,
+
+            };
+        // var options = new DialogOptions { FullWidth = true };
+        var dialog = await DialogService.ShowAsync<FinalInspectionDialog>("FINAL INSPECTION REPORT", parameters, options);
+
+
+
+    }
 
     private async Task StartScanning()
     {
@@ -347,107 +373,130 @@
         StateHasChanged(); // Update the UI to show the camera or error message
     }
 
-    
+
 
     private async Task Submitdata()
     {
         try
         {
-            FinalInspection.SerialNumber = serialNumberData.SerialNumber;
-            FinalInspection.Module = serialNumberData.Module;
-            FinalInspection.SalesOrderNumber = serialNumberData.SalesOrderNumber;
-            FinalInspection.WorkOrder = serialNumberData.WorkOrder;
-            FinalInspection.MatNumber = serialNumberData.MatNumber;
-            FinalInspection.Customer = serialNumberData.Customer;
-            FinalInspection.Location = serialNumberData.Location;
-            FinalInspection.Received = serialNumberData.Received;
-            FinalInspection.Inspected = serialNumberData.Inspected;
-            FinalInspection.Len = serialNumberData.Len;
-            FinalInspection.RotorsNumber = serialNumberData.RotorsNumber;
-            FinalInspection.Initials = serialNumberData.Initials;
-            FinalInspection.Make = serialNumberData.Make;
-            FinalInspection.Dia = serialNumberData.Dia;
-            FinalInspection.RotorStyle = serialNumberData.RotorStyle;
-            FinalInspection.Fits = serialNumberData.Fits;
-            FinalInspection.Materials = serialNumberData.Materials;
-            FinalInspection.Others = serialNumberData.Others;
-            FinalInspection.RotorsDia = serialNumberData.RotorsDia;
-            FinalInspection.Type = serialNumberData.Type;
-            FinalInspection.BearingRemoved = serialNumberData.BearingRemoved;
-            FinalInspection.Bearing = serialNumberData.Bearing;
-            FinalInspection.BearingSeals = serialNumberData.BearingSeals;
-            FinalInspection.CeramicSeals = serialNumberData.CeramicSeals;
-            FinalInspection.Right = serialNumberData.Right;
-            FinalInspection.yRight = serialNumberData.yRight;
-            FinalInspection.yLeft = serialNumberData.yLeft;
-            FinalInspection.Left = serialNumberData.Left;
-            FinalInspection.BasicSharpening = serialNumberData.BasicSharpening;
-            FinalInspection.IfYBasicSharpening = serialNumberData.IfYBasicSharpening;
-            FinalInspection.WedgelockAlignmentMarks = serialNumberData.WedgelockAlignmentMarks;
-            FinalInspection.CenterGrinding = serialNumberData.CenterGrinding;
-            FinalInspection.IfYCenterGrinding = serialNumberData.IfYCenterGrinding;
-            FinalInspection.Aligned = serialNumberData.Aligned;
-            FinalInspection.PlasticSleaves = serialNumberData.PlasticSleaves;
-            FinalInspection.Welding = serialNumberData.Welding;
-            FinalInspection.WeldingNum = serialNumberData.WeldingNum;
-            FinalInspection.BedKnife = serialNumberData.BedKnife;
-            FinalInspection.BoxReceivedWithSaddles = serialNumberData.BoxReceivedWithSaddles;
-            FinalInspection.ReProfile = serialNumberData.ReProfile;
-            FinalInspection.SandBlasting = serialNumberData.SandBlasting;
-            FinalInspection.ManualLabor = serialNumberData.ManualLabor;
-            FinalInspection.Bottom = serialNumberData.Bottom;
-            FinalInspection.Top = serialNumberData.Top;
-            FinalInspection.AddQty = serialNumberData.AddQty;
-            FinalInspection.TirLeftJournal = serialNumberData.TirLeftJournal;
-            FinalInspection.TirRightJournal = serialNumberData.TirRightJournal;
-            FinalInspection.SaddlePartNumber = serialNumberData.SaddlePartNumber;
-            FinalInspection.RotorCategorization = serialNumberData.RotorCategorization;
-            FinalInspection.ComponentType = serialNumberData.ComponentType;
-            FinalInspection.Users = serialNumberData.Users;
-            FinalInspection.TargetDate = serialNumberData.TargetDate;
-            FinalInspection.CustomerInstructions = serialNumberData.CustomerInstructions;
-            FinalInspection.CustomerImportance = serialNumberData.CustomerImportance;
-            FinalInspection.SubmitDate = serialNumberData.SubmitDate;
-            FinalInspection.SubmitedBy = serialNumberData.SubmitedBy;
-            FinalInspection.AdvancedSharpingStatus = serialNumberData.AdvancedSharpingStatus;
-            FinalInspection.Workcenters = serialNumberData.Workcenters;
-            FinalInspection.ProductionSubmitDate = serialNumberData.ProductionSubmitDate;
-            FinalInspection.ProductionSubmitBy = serialNumberData.ProductionSubmitBy;
-            FinalInspection.RotorsDiaLeft = serialNumberData.RotorsDiaLeft;
-            FinalInspection.RotorsDiaRight = serialNumberData.RotorsDiaRight;
-            FinalInspection.ReliefLand = serialNumberData.ReliefLand;
-            FinalInspection.ToothFaceLeft = serialNumberData.ToothFaceLeft;
-            FinalInspection.ToothFaceRight = serialNumberData.ToothFaceRight;
-            FinalInspection.CentersLeft = serialNumberData.CentersLeft;
-            FinalInspection.CentersRight = serialNumberData.CentersRight;
-            FinalInspection.VisualChecks = serialNumberData.VisualChecks;
-            FinalInspection.InspectedBy = serialNumberData.InspectedBy;
-            FinalInspection.GrindingStartDate = serialNumberData.GrindingStartDate;
-            FinalInspection.GrindingEndDate = serialNumberData.GrindingdataSubmitedByDate;
-            FinalInspection.Notes = serialNumberData.Notes;
-            FinalInspection.DelayReasonTracking = serialNumberData.DelayReasonTracking;
-            FinalInspection.GrindingSubmiteddBy = serialNumberData.GrindingdataSubmiteddBy;
-            // FinalInspection.CustomerPoNum =;
-            // FinalInspection.DWGNum = ;
-            // FinalInspection.AGNum = ;
-            // FinalInspection.SpecialNoteComment = ;
-            // FinalInspection.Dressedwithnewbearing = ;
-            // FinalInspection.InspectorSing = ;
-            // FinalInspection.Description = ;
-            // FinalInspection.Oktoship = ;
-            // FinalInspection.InspectorComments = ;
-            // FinalInspection.Start = ;
-            // FinalInspection.Finish = ;
-            // FinalInspection.Name = ;
-            // FinalInspection.Date = ;
-          //  FinalInspection.FinalInspectionSubmiteddBy = ;
-            FinalInspection.FinalInspectionSubmitedByDate = DateTime.Now;
+            var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+            string useradd = userData?.UserName ?? "User";
+            if (userData != null)
+            {
+                useradd = userData.UserName;
+
+            }
+
+            RotorsFinalInspection FinalInspection = new RotorsFinalInspection()
+                {
+                    SerialNumber = serialNumberData.SerialNumber,
+                    Module = serialNumberData.Module,
+                    SalesOrderNumber = serialNumberData.SalesOrderNumber,
+                    WorkOrder = serialNumberData.WorkOrder,
+                    MatNumber = serialNumberData.MatNumber,
+                    Customer = serialNumberData.Customer,
+                    Location = serialNumberData.Location,
+                    Received = serialNumberData.Received,
+                    Inspected = serialNumberData.Inspected,
+                    Len = serialNumberData.Len,
+                    RotorsNumber = serialNumberData.RotorsNumber,
+                    Initials = serialNumberData.Initials,
+                    Make = serialNumberData.Make,
+                    Dia = serialNumberData.Dia,
+                    RotorStyle = serialNumberData.RotorStyle,
+                    Fits = serialNumberData.Fits,
+                    Materials = serialNumberData.Materials,
+                    Others = serialNumberData.Others,
+                    RotorsDia = serialNumberData.RotorsDia,
+                    Type = serialNumberData.Type,
+                    BearingRemoved = serialNumberData.BearingRemoved,
+                    Bearing = serialNumberData.Bearing,
+                    BearingSeals = serialNumberData.BearingSeals,
+                    CeramicSeals = serialNumberData.CeramicSeals,
+                    Right = serialNumberData.Right,
+                    yRight = serialNumberData.yRight,
+                    yLeft = serialNumberData.yLeft,
+                    Left = serialNumberData.Left,
+                    BasicSharpening = serialNumberData.BasicSharpening,
+                    IfYBasicSharpening = serialNumberData.IfYBasicSharpening,
+                    WedgelockAlignmentMarks = serialNumberData.WedgelockAlignmentMarks,
+                    CenterGrinding = serialNumberData.CenterGrinding,
+                    IfYCenterGrinding = serialNumberData.IfYCenterGrinding,
+                    Aligned = serialNumberData.Aligned,
+                    PlasticSleaves = serialNumberData.PlasticSleaves,
+                    Welding = serialNumberData.Welding,
+                    WeldingNum = serialNumberData.WeldingNum,
+                    BedKnife = serialNumberData.BedKnife,
+                    BoxReceivedWithSaddles = serialNumberData.BoxReceivedWithSaddles,
+                    ReProfile = serialNumberData.ReProfile,
+                    SandBlasting = serialNumberData.SandBlasting,
+                    ManualLabor = serialNumberData.ManualLabor,
+                    Bottom = serialNumberData.Bottom,
+                    Top = serialNumberData.Top,
+                    AddQty = serialNumberData.AddQty,
+                    TirLeftJournal = serialNumberData.TirLeftJournal,
+                    TirRightJournal = serialNumberData.TirRightJournal,
+                    SaddlePartNumber = serialNumberData.SaddlePartNumber,
+                    RotorCategorization = serialNumberData.RotorCategorization,
+                    ComponentType = serialNumberData.ComponentType,
+                    Users = serialNumberData.Users,
+                    TargetDate = serialNumberData.TargetDate,
+                    CustomerInstructions = serialNumberData.CustomerInstructions,
+                    CustomerImportance = serialNumberData.CustomerImportance,
+                    SubmitDate = serialNumberData.SubmitDate,
+                    SubmitedBy = serialNumberData.SubmitedBy,
+                    AdvancedSharpingStatus = serialNumberData.AdvancedSharpingStatus,
+                    Workcenters = serialNumberData.Workcenters,
+                    ProductionSubmitDate = serialNumberData.ProductionSubmitDate,
+                    ProductionSubmitBy = serialNumberData.ProductionSubmitBy,
+                    RotorsDiaLeft = serialNumberData.RotorsDiaLeft,
+                    RotorsDiaRight = serialNumberData.RotorsDiaRight,
+                    ReliefLand = serialNumberData.ReliefLand,
+                    ToothFaceLeft = serialNumberData.ToothFaceLeft,
+                    ToothFaceRight = serialNumberData.ToothFaceRight,
+                    CentersLeft = serialNumberData.CentersLeft,
+                    CentersRight = serialNumberData.CentersRight,
+                    VisualChecks = serialNumberData.VisualChecks,
+                    InspectedBy = serialNumberData.InspectedBy,
+                    GrindingStartDate = serialNumberData.GrindingStartDate,
+                    GrindingEndDate = serialNumberData.GrindingdataSubmitedByDate,
+                    Notes = serialNumberData.Notes,
+                    DelayReasonTracking = serialNumberData.DelayReasonTracking,
+                    GrindingSubmiteddBy = serialNumberData.GrindingdataSubmiteddBy,
+                    CustomerPoNum = FinalInspectionData.CustomerPoNum,
+                    DWGNum = FinalInspectionData.DWGNum,
+                    AGNum = FinalInspectionData.SpecialNoteComment,
+                    Dressedwithnewbearing = FinalInspectionData.Dressedwithnewbearing,
+                    Description = FinalInspectionData.Description,
+                    Start = FinalInspectionData.Start,
+                    Finish = FinalInspectionData.Finish,
+                    Name = FinalInspectionData.Name,
+                    FinalInspectionSubmiteddBy = useradd,
+
+                    FinalInspectionSubmitedByDate = DateTime.Now,
+                };
 
             var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/RotorsFinalInspection/AddFinalInspection", FinalInspection);
 
             if (response.IsSuccessStatusCode)
             {
+                var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+                var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
+                // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
+
+                if (projectimageresponse.IsSuccessStatusCode)
+                {
+                    await localStorage.RemoveItemAsync("IncomingImageData");
+                    // Console.WriteLine("Images added successfully.");
+
+                }
                 Snackbar.Add("Final Inspection data saved successfully!", Severity.Success);
+                isSubmitted = true;
+
+                StateHasChanged();
             }
             else
             {
@@ -460,40 +509,11 @@
         }
     }
 
-    private async Task OpenFinalDialogBox()
-    {
-        var options = new DialogOptions
-            {
-                MaxWidth = MaxWidth.Medium,
-                FullWidth = true,
-                CloseButton = true,
-                DisableBackdropClick = true
-            };
 
-
-        var parameters = new DialogParameters
-            {//selectedMaterial
-                ["InspectionData"] = serialNumberData
-
-            };
-        // var options = new DialogOptions { FullWidth = true };
-        var dialog = await DialogService.ShowAsync<FinalInspectionDialog>("FINAL INSPECTION REPORT", parameters, options);
-
-        var result = await dialog.Result;
-
-        if (!result.Cancelled && result.Data is RotorFinalInspectionDTO returnData)
-        {
-            _finalResult = returnData;
-
-            // Now you can use `_finalResult` to bind to UI or perform logic
-            Snackbar.Add("Final inspection data received!", Severity.Success);
-        }
-
-    }
 
     private async Task ViewAttachedFile()
     {
-        if (string.IsNullOrEmpty(selectedData?.SerialNumber))
+        if (string.IsNullOrEmpty(serialNumberData?.SerialNumber))
         {
             Snackbar.Add("Serial number is missing!", Severity.Warning);
             return;
@@ -502,7 +522,7 @@
         try
         {
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var response = await HttpClient.GetAsync($"{ApiConstants.GetSalesAttachedFileBySerialNumber}/{selectedData.SerialNumber}");
+            var response = await HttpClient.GetAsync($"{ApiConstants.GetSalesAttachedFileBySerialNumber}/{serialNumberData.SerialNumber}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -579,7 +599,7 @@
                 FinalInspection = updatedInspection;
             }
 
-           
+
         }
     }
 
@@ -608,6 +628,23 @@
 
         StateHasChanged();
     }
+    protected override async Task OnInitializedAsync()
+    {
+        tableData = new List<RotorsFinalInspection>
+    {
+        new RotorsFinalInspection { Description = "Flute Diameter", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Land Width", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "T.I.R", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Taper", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Locknut Threads", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Is the Rotor clean?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Relief Angle", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Journals O.K.?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Wedgelock assembly", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+        new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
+    };
+    }
+
 
     private async Task AddProjectImagesAsync(ProjectImgDTO projectImagesDTO)
     {
@@ -661,7 +698,7 @@
                 });
         }
 
-         StateHasChanged(); // ✅ This triggers UI refresh
+        StateHasChanged(); // ✅ This triggers UI refresh
     }
 
     private async Task FetchSerialNumberData(string serial)

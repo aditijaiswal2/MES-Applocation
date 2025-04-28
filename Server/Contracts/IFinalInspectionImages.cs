@@ -6,8 +6,9 @@ namespace MES.Server.Contracts
 {
     public interface IFinalInspectionImages
     {
-       Task<IEnumerable<FinalInspection>> GetAllAsync();
+        Task<IEnumerable<FinalInspection>> GetAllAsync();
         Task<FinalInspection?> GetByIdAsync(int id);
+        Task<bool> SerialNumberExistsAsync(string serialNumber);
         Task AddIncomingImageAsync(FinalInspection image);
         Task UpdateIncomingImageAsync(FinalInspection image);
         Task DeleteIncomingImageAsync(int id);

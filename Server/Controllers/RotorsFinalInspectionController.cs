@@ -102,6 +102,15 @@ namespace YourAppNamespace.Controllers
 
             return Ok(new { message = "Inspection data saved successfully" });
         }
+
+        [HttpGet("CheckSerialExists/{serialNumber}")]
+        public async Task<IActionResult> CheckSerialExists(string serialNumber)
+        {
+            var exists = await _context.RotorsFinalInspections
+                .AnyAsync(r => r.SerialNumber == serialNumber); // adjust property name if different
+            return Ok(exists);
+        }
+
     }
 }
 

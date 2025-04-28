@@ -37,6 +37,11 @@ namespace MES.Server.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> SerialNumberExistsAsync(string serialNumber)
+        {
+            return await _context.finalInspections.AnyAsync(x => x.SerialNumber == serialNumber);
+        }
+
         public async Task DeleteIncomingImageAsync(int id)
         {
             var image = await _context.finalInspections.FindAsync(id);
@@ -76,7 +81,7 @@ namespace MES.Server.Data.Repositories
 
             return wIPForProjectJOB;
         }
-        
+
 
         public async Task<FinalInspection> GetImagesByDTOAsync(FinalInspectionImageDTO wIPForProjectJOBDTO)
         {

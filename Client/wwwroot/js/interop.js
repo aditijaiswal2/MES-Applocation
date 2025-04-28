@@ -1,98 +1,165 @@
-﻿
+﻿function printForm() {
+    // Open a new window for printing
+    var printWindow = window.open('', '', 'height=650, width=900');
+
+    // Get the content of the form (with dynamic values rendered)
+    var content = document.getElementById('printForm-section').innerHTML;
+
+    // Ensure that dynamic form data is included
+    var styles = `
+        <style>
+            body, * {
+                font-family: Arial, sans-serif !important;
+                font-size: 16px !important;
+                background-color: white;
+                color: black;
+                margin: 3px;
+                padding: 0;
+            }
+            .dialog-title {
+                text-align: center;
+                margin: 0;
+                font-size: 14px !important;
+            }
+            .mud-dialog, .mud-paper {
+                box-shadow: none !important;
+                border: 1px solid #000;
+                padding: 20px;
+                margin: 10px;
+                background-color: white;
+            }
+            .mud-dialog-title {
+                font-weight: bold;
+                margin-bottom: 16px;
+                border-bottom: 1px solid #000;
+                padding-bottom: 8px;
+            }
+            .mud-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px;
+            }
+            .mud-item {
+                padding: 4px;
+                box-sizing: border-box;
+            }
+            .qr-container {
+                text-align: center;
+                margin-top: 20px;
+            }
+            .qr-container img {
+                width: 75px !important;
+                height: 75px !important;
+                object-fit: contain;
+            }
+            @media print {
+                @page {
+                    margin: 10mm;
+                }
+            }
+        </style>
+    `;
+
+    // Write the content and styles to the print window
+    printWindow.document.write('<html><head><title>Print</title>' + styles + '</head><body>');
+    printWindow.document.write(content);  // Content should reflect the updated form values
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
 function printincomingImage(imageDataUrl, labelText) {
     const previewContent = document.getElementById("print-section");
 
     const htmlContent = `
-        <html>
-            <head>
-               
-                <style>
-                   body, * {
-                        font-family: Arial, sans-serif !important;
-                        font-size: 16px !important;
-                        background-color: white;
-                        color: black;
-                        margin: 3px;
-                        padding: 0;
-                    }
+       <html>
+    <head>
+        <style>
+            body, * {
+                font-family: Arial, sans-serif !important;
+                font-size: 16px !important;
+                background-color: white;
+                color: black;
+                margin: 3px;
+                padding: 0;
+            }
 
-                    .dialog-title {
-                      text-align: center;
-                      margin: 0;
-                      font-size: 14px !important;
-                    }              
+            .dialog-title {
+                text-align: center;
+                margin: 0;
+                font-size: 14px !important;
+            }
 
-                      .mud-dialog,
-                    .mud-paper {
-                        box-shadow: none !important;
-                        border: 1px solid #000;
-                        padding: 20px;
-                        margin: 10px;
-                        background-color: white;
-                    }
+            .mud-dialog,
+            .mud-paper {
+                box-shadow: none !important;
+                border: 1px solid #000;
+                padding: 20px;
+                margin: 10px;
+                background-color: white;
+            }
 
-                      .mud-dialog-title {
-                        font-weight: bold;
-                  
-                        margin-bottom: 16px;
-                        border-bottom: 1px solid #000;
-                        padding-bottom: 8px;
-                    }
-                     .mud-grid {
-                        display: grid !important;
-                        grid-template-columns: repeat(3, 1fr) !important;
-                        gap: 12px;
-                    }
+            .mud-dialog-title {
+                font-weight: bold;
+                margin-bottom: 16px;
+                border-bottom: 1px solid #000;
+                padding-bottom: 8px;
+            }
 
-                    .mud-item {
-                        padding: 4px;
-                        box-sizing: border-box;
-                    }
+            .mud-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important; /* Change to 4 columns */
+                gap: 12px;
+            }
 
-                    .qr-container {
-                        text-align: center;
-                        margin-top: 20px;
-                    }
-.qr-container img {
-    width: 75px !important;
-    height: 75px !important;
-    object-fit: contain;
-}
-                    @media print {
-                        @page {
-                            margin: 10mm;
-                          
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-              
-                  <div class="mud-dialog">
-                   <title class="dialog-title">INCOMING ROTOR INSPECTION</title>
-                       <img id="qr-img" src="${imageDataUrl}" alt="QR Code" />
+            .mud-item {
+                padding: 4px;
+                box-sizing: border-box;
+            }
 
-                    ${previewContent ? previewContent.innerHTML : ""}
-                </div>
+            .qr-container {
+                text-align: center;
+                margin-top: 20px;
+            }
 
-                <script>
-                    window.onload = function() {
-                        const img = document.getElementById('qr-img');
-                        if (img.complete) {
+            .qr-container img {
+                width: 75px !important;
+                height: 75px !important;
+                object-fit: contain;
+            }
+
+            @media print {
+                @page {
+                    margin: 10mm;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mud-dialog">
+            <title class="dialog-title">INCOMING ROTOR INSPECTION</title>
+            <img id="qr-img" src="${imageDataUrl}" alt="QR Code" />
+            ${previewContent ? previewContent.innerHTML : ""}
+        </div>
+
+        <script>
+            window.onload = function() {
+                const img = document.getElementById('qr-img');
+                if (img.complete) {
+                    window.print();
+                    window.onafterprint = () => window.close();
+                } else {
+                    img.onload = function () {
+                        setTimeout(() => {
                             window.print();
                             window.onafterprint = () => window.close();
-                        } else {
-                            img.onload = function () {
-                                setTimeout(() => {
-                                    window.print();
-                                    window.onafterprint = () => window.close();
-                                }, 300); // wait for rendering
-                            };
-                        }
-                    }
-                </script>
-            </body>
-        </html>
+                        }, 300); // wait for rendering
+                    };
+                }
+            }
+        </script>
+    </body>
+</html>
     `;
 
 

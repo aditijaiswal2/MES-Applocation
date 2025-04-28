@@ -16,6 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using MES.Shared.DTOs.MES.Shared.DTOs.Rotors;
 using MES.Server.Data.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
+using SkiaSharp;
+using MES.Shared.Models;
+using MES.Server.Data;
 
 
 namespace MES.Server.Controllers
@@ -29,20 +32,23 @@ namespace MES.Server.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly IncomingInspectionRepository _repository;
+        private readonly ProjectdbContext _context;
+
         //public WIPDataController(HttpClient httpClient, IncomingInspectionRepository repository)
         //{
         //    _httpClient = httpClient;
         //    _wipService = wipService;
         //}
 
-        public IncomingInspectionController(HttpClient httpClient, IncomingInspectionRepository repository)
+        public IncomingInspectionController(HttpClient httpClient, IncomingInspectionRepository repository, ProjectdbContext context)
         {
             _httpClient = httpClient;
             _repository = repository;
+            _context = context;
         }
 
         // GET: api/IncomingInspection
-        [HttpGet("getIncomingData")]
+        // [HttpGet("getIncomingData")]
         //public async Task<ActionResult<IEnumerable<IncomingInspection>>> GetAll()
         //{
         //    var inspections = await _repository.GetAllAsync();
@@ -176,11 +182,11 @@ namespace MES.Server.Controllers
 
 Regards,
 Incoming Inspection 
-{IncomingDataDTO.Users}"; 
+{IncomingDataDTO.Users}";
 
             var bodyPart = new TextPart(TextFormat.Plain) { Text = bodyText };
 
-          //  var emailBodyText = "Please find the attached inspection report.";
+            //  var emailBodyText = "Please find the attached inspection report.";
 
             foreach (var recipientEmail in IncomingDataDTO.SalesEmails.Distinct())
             {
@@ -220,7 +226,6 @@ Incoming Inspection
         }
 
         [HttpPost("addincoming")]
-
         public async Task<IActionResult> Create([FromBody] IncomingInspectionDTO incomingDataDTO)
         {
             if (incomingDataDTO == null)
@@ -256,5 +261,17 @@ Incoming Inspection
         }
 
 
+
+
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<Receiving>>> GetAll()
+        {
+            var records = await _context.Receivings.ToListAsync();
+
+            if (records == null || !records.Any())
+                return NotFound("No inspection records found.");
+
+            return Ok(records);
+        }
     }
 }

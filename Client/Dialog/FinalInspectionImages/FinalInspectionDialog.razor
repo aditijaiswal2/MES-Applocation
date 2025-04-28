@@ -10,6 +10,8 @@
 @using System.ComponentModel.DataAnnotations;
  @using MES.Shared.Models.Rotors
 
+
+ @inject IJSRuntime JSRuntime
 @inject ISnackbar Snackbar
 @inject HttpClient HttpClient
 @inject IDialogCompletionService CompletionService
@@ -20,7 +22,7 @@
 
 <div>
     <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
-        
+
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.AcUnit" Class="mr-3 mb-n1" />
@@ -29,67 +31,70 @@
         </TitleContent>
         <DialogContent>
 
-             <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
-                        <MudCardContent>
+            <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
+                <MudCardContent>
 
-                            <MudGrid Class="w-100">
-
-                                    <MudGrid Spacing="3">
-
-                                        <MudItem xs="12" md="6">
-                                <MudTextField Label="Sales Order" @bind-Value="InspectionData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                        </MudItem>
-
-                                        <MudItem xs="12" md="6">
-                                <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
-                                        </MudItem>
-                                     
-                                </MudGrid>
-
-                            <MudGrid Spacing="3">
-
-                                <MudItem xs="12" md="6">
-                                <MudTextField Label="Customer" @bind-Value="InspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                </MudItem>
-
-                                <MudItem xs="12" md="6">
-                                <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined"/>
-                                </MudItem>
-
-                            </MudGrid>
+                    <MudGrid Class="w-100">
 
                         <MudGrid Spacing="3">
 
-                            <MudItem xs="12" md="4">
-                                <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined"/>
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Sales Order</MudText>
+                                <MudText Typo="Typo.body1">@Grinding.SalesOrderNumber</MudText>
                             </MudItem>
 
-                            <MudItem xs="12" md="4">
-                                <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined"/>
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Customer PO#</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.CustomerPoNum</MudText>
                             </MudItem>
 
-                            <MudItem xs="12" md="4">
-                                <MudTextField Label="Material" @bind-Value="InspectionData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Customer</MudText>
+                                <MudText Typo="Typo.body1">@Grinding.Customer</MudText>
                             </MudItem>
 
                         </MudGrid>
 
                         <MudGrid Spacing="3">
 
-                            <MudItem xs="12" md="12">
-                                <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined"/>
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Dwg#</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.DWGNum</MudText>
                             </MudItem>
-                        </MudGrid>                       
+
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">AG#</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.AGNum</MudText>
+                            </MudItem>
+
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Description</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.Description</MudText>
+                            </MudItem>
+
+                        </MudGrid>
 
                         <MudGrid Spacing="3">
 
-                            <MudItem xs="12" md="12">
-                                <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined"/>
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Material</MudText>
+                                <MudText Typo="Typo.body1">@Grinding.Materials</MudText>
                             </MudItem>
+
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Special notes / comments</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.SpecialNoteComment</MudText>
+                            </MudItem>
+
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Dressed With New Bearings</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.Dressedwithnewbearing</MudText>
+                            </MudItem>
+
                         </MudGrid>
 
-                            </MudGrid>
-                        </MudCardContent>
+                    </MudGrid>
+                </MudCardContent>
                 <!-- Table Section -->
                 <MudGrid Spacing="3" Class="mt-4">
                     <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
@@ -103,45 +108,45 @@
                         <RowTemplate>
                             <MudTd DataLabel="Description">@context.Description</MudTd>
                             <MudTd DataLabel="Start">
-                                <MudTextField @bind-Value="context.Start"  />
+                                <MudTextField @bind-Value="context.Start" ReadOnly />
                             </MudTd>
                             <MudTd DataLabel="Finish">
-                                <MudTextField @bind-Value="context.Finish" />
+                                <MudTextField @bind-Value="context.Finish" ReadOnly />
                             </MudTd>
                             <MudTd DataLabel="Date">
-                                <MudDatePicker @bind-Date="context.Date"/>
+                                <MudTextField @bind-Value="context.Date" ReadOnly />
                             </MudTd>
                             <MudTd DataLabel="Name">
-                                <MudTextField @bind-Value="context.Name"/>
+                                <MudTextField @bind-Value="context.Name" ReadOnly />
                             </MudTd>
                         </RowTemplate>
                     </MudTable>
 
                 </MudGrid>
 
-                  <MudCardContent>
+                <MudCardContent>
 
-                            <MudGrid Class="w-100">
+                    <MudGrid Class="w-100" Style="margin-top:10px;">
 
-                                    <MudGrid Spacing="3">
-                                        <MudItem md="6" xs="12" class="outlined-box pa-2">
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
-                                <MudTextField @bind-Value="FinalInspectionData.InspectorSing" Variant="Variant.Text" />
-                                        </MudItem>
+                        <MudGrid Spacing="3">
+                            <MudItem md="6" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
+                                <MudTextField @bind-Value="InspectionData.InspectorSing" Variant="Variant.Text" ReadOnly />
+                            </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                <MudTextField @bind-Value="FinalInspectionData.InspectorComments" Variant="Variant.Text" />
+                                <MudTextField @bind-Value="InspectionData.InspectorComments" Variant="Variant.Text" ReadOnly />
                             </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
-                                <MudTextField @bind-Value="FinalInspectionData.Oktoship" Variant="Variant.Text" />
-                            </MudItem>                                      
+                                <MudTextField @bind-Value="InspectionData.Oktoship" Variant="Variant.Text" ReadOnly />
+                            </MudItem>
 
-                                </MudGrid>
-                            </MudGrid>
-                  </MudCardContent>
+                        </MudGrid>
+                    </MudGrid>
+                </MudCardContent>
 
                 <MudGrid Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
                     <MudItem xs="12" md="6" Class="text-center">
@@ -152,10 +157,10 @@
                     </MudItem>
                 </MudGrid>
 
-              </MudForm>
+            </MudForm>
         </DialogContent>
         <DialogActions>
-            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Add">Add</MudButton>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Print">Print</MudButton>
             <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
         </DialogActions>
     </MudDialog>
@@ -163,14 +168,18 @@
 
 @code {
     [Parameter]
-    public RotorGrindingData InspectionData { get; set; }
+    public RotorsFinalInspection InspectionData { get; set; }
+    [Parameter]
+    public RotorGrindingData Grinding { get; set; }
+
+    //    ["Grinding"] = serialNumberData,
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
     private List<RotorsFinalInspection> tableData = new();
 
-  //  private RotorsFinalInspection FinalInspectionData;
+    //  private RotorsFinalInspection FinalInspectionData;
     private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
 
     private IEnumerable<AppRole> appRoles = new List<AppRole>();
@@ -180,16 +189,9 @@
         MudDialog?.Cancel();
     }
 
-    private async Task Add()
+    private async Task Print()
     {
-        var finalInspectionDataModel = new RotorFinalInspectionDTO
-            {
-                InspectionData = InspectionData,
-                FinalInspectionData = FinalInspectionData,
-                TableData = tableData
-            };
-
-        MudDialog?.Close(DialogResult.Ok(finalInspectionDataModel));
+        await JSRuntime.InvokeVoidAsync("printForm");
     }
 
 
@@ -209,44 +211,7 @@
         new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
  };
 
-        await LoadRoles();
 
-        // get Work Centers
-        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);
-
-        if (workcenterResponse.IsSuccessStatusCode)
-        {
-            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<MESWorkcenters>>();
-
-           
-        }
     }
-
-    private async Task LoadRoles()
-    {
-        try
-        {
-            Snackbar.Clear();
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-
-            //var roleResponse = await HttpClient.GetAsync("https://localhost:7006/api/Role/getrole");
-            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var roleResponse = await HttpClient.GetAsync(ApiConstants.GetRole);
-            if (roleResponse.IsSuccessStatusCode)
-            {
-                var roleResult = await roleResponse.Content.ReadFromJsonAsync<IEnumerable<AppRole>>();
-                if (roleResult != null)
-                {
-                    appRoles = roleResult.ToList();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
-        }
-    }
-
 
 }

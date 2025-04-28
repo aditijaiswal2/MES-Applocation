@@ -143,6 +143,13 @@ namespace MES.Server.Controllers
             return Ok(data);
         }
 
+        [HttpGet("CheckSerialExists/{serialNumber}")]
+        public async Task<IActionResult> CheckSerialExists(string serialNumber)
+        {
+            var exists = await _context.RotorGrindingData
+                .AnyAsync(r => r.SerialNumber == serialNumber); // adjust property name if different
+            return Ok(exists);
+        }
 
     }
 }

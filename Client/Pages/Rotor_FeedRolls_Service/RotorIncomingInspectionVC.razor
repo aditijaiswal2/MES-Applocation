@@ -1,30 +1,34 @@
 ﻿    @page "/rii"
 
-
 @using MES.Client.Dialog.Rotors
 @using MES.Client.Pages.Account;
 @using MES.Client.Utitlity
 @using MES.Shared.DTOs
-@using MES.Shared.DTOs.MES.Shared.DTOs.Rotors
 @using MES.Shared.Entities
 @using ReactorBlazorQRCodeScanner;
 @using Microsoft.JSInterop;
+@using MES.Shared.Models
 @using MES.Shared.Models.Rotors;
-@using Newtonsoft.Json
-@using System.Text
-@using System.Net
-@using MudBlazor;
-@using static MES.Shared.Models.Rotors.IncomingInspection
-@using static MES.Client.Pages.LoginVC
-@inject IDialogService DialogService
+@using MES.Shared.DTOs.MES.Shared.DTOs.Rotors
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
-@inject Blazored.LocalStorage.ILocalStorageService localStorage
-@inject IDialogService DialogService
+@using System.Text.Json;
+@using System.Text
+@inject IHttpClientFactory _httpClient
 @inject IJSRuntime JSRuntime
+@using static MES.Client.Pages.LoginVC
+@inject IDialogService DialogService
+
+
 
 @inject IDialogCompletionService CompletionService
 @inherits BaseAuthentication;
+
+@using Newtonsoft.Json;
+@using MudBlazor;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IDialogCompletionService CompletionService
+
 
 <MudContainer Style="overflow:hidden" Class="mt-5">
     <MudGrid Class="d-flex justify-center">
@@ -32,16 +36,49 @@
             <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
         </MudItem> *@
         <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
-            <div>
-                <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">Scan QR</MudButton>
+            <div  style="gap: 10px;">
+                <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">
+                    Scan QR
+                </MudButton>
+
                 @if (isCancel)
                 {
-                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">Cancel</MudButton>
+                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px;">
+                        Cancel
+                    </MudButton>
                 }
+
+                <MudButton @onclick="OpenReceiverecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px;">
+                    Incoming Inspection
+                </MudButton>
             </div>
         </MudItem>
+
+        @if (showContent)
+        {
+            <MudItem xs="12">
+                <div class="d-flex justify-content-start mt-2">
+                    <MudPaper Elevation="3" Class="pa-3" Style="width: 300px;">
+                        @* You can adjust width *@
+                        <MudList Dense="true">
+                            @foreach (var item in Receivealldata.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <MudListItem OnClick="() => SelectReceive(item)" Button="true" Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                @onmouseover="() => hoveredReceive = item"
+                                @onmouseout="() => hoveredReceive = null">
+                                    <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudPaper>
+                </div>
+            </MudItem>
+        }
+
+
+
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
-            @if (isScanning)
+            @if (isScanning )
             {
                 <div class="d-flex justify-center" style="width: 350px; height: 350px;">
                     <QRCodeScanner LoadingMessage="" />
@@ -50,15 +87,28 @@
 
         </MudItem>
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
-            @if (!string.IsNullOrEmpty(qrCodeData) && !isSubmitted)
+            @if ((!string.IsNullOrEmpty(qrCodeData) && !isSubmitted) || (selectedReceive != null && !isSubmitted))
             {
                 <div>
-                    <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
-                        @foreach (var item in qrCodeData.Split(','))
+
+                    @if (!string.IsNullOrEmpty(qrCodeData))
+                    {
+                        foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
                         {
                             <p class="qr-item">@item.Trim()</p>
                         }
-                    </div>
+                    }
+
+                    @if (selectedReceive != null )
+                    {
+                        @foreach (var item in Receive)
+                        {
+                            <p class="qr-item">Serial Number: @item.SerialNumber</p>
+                            <p class="qr-item">Module Name: @item.SelectedOption</p>
+                            <p class="qr-item">Customer: @item.Customer</p>
+                            <p class="qr-item">Date: @item.Date</p>
+                        }
+                    }
 
                     @if (!isExistingSerial)
                     {
@@ -90,10 +140,10 @@
                                                 <MudTextField Label="Location" @bind-Value="inspection.Location" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
                                             </MudItem>
                                             <MudItem xs="12" md="3">
-                                                <MudTextField Label="Received" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                <MudTextField Label="Received Date" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
                                             </MudItem>
                                             <MudItem xs="12" md="3">
-                                                <MudTextField Label="Inspected" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                <MudTextField Label="Inspected by" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
                                             </MudItem>
 
                                         </MudGrid>
@@ -460,7 +510,7 @@
 
                                         </MudGrid>
 
-                                        <MudItem xs="12" Class="d-flex justify-center mt-4">
+                                        <MudItem xs="12" Class="d-flex justify-center mt-4" style=" gap: 10px;">
                                             <MudButton OnClick="OpenPreviewDialogBox" Color="Color.Secondary" Variant="Variant.Filled">Preview</MudButton>
                                             @*  <MudButton OnClick="Print" Color="Color.Tertiary" Variant="Variant.Filled">Print</MudButton>
                                        *@  <MudButton OnClick="SubmitForm" Color="Color.Primary" Variant="Variant.Filled">Submit</MudButton>
@@ -523,13 +573,101 @@
     private Action<string>? _onQrCodeScanAction;
     private Action<string>? _onCameraPermissionFailedAction;
     private QRCodeScanner qrCodeScanner;
+    private Receiving selectedReceive;
     private bool isSubmitted = false;
     private IncomingInspection inspection { get; set; } = new IncomingInspection();
     private string? SelectedProject { get; set; }
     //private List<IncomingInspection> selectedImagesFromSM = new();
     private List<IncomingImages> selectedImagesFromSM = new List<IncomingImages>();
-
+    // private List<Receiving> Receive = new ();
+    private IEnumerable<Receiving> Receive { get; set; } = new List<Receiving>();
+    private List<Receiving> Receivealldata = new();
+    private string currentuser;
+    private Receiving? hoveredReceive;
+    private bool showContent = false;
+    private string errorMessage = "";
     public IncomingInspectionImageDTO? ProjectimagesData { get; set; }
+    private string searchTerm = "";
+    bool isFormOpen = false;
+    string SelectedSerialNumber;
+    string SelectedModuleName;
+
+
+    private DateTime currentDateTime = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+
+        // Assign user name or default to "User" if userData is null
+        string currentuser = userData?.UserName ?? "User";
+        inspection.Inspected = currentuser;
+        inspection.Received = currentDateTime.ToString();
+
+    }
+
+
+    // Called when clicking a list item
+    public async Task SelectReceive(Receiving item)
+    {
+
+        selectedReceive = item;       
+
+        // Now get Serial Number and Module Name
+        SelectedSerialNumber = item.SerialNumber;
+        SelectedModuleName = item.SelectedOption;
+
+    } 
+
+    private async Task OpenReceiverecord()
+    {
+        await StopScanning();
+      
+        showContent = true;
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            var response = await HttpClient.GetAsync(ApiConstants.GetAllInspectionData);
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var allInspections = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Receiving>();
+
+                // Now filter the list by checking each Serial Number
+                var filteredList = new List<Receiving>();
+
+                foreach (var item in allInspections)
+                {
+                    // Check if Serial Number exists (Call API for each Serial)
+                    var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{item.SerialNumber}");
+
+                    if (!exists)
+                    {
+                        // Only add if Serial does not exist
+                        filteredList.Add(item);
+                    }
+                }
+
+                Receivealldata = filteredList; // Only non-existing serial numbers will be shown now
+            }
+            else
+            {
+                errorMessage = $"Error: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            // isLoading = false;
+        }
+    }
+
 
     private List<string> Type = new()
     {
@@ -928,7 +1066,7 @@
             {
                 useraddemail = userEmail.UserEmail;
             }
-           
+
 
             if (string.IsNullOrWhiteSpace(selectedddrc) || string.IsNullOrWhiteSpace(selecteddd))
             {
@@ -950,10 +1088,19 @@
                 }
                 else
                 {
-                    Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
-                    return;
+                  
+                        Snackbar.Add("No QR code scanned and no item selected. Please select an item.", Severity.Warning);
+                        return;
+                  
                 }
-            }
+            } else if (selectedReceive != null)
+                {
+                    // Fetch from selected Receive item instead
+                    inspection.SerialNumber = selectedReceive.SerialNumber;
+                    inspection.Module = selectedReceive.SelectedOption;
+
+                }
+
             else
             {
                 Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
@@ -1017,12 +1164,12 @@
 
                 };
 
-           // var userResponse = await HttpClient.GetAsync("https://localhost:7172/api/Users/getuserlist?sales=true");
-         
-         
+            // var userResponse = await HttpClient.GetAsync("https://localhost:7172/api/Users/getuserlist?sales=true");
+
+
             var userResponse = await HttpClient.GetAsync($"{ApiConstants.GetsalesEmails}?sales=true");
 
-           if (userResponse.IsSuccessStatusCode)
+            if (userResponse.IsSuccessStatusCode)
             {
                 var allUserData = await userResponse.Content.ReadFromJsonAsync<List<AppUser>>();
 
@@ -1030,7 +1177,7 @@
                 var filteredUsers = allUserData.Where(u => u.IsSalesUser).ToList();
 
                 // Extract their email IDs
-               // var emailIds = filteredUsers.Select(u => u.Email).Where(email => !string.IsNullOrEmpty(email)).ToList();
+                // var emailIds = filteredUsers.Select(u => u.Email).Where(email => !string.IsNullOrEmpty(email)).ToList();
                 var emailIds = filteredUsers.Select(u => u.Email).Where(email => !string.IsNullOrEmpty(email)).ToList();
                 IncomingDataDTO.SalesEmails = emailIds;
 
@@ -1055,13 +1202,15 @@
                     if (projectimageresponse.IsSuccessStatusCode)
                     {
                         await localStorage.RemoveItemAsync("IncomingImageData");
-                       // Console.WriteLine("Images added successfully.");
+                        // Console.WriteLine("Images added successfully.");
 
                     }
 
-                    Snackbar.Add("Form submitted successfully!", Severity.Success);
-                    isSubmitted = true;
+                    Snackbar.Add("Incoming Inspection form submitted successfully!", Severity.Success);
+                    Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
 
+                    isSubmitted = true;
+                    showContent = false;
                     StateHasChanged();
                 }
                 else
@@ -1085,7 +1234,7 @@
         isScanning = false;
         isCancel = false;
         _qrCodeScannerJsInterop.StopRecording();
-   
+
 
         var qrDetails = qrCodeData.Split(',');
 
@@ -1101,7 +1250,7 @@
     }
 
     private bool isExistingSerial = false;
-  
+
     private string ExtractValue(string data)
     {
         var parts = data.Split(':'); // Check if the data has a label like "SerialNumber: 12345"
@@ -1118,6 +1267,8 @@
     {
         try
         {
+          
+            showContent = false;
             isScanning = true;
             qrCodeData = null;
             cameraError = false;
@@ -1136,8 +1287,8 @@
 
                 Snackbar.Clear();
 
-               // var exists = await HttpClient.GetFromJsonAsync<bool>($"https://localhost:7172/api/IncomingInspection/CheckSerialExists/{serialNumber}");
-                 var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{serialNumber}");
+                // var exists = await HttpClient.GetFromJsonAsync<bool>($"https://localhost:7172/api/IncomingInspection/CheckSerialExists/{serialNumber}");
+                var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{serialNumber}");
 
                 if (exists)
                 {
@@ -1147,7 +1298,7 @@
                     StateHasChanged();
                     return;
                 }
-            
+
 
                 isExistingSerial = false;
                 await StopScanning();
@@ -1208,11 +1359,19 @@
                 inspection.Module = ExtractValue(qrDetails[1]);
 
             }
+         
             else
             {
                 Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
                 return;
             }
+        }
+        else if (selectedReceive != null)
+        {
+            // Fetch from selected Receive item instead
+            inspection.SerialNumber = selectedReceive.SerialNumber;
+            inspection.Module = selectedReceive.SelectedOption;
+
         }
         else
         {

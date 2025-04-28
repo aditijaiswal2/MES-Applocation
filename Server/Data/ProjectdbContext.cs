@@ -82,8 +82,12 @@ namespace MES.Server.Data
                 .HasForeignKey(i => i.IncomingImageId)
                 .IsRequired();
 
+
+            modelBuilder.Entity<FinalImagedata>()
+.HasKey(i => i.ID);
+
             modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
-               .HasKey(i => i.ID);
+                .HasKey(i => i.ID);
 
             modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
                 .HasOne(i => i.FinalImages)
