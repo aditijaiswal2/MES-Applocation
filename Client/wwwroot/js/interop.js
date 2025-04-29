@@ -1,11 +1,21 @@
 ﻿function printForm() {
-    // Open a new window for printing
-    var printWindow = window.open('', '', 'height=650, width=900');
+    // Clone the form section
+    var formSection = document.getElementById('printForm-section').cloneNode(true);
 
-    // Get the content of the form (with dynamic values rendered)
-    var content = document.getElementById('printForm-section').innerHTML;
+    // Find all input fields (TextField uses <input>)
+    var inputs = formSection.querySelectorAll('input');
 
-    // Ensure that dynamic form data is included
+    inputs.forEach(function (input) {
+        var value = input.value; // Get current user-typed value
+        var textNode = document.createTextNode(value ? value : ''); // Create text node with value
+
+        // Replace the input field with its value
+        input.parentNode.replaceChild(textNode, input);
+    });
+
+    // Now formSection has input values replaced with text
+    var content = formSection.innerHTML;
+
     var styles = `
         <style>
             body, * {
@@ -28,44 +38,63 @@
                 margin: 10px;
                 background-color: white;
             }
+             table, th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
             .mud-dialog-title {
                 font-weight: bold;
                 margin-bottom: 16px;
                 border-bottom: 1px solid #000;
-                padding-bottom: 8px;
             }
-            .mud-grid {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px;
+             .mud-grid {
+                display: flex;
+                flex-wrap: wrap;
             }
             .mud-item {
-                padding: 4px;
+                flex: 0 0 33.3333%; /* Three columns */
                 box-sizing: border-box;
+                padding: 10px;
             }
-            .qr-container {
-                text-align: center;
+            .outlined-box {
+                border: 1px solid #000;
+                padding: 10px;
+                min-height: 80px;
+            }
+            .mud-table {
+                width: 100%;
+                border-collapse: collapse;
                 margin-top: 20px;
+                text-align: center; /* Center table text */
             }
-            .qr-container img {
-                width: 75px !important;
-                height: 75px !important;
-                object-fit: contain;
+            .mud-table th, .mud-table td {
+                border: 1px solid #000;
+                padding: 8px;
             }
-            @media print {
-                @page {
-                    margin: 10mm;
-                }
+            .mud-card-content, .mud-dialog {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+            h5, h6, p {
+                text-align: center;
+                margin: 5px 0;
             }
         </style>
     `;
 
-    // Write the content and styles to the print window
-    printWindow.document.write('<html><head><title>Print</title>' + styles + '</head><body>');
-    printWindow.document.write(content);  // Content should reflect the updated form values
+    var printWindow = window.open('', '', 'height=650,width=900');
+    printWindow.document.write('<html><head><title>Print Report</title>');
+    printWindow.document.write(styles);
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(content);
     printWindow.document.write('</body></html>');
+
     printWindow.document.close();
+    printWindow.focus();
     printWindow.print();
+    printWindow.close();
 }
 
 function printincomingImage(imageDataUrl, labelText) {

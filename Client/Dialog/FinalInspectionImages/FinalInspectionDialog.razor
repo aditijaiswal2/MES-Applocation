@@ -99,25 +99,25 @@
                 <MudGrid Spacing="3" Class="mt-4">
                     <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
                         <HeaderContent>
-                            <MudTh>Description</MudTh>
-                            <MudTh>Start</MudTh>
-                            <MudTh>Finish</MudTh>
-                            <MudTh>Date</MudTh>
-                            <MudTh>Name</MudTh>
+                            <MudTh class="text-center">Description</MudTh>
+                            <MudTh class="text-center">Start</MudTh>
+                            <MudTh class="text-center">Finish</MudTh>
+                            <MudTh class="text-center">Date</MudTh>
+                            <MudTh class="text-center">Name</MudTh>
                         </HeaderContent>
                         <RowTemplate>
-                            <MudTd DataLabel="Description">@context.Description</MudTd>
-                            <MudTd DataLabel="Start">
-                                <MudTextField @bind-Value="context.Start" ReadOnly />
+                            <MudTd DataLabel="Description" class="text-center">@context.Description</MudTd>
+                            <MudTd DataLabel="Start" class="text-center">
+                                <MudTextField @bind-Value="context.Start" />
                             </MudTd>
-                            <MudTd DataLabel="Finish">
-                                <MudTextField @bind-Value="context.Finish" ReadOnly />
+                            <MudTd DataLabel="Finish" class="text-center">
+                                <MudTextField @bind-Value="context.Finish"/>
                             </MudTd>
-                            <MudTd DataLabel="Date">
-                                <MudTextField @bind-Value="context.Date" ReadOnly />
+                            <MudTd DataLabel="Date" class="text-center">
+                                <MudDatePicker @bind-Date="context.Date" DateFormat="dd/MM/yyyy" />
                             </MudTd>
-                            <MudTd DataLabel="Name">
-                                <MudTextField @bind-Value="context.Name" ReadOnly />
+                            <MudTd DataLabel="Name" class="text-center">
+                                <MudTextField @bind-Value="context.Name"/>
                             </MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -131,17 +131,17 @@
                         <MudGrid Spacing="3">
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
-                                <MudTextField @bind-Value="InspectionData.InspectorSing" Variant="Variant.Text" ReadOnly />
+                                <MudTextField @bind-Value="InspectionData.InspectorSing" Variant="Variant.Text"/>
                             </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                <MudTextField @bind-Value="InspectionData.InspectorComments" Variant="Variant.Text" ReadOnly />
+                                <MudTextField @bind-Value="InspectionData.InspectorComments" Variant="Variant.Text"/>
                             </MudItem>
 
                             <MudItem md="6" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
-                                <MudTextField @bind-Value="InspectionData.Oktoship" Variant="Variant.Text" ReadOnly />
+                                <MudTextField @bind-Value="InspectionData.Oktoship" Variant="Variant.Text"/>
                             </MudItem>
 
                         </MudGrid>
@@ -165,6 +165,14 @@
         </DialogActions>
     </MudDialog>
 </div>
+
+<style>
+    .table-center td, .table-center th {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+
 
 @code {
     [Parameter]

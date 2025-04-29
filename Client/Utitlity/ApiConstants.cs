@@ -100,7 +100,7 @@
         public const string CheckSerialNumbersales = $"{BaseUrl}/RotorsFinalInspection/CheckSerialExists";
         public const string CheckGrindingSerial = $"{BaseUrl}/RotorGrinding/CheckSerialExists";
         public const string GetAllInspectionData = $"{BaseUrl}/IncomingInspection/GetAll";
-        // public const string GetAllDDGSubmitedData = $"{BaseUrl}/RotorDamageGrindingSubmited/GetAllDDGSubmitedData";
+        public const string AddFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/AddFinalInspection";
 
 
         // Sales AttachedFile 

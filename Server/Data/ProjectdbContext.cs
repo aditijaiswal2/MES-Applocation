@@ -83,8 +83,8 @@ namespace MES.Server.Data
                 .IsRequired();
 
 
-            modelBuilder.Entity<FinalImagedata>()
-.HasKey(i => i.ID);
+            modelBuilder.Entity<FinalInspection>()
+ .HasKey(i => i.Id);
 
             modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
                 .HasKey(i => i.ID);

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250428071535_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250429043830_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
