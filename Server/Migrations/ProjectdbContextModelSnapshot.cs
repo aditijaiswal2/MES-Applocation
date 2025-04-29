@@ -681,8 +681,8 @@ namespace MES.Server.Migrations
                     b.Property<DateTime?>("NewRotorDataSubmitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
                         .IsRequired()

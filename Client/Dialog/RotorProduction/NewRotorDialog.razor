@@ -45,8 +45,8 @@
 
                 <MudItem md="6" sm="12" xs="12">
                     <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedWorkCenters"
-                    AnchorOrigin="Origin.BottomCenter" Label="Work centers"
-                    OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
+                               AnchorOrigin="Origin.BottomCenter" Label="Work centers"
+                               OpenIcon="@Icons.Material.Filled.LocationCity" AdornmentColor="Color.Primary">
                         @if (MESWorkcenters != null)
                         {
                             @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
@@ -59,20 +59,33 @@
 
                 <MudItem md="6" sm="12" xs="12">
                     <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="fromDate"
-                    Variant="Variant.Outlined"
-                    Label="Target Date Entry"
-                    MinDate="DateTime.Today" />
+                                   Variant="Variant.Outlined"
+                                   Label="Target Date Entry"
+                                   MinDate="DateTime.Today" />
                 </MudItem>
 
-                <MudItem md="6" sm="12" xs="12">
-                    <MudTimePicker @bind-Time="PlannedHours"
-                                   Label="Planned Hours"
-                                   TimeFormat="HH:mm"
-                                   AmPm="false"
-                                   OpenTo="OpenTo.Hours"
-                                   Variant="Variant.Outlined"
-                                   PickerVariant="PickerVariant.Dialog" />
+                <MudItem md="3" sm="12" xs="12">
+                    <MudNumericField @bind-Value="Hours"
+                                     Label="Hours"
+                                     Min="0"
+                                     Max="150"
+                                     Required="true"
+                                     Immediate="true"
+                                     Variant="Variant.Outlined"
+                                     ErrorText="Enter a value between 0 and 150" />
                 </MudItem>
+
+                <MudItem md="3" sm="12" xs="12">
+                    <MudNumericField @bind-Value="Minutes"
+                                     Label="Minutes"
+                                     Min="1"
+                                     Max="59"
+                                     Required="true"
+                                     Immediate="true"
+                                     Variant="Variant.Outlined"
+                                     ErrorText="Enter a value between 1 and 59" />
+                </MudItem>
+
 
                 <MudItem md="12" sm="12" xs="12">
                     <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedPriority" AnchorOrigin="Origin.BottomCenter" Label="Customer Priority" OpenIcon="@Icons.Material.Filled.PriorityHigh" AdornmentColor="Color.Primary">
@@ -87,11 +100,11 @@
             <br />
             <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
                 <MudButton Class="mr-2"
-                Variant="Variant.Filled"
-                Size="Size.Small"
-                Color="@((isFileAttached ? Color.Success : Color.Primary))"
-                Disabled="@(isFileAttached)"
-                OnClick="AttacheFile">
+                           Variant="Variant.Filled"
+                           Size="Size.Small"
+                           Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                           Disabled="@(isFileAttached)"
+                           OnClick="AttacheFile">
                     @(isFileAttached ? "Done" : "Attach File")
                 </MudButton>
 
@@ -113,14 +126,14 @@
 
 @code {
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
-    private string? CustomerName { get; set; }   
+    private string? CustomerName { get; set; }
     private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
     private string? SelectedWorkCenters { get; set; }
     private string? SalesOrderNumber { get; set; }
     private string? WorkOrder { get; set; }
     private string? MatNumber { get; set; }
     private DateTime? fromDate = DateTime.Today;
-    private TimeSpan? PlannedHours { get; set; }
+    private string? PlannedHours { get; set; }
     private string? SelectedPriority { get; set; }
     private List<string> CustomerPriorityStatus = new List<string>();
     private ElementReference pdfFileInput;
@@ -129,7 +142,10 @@
     private byte[] uploadedFileBytes;
     private IBrowserFile selectedPdfFile;
     private string fileName;
-   
+    private int Hours { get; set; }
+    private int Minutes { get; set; }
+    private string? plannedHours { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -159,6 +175,14 @@
             Snackbar.Add("Please fill all required fields", Severity.Warning);
             return;
         }
+        plannedHours = $"{Hours:D2}:{Minutes:D2}";
+
+        if (plannedHours == "00:00")
+        {
+            Snackbar.Add("Planned hours is required.", Severity.Error);
+            return;
+        }
+
 
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
         string useradd = userData?.UserName ?? "User";
@@ -197,8 +221,8 @@
                 ComponentType = "Rotor",
                 CustomerImportance = SelectedPriority,
                 TargetDate = fromDate,
-                PlannedHours = PlannedHours,
-                CustomerName = CustomerName,              
+                PlannedHours = plannedHours,
+                CustomerName = CustomerName,
                 Workcenters = SelectedWorkCenters,
                 IsDeleted = false,
                 NewRotorDataSSubmitBy = useradd,
@@ -316,7 +340,7 @@
     }
 
     private async Task ClearAll()
-    {       
+    {
         CustomerName = string.Empty;
         SelectedWorkCenters = string.Empty;
         WorkOrder = string.Empty;
@@ -331,6 +355,14 @@
         fromDate = DateTime.Now;
         PlannedHours = null;
         SelectedWorkCenters = null;
+        plannedHours = null;
+        Hours = 0;
+        Minutes = 0;
+        Hours = 0;
+        Minutes = 0;
+        plannedHours = $"{Hours:D2}:{Minutes:D2}"; // This will now be "00:00"
+
+
 
         StateHasChanged();
     }

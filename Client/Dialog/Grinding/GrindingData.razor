@@ -27,9 +27,9 @@
 
                     <MudItem md="12" sm="12" xs="12" class="center">
                         <MudButton Variant="Variant.Filled"
-                        Size="Size.Small"
-                        Color="Color.Primary"
-                        OnClick="ViewAttachedFile">
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   OnClick="ViewAttachedFile">
                             View Production Order
                         </MudButton>
                     </MudItem>
@@ -38,10 +38,10 @@
 
                     <MudItem md="12" sm="12" xs="12">
                         <MudDatePicker PickerVariant="PickerVariant.Dialog"
-                        @bind-Date="StartDate"
-                        Variant="Variant.Outlined"
-                        Label="Select Start Date"
-                        MinDate="@StartMinDate" />
+                                       @bind-Date="StartDate"
+                                       Variant="Variant.Outlined"
+                                       Label="Select Start Date"
+                                       MinDate="@StartMinDate" />
                     </MudItem>
 
                     <MudItem class="center" md="12" sm="12" xs="12">
@@ -58,7 +58,7 @@
 
                     <MudItem xs="6">
                         <MudTextField Label="Rotor Dia.Right" @bind-Value="@GetRotorProcess.RotorsDiaRight" Variant="Variant.Outlined" />
-                    </MudItem>                    
+                    </MudItem>
 
                     <MudItem xs="6">
                         <MudTextField Label="Tooth Face Left" @bind-Value="@GetRotorProcess.ToothFaceLeft" Variant="Variant.Outlined" />
@@ -122,11 +122,11 @@
                     {
                         <MudItem md="12" sm="12" xs="12">
                             <MudSelect Variant="Variant.Outlined"
-                            @bind-Value="SelectedSecondaryWorkCenters"
-                            AnchorOrigin="Origin.BottomCenter"
-                            Label="Work Centers"
-                            OpenIcon="@Icons.Material.Filled.LocationCity"
-                            AdornmentColor="Color.Primary">
+                                       @bind-Value="SelectedSecondaryWorkCenters"
+                                       AnchorOrigin="Origin.BottomCenter"
+                                       Label="Work Centers"
+                                       OpenIcon="@Icons.Material.Filled.LocationCity"
+                                       AdornmentColor="Color.Primary">
                                 @if (MESWorkcenters != null)
                                 {
                                     @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
@@ -148,10 +148,9 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
                     } *@
 
-                    @if (IsAllFieldsFilled())
-                    {
-                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
-                    }
+
+                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+
 
                     <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
                 </MudItem>
@@ -167,10 +166,10 @@
 
 <style>
     .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
     }
 
 </style>
@@ -243,16 +242,16 @@
         var submissionData = new GrindingInspectionSubmission
             {
                 SelectedProductionInspection = selectedData,
-                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
-                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
-                ReliefLand = GetRotorProcess.ReliefLand,
-                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
-                ToothFaceRight = GetRotorProcess.ToothFaceRight,
-                CentersLeft = GetRotorProcess.CentersLeft,
-                CentersRight = GetRotorProcess.CentersRight,
-                VisualChecks = GetRotorProcess.VisualChecks,
-                InspectedBy = GetRotorProcess.InspectedBy,
-                Notes = GetRotorProcess.Notes,
+                RotorsDiaLeft = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ? "N/A" : GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ? "N/A" : GetRotorProcess.RotorsDiaRight,
+                ReliefLand = string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ? "N/A" : GetRotorProcess.ReliefLand,
+                ToothFaceLeft = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ? "N/A" : GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ? "N/A" : GetRotorProcess.ToothFaceRight,
+                CentersLeft = string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ? "N/A" : GetRotorProcess.CentersLeft,
+                CentersRight = string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ? "N/A" : GetRotorProcess.CentersRight,
+                VisualChecks = string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ? "N/A" : GetRotorProcess.VisualChecks,
+                InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
+                Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
                 DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
                 AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
@@ -306,16 +305,16 @@
         var SWsubmissionData = new SecondaryWorkCentersSubmission
             {
                 SelectedProductionInspection = selectedData,
-                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
-                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
-                ReliefLand = GetRotorProcess.ReliefLand,
-                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
-                ToothFaceRight = GetRotorProcess.ToothFaceRight,
-                CentersLeft = GetRotorProcess.CentersLeft,
-                CentersRight = GetRotorProcess.CentersRight,
-                VisualChecks = GetRotorProcess.VisualChecks,
-                InspectedBy = GetRotorProcess.InspectedBy,
-                Notes = GetRotorProcess.Notes,
+                RotorsDiaLeft = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ? "N/A" : GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ? "N/A" : GetRotorProcess.RotorsDiaRight,
+                ReliefLand = string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ? "N/A" : GetRotorProcess.ReliefLand,
+                ToothFaceLeft = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ? "N/A" : GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ? "N/A" : GetRotorProcess.ToothFaceRight,
+                CentersLeft = string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ? "N/A" : GetRotorProcess.CentersLeft,
+                CentersRight = string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ? "N/A" : GetRotorProcess.CentersRight,
+                VisualChecks = string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ? "N/A" : GetRotorProcess.VisualChecks,
+                InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
+                Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
                 DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
                 AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
@@ -386,16 +385,16 @@
         var submissionData = new GrindingInspectionSubmission
             {
                 SelectedProductionInspection = selectedData,
-                RotorsDiaLeft = GetRotorProcess.RotorsDiaLeft,
-                RotorsDiaRight = GetRotorProcess.RotorsDiaRight,
-                ReliefLand = GetRotorProcess.ReliefLand,
-                ToothFaceLeft = GetRotorProcess.ToothFaceLeft,
-                ToothFaceRight = GetRotorProcess.ToothFaceRight,
-                CentersLeft = GetRotorProcess.CentersLeft,
-                CentersRight = GetRotorProcess.CentersRight,
-                VisualChecks = GetRotorProcess.VisualChecks,
-                InspectedBy = GetRotorProcess.InspectedBy,
-                Notes = GetRotorProcess.Notes,
+                RotorsDiaLeft = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ? "N/A" : GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ? "N/A" : GetRotorProcess.RotorsDiaRight,
+                ReliefLand = string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ? "N/A" : GetRotorProcess.ReliefLand,
+                ToothFaceLeft = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ? "N/A" : GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ? "N/A" : GetRotorProcess.ToothFaceRight,
+                CentersLeft = string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ? "N/A" : GetRotorProcess.CentersLeft,
+                CentersRight = string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ? "N/A" : GetRotorProcess.CentersRight,
+                VisualChecks = string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ? "N/A" : GetRotorProcess.VisualChecks,
+                InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
+                Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
                 GrindingStartDate = StartDate,
                 DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
                 AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
@@ -441,6 +440,13 @@
             Snackbar.Add("Please Select the Start Date", Severity.Warning);
             return;
         }
+
+        if (StartDate != DateTime.Today)
+        {
+            Snackbar.Add("If you want to start the rotor, then select today's date. otherwise, the rotor will not start.", Severity.Warning);
+            return;
+        }
+
 
         // get the alredy select the stsart date data
 

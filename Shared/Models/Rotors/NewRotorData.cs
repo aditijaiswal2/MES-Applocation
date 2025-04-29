@@ -17,7 +17,7 @@ namespace MES.Shared.Models.Rotors
         public string ComponentType { get; set; }
         public string CustomerImportance { get; set; }
         public DateTime? TargetDate { get; set; }
-        public TimeSpan? PlannedHours { get; set; }
+        public string? PlannedHours { get; set; }
         public string CustomerName { get; set; }       
         public string Workcenters { get; set; }
         public bool IsDeleted { get; set; }

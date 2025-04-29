@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -212,7 +212,7 @@ namespace MES.Server.Migrations
                     ComponentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerImportance = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TargetDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PlannedHours = table.Column<TimeSpan>(type: "time", nullable: true),
+                    PlannedHours = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Workcenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),

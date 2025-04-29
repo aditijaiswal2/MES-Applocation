@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250429102638_Initial")]
-    partial class Initial
+    [Migration("20250429114904_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -684,8 +684,8 @@ namespace MES.Server.Migrations
                     b.Property<DateTime?>("NewRotorDataSubmitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
                         .IsRequired()
