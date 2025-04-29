@@ -13,7 +13,8 @@ namespace MES.Shared.Models.Rotors
     {
         public int Id { get; set; }
         public string? SerialNumber { get; set; }
-         public required List<FinalImagedata> Images { get; set; }
+        public ICollection<FinalImagedata> Images { get; set; } = new List<FinalImagedata>();
+
     }
 
     public class FinalImagedata
@@ -23,9 +24,9 @@ namespace MES.Shared.Models.Rotors
         public byte[] Data { get; set; }
         public string ImageFilePath { get; set; }
 
-        public int IncomingImageId { get; set; } 
-        [JsonIgnore] 
-        public FinalInspection? FinalImages { get; set; }
+        public int FinalInspectionId { get; set; }
+        [JsonIgnore]
+        public FinalInspection? FinalInspection { get; set; }
     }
 }
 

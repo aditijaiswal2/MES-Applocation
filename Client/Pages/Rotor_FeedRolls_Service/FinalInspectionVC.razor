@@ -62,15 +62,15 @@
                     {
                         <div style="margin-top:10px">
                             <MudButton OnClick="OpenPreviewDialogBox"
-                            Class="mr-2"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled">
+                                       Class="mr-2"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled">
                                 Incoming Inspection Report
                             </MudButton>
 
                             <MudButton Class="mr-2"
-                            Color="Color.Secondary"
-                            Variant="Variant.Filled" OnClick="ViewAttachedFile">
+                                       Color="Color.Secondary"
+                                       Variant="Variant.Filled" OnClick="ViewAttachedFile">
                                 Production Order Report
                             </MudButton>
                         </div>
@@ -137,7 +137,7 @@
                                             </MudItem>
 
                                             <MudItem xs="12" md="4">
-                                                <MudTextField Label="Inspected By" @bind-Value="serialNumberData.InspectedBy" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                <MudTextField Label="Inspected By" @bind-Value=" FinalInspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                             </MudItem>
 
                                         </MudGrid>
@@ -242,19 +242,72 @@
                                             </MudItem>
                                         </MudGrid>
 
+
+                                        <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
+                                            <HeaderContent>
+                                                <MudTh class="text-center">Description</MudTh>
+                                                <MudTh class="text-center">Start</MudTh>
+                                                <MudTh class="text-center">Finish</MudTh>
+                                                <MudTh class="text-center">Date</MudTh>
+                                                <MudTh class="text-center">Name</MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Description" class="text-center">@context.Description</MudTd>
+                                                <MudTd DataLabel="Start" class="text-center">
+                                                    <MudTextField @bind-Value="context.Start" />
+                                                </MudTd>
+                                                <MudTd DataLabel="Finish" class="text-center">
+                                                    <MudTextField @bind-Value="context.Finish" />
+                                                </MudTd>
+                                                <MudTd DataLabel="Date" class="text-center">
+                                                    <MudDatePicker @bind-Date="context.Date" DateFormat="dd/MM/yyyy" />
+                                                </MudTd>
+                                                <MudTd DataLabel="Name" class="text-center">
+                                                    <MudTextField @bind-Value="context.Name" />
+                                                </MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+
+
+
+
+
+                                        <MudGrid Spacing="3">
+
+                                            <MudItem xs="12" md="6">
+                                                <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" />
+                                            </MudItem>
+
+                                            <MudItem xs="12" md="6">
+                                                <MudTextField Label="Comments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" />
+                                            </MudItem>
+
+
+
+
+
+                                        </MudGrid>
+                                        <MudGrid Spacing="2">
+                                            <MudItem xs="12" md="12">
+                                                <MudTextField Label="OK TO SHIP" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" />
+                                            </MudItem>
+
+                                        </MudGrid>
+
+
                                         <MudGrid>
                                             <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
                                                 <div style="display: flex; justify-content: flex-end;">
                                                     <MudButton OnClick="OpenFinalDialogBox"
-                                                    Class="mr-2"
-                                                    Color="Color.Primary"
-                                                    Variant="Variant.Filled">
+                                                               Class="mr-2"
+                                                               Color="Color.Primary"
+                                                               Variant="Variant.Filled">
                                                         Preview
                                                     </MudButton>
                                                     <MudButton OnClick="Submitdata"
-                                                    Class="mr-2"
-                                                    Color="Color.Primary"
-                                                    Variant="Variant.Filled">
+                                                               Class="mr-2"
+                                                               Color="Color.Primary"
+                                                               Variant="Variant.Filled">
                                                         Submit
                                                     </MudButton>
                                                 </div>
@@ -330,6 +383,7 @@
 
         var parameters = new DialogParameters
             {//selectedMaterial
+                ["TableData"] = tableData,
                 ["InspectionData"] = FinalInspectionData,
                 ["Grinding"] = serialNumberData,
 
@@ -449,7 +503,7 @@
                     CentersLeft = serialNumberData.CentersLeft,
                     CentersRight = serialNumberData.CentersRight,
                     VisualChecks = serialNumberData.VisualChecks,
-                    InspectedBy = serialNumberData.InspectedBy,
+                    InspectedBy = FinalInspectionData.Inspected,
                     GrindingStartDate = serialNumberData.GrindingStartDate,
                     GrindingEndDate = serialNumberData.GrindingdataSubmitedByDate,
                     Notes = serialNumberData.Notes,
@@ -468,7 +522,7 @@
                     FinalInspectionSubmitedByDate = DateTime.Now,
                 };
 
-          //  var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/RotorsFinalInspection/AddFinalInspection", FinalInspection);
+            //  var response = await HttpClient.PostAsJsonAsync("https://localhost:7172/api/RotorsFinalInspection/AddFinalInspection", FinalInspection);
             var response = await HttpClient.PostAsJsonAsync(ApiConstants.AddFinalInspectionData, FinalInspection);
 
             if (response.IsSuccessStatusCode)
@@ -477,7 +531,7 @@
                 var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
                 var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
 
-              //  var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
+                //  var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
                 // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
                 var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
 
@@ -639,6 +693,9 @@
         StateHasChanged();
     }
 
+
+
+
     protected override async Task OnInitializedAsync()
     {
         tableData = new List<RotorsFinalInspection>
@@ -654,6 +711,14 @@
         new RotorsFinalInspection { Description = "Wedgelock assembly", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
         new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
     };
+
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+
+        // Assign user name or default to "User" if userData is null
+        string currentuser = userData?.UserName ?? "User";
+        FinalInspectionData.Inspected = currentuser;
+        // inspection.Received = currentDateTime.ToString();
     }
 
     private async Task AddProjectImagesAsync(ProjectImgDTO projectImagesDTO)
@@ -719,11 +784,11 @@
             // var response = await client.GetAsync($"https://localhost:7172/api/RotorGrinding/{serial}");
             var response = await client.GetAsync($"{ApiConstants.GetDataFromGrinding}/{serial}");
 
-             if (response.IsSuccessStatusCode)
-        {
-            serialNumberData = await response.Content.ReadFromJsonAsync<RotorGrindingData>();
-            StateHasChanged(); // Force re-render to update UI
-        }
+            if (response.IsSuccessStatusCode)
+            {
+                serialNumberData = await response.Content.ReadFromJsonAsync<RotorGrindingData>();
+                StateHasChanged(); // Force re-render to update UI
+            }
             else
             {
                 Snackbar.Add($"Serial number {serial} not found.", Severity.Warning);

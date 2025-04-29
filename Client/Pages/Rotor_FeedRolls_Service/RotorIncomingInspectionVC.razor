@@ -36,19 +36,19 @@
             <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
         </MudItem> *@
         <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
-            <div  style="gap: 10px;">
+            <div style="gap: 10px;">
                 <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">
                     Scan QR
                 </MudButton>
 
                 @if (isCancel)
                 {
-                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px;">
+                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">
                         Cancel
                     </MudButton>
                 }
 
-                <MudButton @onclick="OpenReceiverecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px;">
+                <MudButton @onclick="OpenReceiverecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px; margin-left:8px;">
                     Incoming Inspection
                 </MudButton>
             </div>
@@ -64,8 +64,8 @@
                             @foreach (var item in Receivealldata.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                             {
                                 <MudListItem OnClick="() => SelectReceive(item)" Button="true" Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                @onmouseover="() => hoveredReceive = item"
-                                @onmouseout="() => hoveredReceive = null">
+                                             @onmouseover="() => hoveredReceive = item"
+                                             @onmouseout="() => hoveredReceive = null">
                                     <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
                                 </MudListItem>
                             }
@@ -75,10 +75,8 @@
             </MudItem>
         }
 
-
-
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
-            @if (isScanning )
+            @if (isScanning)
             {
                 <div class="d-flex justify-center" style="width: 350px; height: 350px;">
                     <QRCodeScanner LoadingMessage="" />
@@ -90,25 +88,23 @@
             @if ((!string.IsNullOrEmpty(qrCodeData) && !isSubmitted) || (selectedReceive != null && !isSubmitted))
             {
                 <div>
-
-                    @if (!string.IsNullOrEmpty(qrCodeData))
-                    {
-                        foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
+                        @if (!string.IsNullOrEmpty(qrCodeData))
                         {
-                            <p class="qr-item">@item.Trim()</p>
+                            foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <p class="qr-item">@item.Trim()</p>
+                            }
                         }
-                    }
-
-                    @if (selectedReceive != null )
-                    {
-                        @foreach (var item in Receive)
+                        else if (selectedReceive != null)
                         {
-                            <p class="qr-item">Serial Number: @item.SerialNumber</p>
-                            <p class="qr-item">Module Name: @item.SelectedOption</p>
-                            <p class="qr-item">Customer: @item.Customer</p>
-                            <p class="qr-item">Date: @item.Date</p>
+                            <p class="qr-item">Serial Number: @selectedReceive.SerialNumber</p>
+                            <p class="qr-item">Module Name: @selectedReceive.SelectedOption</p>
+                            <p class="qr-item">Customer: @selectedReceive.Customer</p>
+                            <p class="qr-item">Date: @selectedReceive.Date.ToString("dd-MM-yyyy HH:mm")</p>
+
                         }
-                    }
+                    </div>
 
                     @if (!isExistingSerial)
                     {
@@ -140,10 +136,10 @@
                                                 <MudTextField Label="Location" @bind-Value="inspection.Location" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
                                             </MudItem>
                                             <MudItem xs="12" md="3">
-                                                <MudTextField Label="Received Date" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                <MudTextField Label="Received Date" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
                                             </MudItem>
                                             <MudItem xs="12" md="3">
-                                                <MudTextField Label="Inspected by" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                <MudTextField Label="Inspected by" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
                                             </MudItem>
 
                                         </MudGrid>
@@ -230,10 +226,15 @@
                                             </MudItem>
 
                                             <MudItem xs="12" md="4">
-                                                <MudSelect T="string" Label="Bearing Seals" @bind-SelectedValue="selectedBearSeals" Variant="Variant.Outlined" ValueChanged="OnbearingsealChanged" FullWidth="true">
+                                                <MudSelect T="string" Label="Bearing Seals" MultiSelection="true" @bind-SelectedValue="selectedBearSeals" ValueChanged="OnbearingselasChanged" Variant="Variant.Outlined" FullWidth="true">
                                                     @foreach (var bearseal in BearSeals)
                                                     {
-                                                        <MudSelectItem Value="@bearseal">@bearseal</MudSelectItem>
+
+                                                        @* <MudSelectItem Value="@bearseal" Disabled="@(bearseal == "Okay" || bearseal == "Replace")">@bearseal</MudSelectItem>
+ *@
+                                                        var cssClass = (bearseal == "Okay" || bearseal == "Replace") ? "no-checkbox" : null;
+
+                                                        <MudSelectItem Value="@bearseal" Class="@cssClass"></MudSelectItem>
                                                     }
                                                 </MudSelect>
                                             </MudItem>
@@ -285,10 +286,10 @@
                                                 @if (selectedbs == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                    @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
-                                                    ValueChanged="OnybasicsharpChanged"
-                                                    FullWidth="true"
-                                                    Class="custom-select">
+                                                               @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
+                                                               ValueChanged="OnybasicsharpChanged"
+                                                               FullWidth="true"
+                                                               Class="custom-select">
                                                         @foreach (var ber in ybasicsharp)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -319,10 +320,10 @@
                                                 @if (selectedctr == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                    @bind-SelectedValue="selectedycg"
-                                                    ValueChanged="OnycgChanged"
-                                                    FullWidth="true" Variant="Variant.Outlined"
-                                                    Class="custom-select">
+                                                               @bind-SelectedValue="selectedycg"
+                                                               ValueChanged="OnycgChanged"
+                                                               FullWidth="true" Variant="Variant.Outlined"
+                                                               Class="custom-select">
                                                         @foreach (var ber in ycg)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -540,30 +541,33 @@
 
 <style>
     .bordered-container {
-    width: 100%;
-    max-width: 100%;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 30px;
-    margin-bottom: 16px;
-    box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
     }
 
+    .no-checkbox .mud-selected-item-checkbox {
+        display: none !important;
+    }
 
     .qr-item {
-    margin: 1.5rem;
-    font-size: 16px;
-    white-space: nowrap; /* Ensures text stays in one line */
+        margin: 1.5rem;
+        font-size: 16px;
+        white-space: nowrap; /* Ensures text stays in one line */
     }
 
 
     .full-width-grid {
-    width: 100%;
-    margin: 0;
+        width: 100%;
+        margin: 0;
     }
 
     .spaced-select .mud-input-label {
-    margin-bottom: 6px; /* Adjust as needed */
+        margin-bottom: 6px; /* Adjust as needed */
     }
 
 </style>
@@ -608,21 +612,36 @@
 
 
     // Called when clicking a list item
+    // public async Task SelectReceive(Receiving item)
+    // {
+
+    //     selectedReceive = item;
+
+    //     // Now get Serial Number and Module Name
+    //     SelectedSerialNumber = item.SerialNumber;
+    //     SelectedModuleName = item.SelectedOption;
+
+    // }
     public async Task SelectReceive(Receiving item)
     {
+        selectedReceive = item;
 
-        selectedReceive = item;       
-
-        // Now get Serial Number and Module Name
         SelectedSerialNumber = item.SerialNumber;
         SelectedModuleName = item.SelectedOption;
 
-    } 
+        showContent = false;
+
+        qrCodeData = null; // ✅ Clear QR code data so UI can show selectedReceive content
+        showContent = false;
+
+        StateHasChanged();
+    }
+
 
     private async Task OpenReceiverecord()
     {
         await StopScanning();
-      
+
         showContent = true;
 
         try
@@ -891,16 +910,16 @@
     private string selectedCerSeals { get; set; } = "";
 
     private List<string> BearSeals = new()
-    {
+     {
         "Okay",
         "Replace Inner x1",
         "Replace Inner x2",
         "Replace Outer x1",
         "Replace Outer x2",
-        "All"
-    };
+        "Replace"    };
 
-    private string selectedBearSeals { get; set; } = "";
+    private List<string> selectedBearSeals = new List<string>();  // Use List<string>
+
 
     private List<string> materials = new()
     {
@@ -943,10 +962,14 @@
         selectedBearings = value;
     }
 
-    private async Task OnbearingsealChanged(string value)
+    //selectedBearSeals
+    private async Task OnbearingselasChanged(string values)
     {
-        selectedBearSeals = value;
+        // Split the string by comma to convert it to a string array
+        selectedBearSeals = values.Split(',').ToList();  // If you want a List<string>
     }
+
+
 
     private async Task OnbearcerChanged(string value)
     {
@@ -1056,7 +1079,7 @@
             string useradd = userData?.UserName ?? "User";
             if (userData != null)
             {
-                useradd = userData.UserName;   
+                useradd = userData.UserName;
 
             }
 
@@ -1088,18 +1111,19 @@
                 }
                 else
                 {
-                  
-                        Snackbar.Add("No QR code scanned and no item selected. Please select an item.", Severity.Warning);
-                        return;
-                  
-                }
-            } else if (selectedReceive != null)
-                {
-                    // Fetch from selected Receive item instead
-                    inspection.SerialNumber = selectedReceive.SerialNumber;
-                    inspection.Module = selectedReceive.SelectedOption;
+
+                    Snackbar.Add("No QR code scanned and no item selected. Please select an item.", Severity.Warning);
+                    return;
 
                 }
+            }
+            else if (selectedReceive != null)
+            {
+                // Fetch from selected Receive item instead
+                inspection.SerialNumber = selectedReceive.SerialNumber;
+                inspection.Module = selectedReceive.SelectedOption;
+
+            }
 
             else
             {
@@ -1129,7 +1153,7 @@
                     Type = selectedType,
                     BearingRemoved = selectedberrem,
                     Bearing = selectedBearings,
-                    BearingSeals = selectedBearSeals,
+                    BearingSeals = string.Join(", ", selectedBearSeals),
                     CeramicSeals = selectedCerSeals,
                     Right = selectedRL,
                     yRight = inspection.yRight,
@@ -1267,7 +1291,6 @@
     {
         try
         {
-          
             showContent = false;
             isScanning = true;
             qrCodeData = null;
@@ -1282,6 +1305,23 @@
 
                 lastScannedCode = code;
                 qrCodeData = code;
+
+                var qrDetails = qrCodeData.Split(',');
+
+                if (qrDetails.Length >= 3) // Ensure QR Code has expected fields
+                {
+                    inspection.SerialNumber = ExtractValue(qrDetails[0]);
+                    inspection.Module = ExtractValue(qrDetails[1]);
+
+                }
+                //  var Module = ExtractValue(code.Split(',')[1]);
+
+                if (inspection.Module != "Rotor/Feed rolls")
+                {
+                    // Display message indicating QR code is not valid
+                    Snackbar.Add("QR code is not valid.", Severity.Warning);
+                    return;
+                }
 
                 var serialNumber = ExtractValue(code.Split(',')[0]);
 
@@ -1317,6 +1357,15 @@
         {
             cameraError = true;
         }
+
+        StateHasChanged();
+    }
+
+    private async Task Stop()
+    {
+        isScanning = false;
+        isCancel = false;
+
 
         StateHasChanged();
     }
@@ -1359,7 +1408,7 @@
                 inspection.Module = ExtractValue(qrDetails[1]);
 
             }
-         
+
             else
             {
                 Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
@@ -1394,7 +1443,8 @@
                 ["SelectedType"] = selectedType,
                 ["Selectedberrem"] = selectedberrem,
                 ["SelectedBearings"] = selectedBearings,
-                ["SelectedBearSeals"] = selectedBearSeals,
+                ["SelectedBearSeals"] = string.Join(", ", selectedBearSeals),
+            //  ["SelectedBearSeals"] = selectedBearSeals,
                 ["SelectedCerSeals"] = selectedCerSeals,
                 ["SelectedRL"] = selectedRL,
                 ["SelectedLR"] = selectedLR,
@@ -1451,6 +1501,14 @@
                 return;
             }
         }
+        else if (selectedReceive != null)
+        {
+            inspection.SerialNumber = selectedReceive.SerialNumber;
+            inspection.Module = selectedReceive.SelectedOption;
+            inspection.Users = selectedReceive.Customer;
+            inspection.DateTime = selectedReceive.Date;
+        }
+
 
         // Set SerialNumber in the DTO
         projectImagesDTO.SerialNumber = inspection.SerialNumber;

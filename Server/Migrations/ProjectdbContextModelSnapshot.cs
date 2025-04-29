@@ -393,18 +393,18 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<int>("FinalInspectionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageFilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IncomingImageId")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
-                    b.HasIndex("IncomingImageId");
+                    b.HasIndex("FinalInspectionId");
 
-                    b.ToTable("finalImagedatas");
+                    b.ToTable("FinalImagedatas");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.FinalInspection", b =>
@@ -420,7 +420,7 @@ namespace MES.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("finalInspections");
+                    b.ToTable("FinalInspections");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
@@ -3503,13 +3503,13 @@ namespace MES.Server.Migrations
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.FinalImagedata", b =>
                 {
-                    b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalImages")
+                    b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalInspection")
                         .WithMany("Images")
-                        .HasForeignKey("IncomingImageId")
+                        .HasForeignKey("FinalInspectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FinalImages");
+                    b.Navigation("FinalInspection");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250429063204_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250429102638_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -396,18 +396,18 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<int>("FinalInspectionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageFilePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IncomingImageId")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
-                    b.HasIndex("IncomingImageId");
+                    b.HasIndex("FinalInspectionId");
 
-                    b.ToTable("finalImagedatas");
+                    b.ToTable("FinalImagedatas");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.FinalInspection", b =>
@@ -423,7 +423,7 @@ namespace MES.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("finalInspections");
+                    b.ToTable("FinalInspections");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>
@@ -3506,13 +3506,13 @@ namespace MES.Server.Migrations
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.FinalImagedata", b =>
                 {
-                    b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalImages")
+                    b.HasOne("MES.Shared.Models.Rotors.FinalInspection", "FinalInspection")
                         .WithMany("Images")
-                        .HasForeignKey("IncomingImageId")
+                        .HasForeignKey("FinalInspectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FinalImages");
+                    b.Navigation("FinalInspection");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.Imagedata", b =>

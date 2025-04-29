@@ -42,8 +42,8 @@ namespace MES.Server.Controllers
             // Set the MAAGImage navigation property for each Imagedata object
             foreach (var imageData in image.Images)
             {
-                imageData.FinalImages = image;  // Link the imageData to the parent MaagAmericansImage
-                imageData.IncomingImageId = image.Id;
+                imageData.FinalInspection = image;  // Link the imageData to the parent MaagAmericansImage
+                imageData.FinalInspectionId = image.Id;
             }
 
             await _imageRepository.AddIncomingImageAsync(image);
@@ -118,7 +118,7 @@ namespace MES.Server.Controllers
                 var bOMImage = new FinalInspection
                 {
                     SerialNumber = IncomingImagesDTO.SerialNumber,
-                   // Project = projectJobImagesDTO.Project,
+                    // Project = projectJobImagesDTO.Project,
                     Images = images
                 };
 

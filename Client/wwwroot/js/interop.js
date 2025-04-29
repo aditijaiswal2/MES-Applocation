@@ -85,7 +85,7 @@
     `;
 
     var printWindow = window.open('', '', 'height=650,width=900');
-    printWindow.document.write('<html><head><title>Print Report</title>');
+    printWindow.document.write('<html><head><title>Final Inspection Report</title>');
     printWindow.document.write(styles);
     printWindow.document.write('</head><body>');
     printWindow.document.write(content);

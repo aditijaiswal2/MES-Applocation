@@ -97,7 +97,7 @@
                 </MudCardContent>
                 <!-- Table Section -->
                 <MudGrid Spacing="3" Class="mt-4">
-                    <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1">
+                    <MudTable T="RotorsFinalInspection" Items="@TableData" Elevation="1">
                         <HeaderContent>
                             <MudTh class="text-center">Description</MudTh>
                             <MudTh class="text-center">Start</MudTh>
@@ -108,16 +108,17 @@
                         <RowTemplate>
                             <MudTd DataLabel="Description" class="text-center">@context.Description</MudTd>
                             <MudTd DataLabel="Start" class="text-center">
-                                <MudTextField @bind-Value="context.Start" />
+                                <MudTextField @bind-Value="context.Start" ReadOnly />
                             </MudTd>
                             <MudTd DataLabel="Finish" class="text-center">
-                                <MudTextField @bind-Value="context.Finish"/>
+                                <MudTextField @bind-Value="context.Finish" ReadOnly />
                             </MudTd>
                             <MudTd DataLabel="Date" class="text-center">
-                                <MudDatePicker @bind-Date="context.Date" DateFormat="dd/MM/yyyy" />
+                                <MudTextField @bind-Value="context.Date" ReadOnly />
+
                             </MudTd>
                             <MudTd DataLabel="Name" class="text-center">
-                                <MudTextField @bind-Value="context.Name"/>
+                                <MudTextField @bind-Value="context.Name" ReadOnly />
                             </MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -129,20 +130,22 @@
                     <MudGrid Class="w-100" Style="margin-top:10px;">
 
                         <MudGrid Spacing="3">
-                            <MudItem md="6" xs="12" class="outlined-box pa-2">
+
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
-                                <MudTextField @bind-Value="InspectionData.InspectorSing" Variant="Variant.Text"/>
+                                <MudText Typo="Typo.body1">@InspectionData.InspectorSing</MudText>
                             </MudItem>
 
-                            <MudItem md="6" xs="12" class="outlined-box pa-2">
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
                                 <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                <MudTextField @bind-Value="InspectionData.InspectorComments" Variant="Variant.Text"/>
+                                <MudText Typo="Typo.body1">@InspectionData.InspectorComments</MudText>
                             </MudItem>
 
-                            <MudItem md="6" xs="12" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">OK TO SHIP</MudText>
-                                <MudTextField @bind-Value="InspectionData.Oktoship" Variant="Variant.Text"/>
+                            <MudItem md="4" xs="12" class="outlined-box pa-2">
+                                <MudText Typo="Typo.h6" Color="Color.Success">OK TO SHIP</MudText>
+                                <MudText Typo="Typo.body1">@InspectionData.Oktoship</MudText>
                             </MudItem>
+
 
                         </MudGrid>
                     </MudGrid>
@@ -179,6 +182,9 @@
     public RotorsFinalInspection InspectionData { get; set; }
     [Parameter]
     public RotorGrindingData Grinding { get; set; }
+    [Parameter]
+    public List<RotorsFinalInspection> TableData { get; set; }
+
 
     //    ["Grinding"] = serialNumberData,
 
@@ -205,21 +211,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        tableData = new List<RotorsFinalInspection>
-    {
-        new RotorsFinalInspection { Description = "Flute Diameter", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Land Width", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "T.I.R", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Taper", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Locknut Threads", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Is the Rotor clean?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Relief Angle", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Journals O.K.?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Wedgelock assembly", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
-        new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
- };
-
-
+        if (TableData == null || !TableData.Any())
+        {
+            TableData = new List<RotorsFinalInspection>
+        {
+            new RotorsFinalInspection { Description = "Flute Diameter", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Land Width", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "T.I.R", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Taper", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Locknut Threads", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Is the Rotor clean?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Relief Angle", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Journals O.K.?", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Wedgelock assembly", Start = "", Finish = "", Date = DateTime.Now, Name = "" },
+            new RotorsFinalInspection { Description = "Special Part Wash (if Applicable )", Start = "", Finish = "", Date = DateTime.Now, Name = "" }
+        };
+        }
     }
+
 
 }

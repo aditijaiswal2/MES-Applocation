@@ -27,11 +27,11 @@ namespace MES.Server.Data.Repositories
             // Ensure the foreign key relationship is correctly established
             foreach (var imageData in image.Images)
             {
-                imageData.FinalImages = image; // Link each Imagedata object to the parent MaagAmericansImage
+                imageData.FinalInspection = image; // Link each Imagedata object to the parent MaagAmericansImage
             }
 
             // Add the MaagAmericansImage object to the DbContext
-            await _context.finalInspections.AddAsync(image);
+            await _context.FinalInspections.AddAsync(image);
 
             // Save changes to persist the data
             await _context.SaveChangesAsync();
@@ -39,22 +39,22 @@ namespace MES.Server.Data.Repositories
 
         public async Task<bool> SerialNumberExistsAsync(string serialNumber)
         {
-            return await _context.finalInspections.AnyAsync(x => x.SerialNumber == serialNumber);
+            return await _context.FinalInspections.AnyAsync(x => x.SerialNumber == serialNumber);
         }
 
         public async Task DeleteIncomingImageAsync(int id)
         {
-            var image = await _context.finalInspections.FindAsync(id);
+            var image = await _context.FinalInspections.FindAsync(id);
             if (image != null)
             {
-                _context.finalInspections.Remove(image);
+                _context.FinalInspections.Remove(image);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<IEnumerable<FinalInspection>> GetAllAsync()
         {
-            return await _context.finalInspections.Include(m => m.Images).ToListAsync();
+            return await _context.FinalInspections.Include(m => m.Images).ToListAsync();
         }
 
 
@@ -72,7 +72,7 @@ namespace MES.Server.Data.Repositories
                     continue;
                 }
 
-                image.IncomingImageId = wIPForProjectJOB.Id;
+                image.FinalInspectionId = wIPForProjectJOB.Id;
                 _context.Set<FinalImagedata>().Add(image);
             }
 
@@ -87,7 +87,7 @@ namespace MES.Server.Data.Repositories
         {
             try
             {
-                var partImages = await _context.finalInspections
+                var partImages = await _context.FinalInspections
                                     .Where(i => i.SerialNumber == wIPForProjectJOBDTO.SerialNumber)
                                     .Include(i => i.Images)
                                     .FirstOrDefaultAsync();
@@ -125,14 +125,14 @@ namespace MES.Server.Data.Repositories
 
         public async Task<FinalInspection?> GetByIdAsync(int id)
         {
-            return await _context.finalInspections
+            return await _context.FinalInspections
                 .Include(m => m.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task UpdateIncomingImageAsync(FinalInspection image)
         {
-            _context.finalInspections.Update(image);
+            _context.FinalInspections.Update(image);
             await _context.SaveChangesAsync();
         }
 
@@ -141,7 +141,7 @@ namespace MES.Server.Data.Repositories
         {
             try
             {
-                var partImages = await _context.finalInspections
+                var partImages = await _context.FinalInspections
                                     .Where(i => i.SerialNumber == serialNumber)
                                     .Include(i => i.Images)
                                     .FirstOrDefaultAsync();
