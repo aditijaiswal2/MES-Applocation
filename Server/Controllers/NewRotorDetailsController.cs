@@ -1,4 +1,5 @@
 ﻿using MES.Server.Data;
+using MES.Shared.Models;
 using MES.Shared.Models.Rotors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,48 @@ namespace MES.Server.Controllers
 
             return Ok(records);
         }
+
+        // update the isdelete status in receive page 
+        [HttpPut("updateRIsdelete")]
+        public async Task<IActionResult> UpdateReceivedeletedType([FromBody] Receiving receiving)
+        {
+            var rotor = await _context.Receivings
+                .FirstOrDefaultAsync(r => r.SerialNumber == receiving.SerialNumber);
+
+            if (rotor == null)
+            {
+                return NotFound("Rotor with specified serial number not found.");
+            }
+
+            rotor.IsDeleted = true;
+
+            _context.Receivings.Update(rotor);
+            await _context.SaveChangesAsync();
+
+            return Ok("Rotor updated to 'IsDeleted'.");
+        }
+
+
+        // update the isdelete status in new rotor page 
+        [HttpPut("UpNewISDelete")]
+        public async Task<IActionResult> UpdateNewRotorDeletedType([FromBody] Receiving receiving)
+        {
+            var rotor = await _context.NewRotorData
+                .FirstOrDefaultAsync(r => r.SerialNumber == receiving.SerialNumber);
+
+            if (rotor == null)
+            {
+                return NotFound("Rotor with specified serial number not found.");
+            }
+
+            rotor.IsDeleted = true;
+
+            _context.NewRotorData.Update(rotor);
+            await _context.SaveChangesAsync();
+
+            return Ok("Rotor updated to 'IsDeleted'.");
+        }
+
 
 
     }

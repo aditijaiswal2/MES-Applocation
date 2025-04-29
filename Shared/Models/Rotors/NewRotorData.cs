@@ -20,6 +20,7 @@ namespace MES.Shared.Models.Rotors
         public TimeSpan? PlannedHours { get; set; }
         public string CustomerName { get; set; }       
         public string Workcenters { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime? NewRotorDataSubmitDate { get; set; }
         public string NewRotorDataSSubmitBy { get; set; }
     }

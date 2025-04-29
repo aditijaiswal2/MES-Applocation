@@ -339,6 +339,9 @@ namespace MES.Server.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("SelectedOption")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -660,6 +663,9 @@ namespace MES.Server.Migrations
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MaterialNumber")
                         .HasColumnType("nvarchar(max)");

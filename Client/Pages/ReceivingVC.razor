@@ -102,16 +102,13 @@
 
                     var now = DateTime.Now;
                     NewRotorData = Data
-                        .Where(r => r.NewRotorDataSubmitDate.HasValue && (now - r.NewRotorDataSubmitDate.Value).TotalHours <= 24)
+                        .Where(r => r.NewRotorDataSubmitDate.HasValue && (now - r.NewRotorDataSubmitDate.Value).TotalHours <= 24 && !r.IsDeleted)
                         .OrderByDescending(r => r.Id)
                         .ToList();
 
                 }
             }
-            else
-            {
-                Snackbar.Add($"Failed to fetch New Rotor Data: {NEWDatasResponse.ReasonPhrase}", Severity.Error);
-            }
+           
         }
         catch (Exception ex)
         {
@@ -171,7 +168,7 @@
                 {
                     var now = DateTime.Now;
                     receiveModule = locationResult
-                        .Where(r => (now - r.Date).TotalHours <= 24) // Assuming r.Date is DateTime
+                        .Where(r => (now - r.Date).TotalHours <= 24 && !r.IsDeleted) // Assuming r.Date is DateTime
                         .OrderByDescending(r => r.Id)
                         .ToList();
                 }
@@ -206,6 +203,7 @@
     private void OnReceiveAdded(Receiving newReceive)
     {
         receiveModule = receiveModule.Prepend(newReceive).ToList(); // Add the new item to the list
+        CombineData();
         StateHasChanged(); // Re-render the UI
     }
 
@@ -245,21 +243,78 @@
     //     }
     // }
 
+    // private async Task DeleteLocation(CombinedData receive)
+    // {
+    //     bool? result = await DialogService.ShowMessageBox(
+    //        "Delete Confirmation",
+    //        "Are you sure you want to delete this QR Code?",
+    //        "Yes", "No"
+    //    );
+
+    //     if (result == true)
+    //     {
+    //         combinedModuleData = combinedModuleData.Where(x => x.SerialNumber != receive.SerialNumber).ToList();
+    //         Snackbar.Add("QR Code deleted successfully.", Severity.Success);
+    //         StateHasChanged(); // Refresh the UI
+    //     }
+    // }
+
     private async Task DeleteLocation(CombinedData receive)
     {
-        bool? result = await DialogService.ShowMessageBox(
-           "Delete Confirmation",
-           "Are you sure you want to delete this QR Code?",
-           "Yes", "No"
-       );
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
-        if (result == true)
+        try
         {
-            combinedModuleData = combinedModuleData.Where(x => x.SerialNumber != receive.SerialNumber).ToList();
-            Snackbar.Add("QR Code deleted successfully.", Severity.Success);
-            StateHasChanged(); // Refresh the UI
+                 bool? result = await DialogService.ShowMessageBox(
+               "Delete Confirmation",
+               "Are you sure you want to delete this QR Code?",
+               "Yes", "No"
+           );
+            if (result == true)
+            {
+                var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(receive);
+                var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+                var response = await HttpClient.PutAsync(ApiConstants.UpdateRIsdelete, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("QR Code deleted successfully.", Severity.Success);
+                    await LoadUser();
+                    await LoadNewRotorData();
+                    CombineData();
+                    StateHasChanged();
+                }
+                else
+                {
+                    // Try alternate endpoint
+                    var newJsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(receive);
+                    var newContent = new StringContent(newJsonPart, Encoding.UTF8, "application/json");
+                    var newResponse = await HttpClient.PutAsync(ApiConstants.UpNewISDeleteStatus, newContent);
+
+                    if (newResponse.IsSuccessStatusCode)
+                    {
+                        Snackbar.Add("QR Code deleted successfully.", Severity.Success);
+                        await LoadUser();
+                        await LoadNewRotorData();
+                        CombineData();
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        Snackbar.Add($"Failed to delete QR Code data, Try again! Status code: {newResponse.StatusCode}", Severity.Error);
+                    }
+                }
+            }
+
+            
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error occurred: {ex.Message}", Severity.Warning);
         }
     }
+
 
     public async Task GenerateQR(CombinedData receive)
     {
