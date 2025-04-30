@@ -258,7 +258,7 @@
                                                     }
                                                 </MudSelect>
 
-                                                <MudTextField @bind-Value="inspection.yRight" Variant="Variant.Outlined" FullWidth="true" />
+                                                <MudTextField Label="Bearing Journal Dia (Right Details)" @bind-Value="inspection.yRight" Variant="Variant.Outlined" FullWidth="true" />
                                             </MudItem>
 
                                             <MudItem xs="12" md="6">
@@ -270,7 +270,7 @@
                                                 </MudSelect>
 
 
-                                                <MudTextField @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
+                                                <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
                                             </MudItem>
                                         </MudGrid>
 
@@ -285,7 +285,7 @@
 
                                                 @if (selectedbs == "Yes")
                                                 {
-                                                    <MudSelect T="string"
+                                                    <MudSelect T="string" Label="Basic Sharpening Detail"
                                                                @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
                                                                ValueChanged="OnybasicsharpChanged"
                                                                FullWidth="true"
@@ -320,7 +320,7 @@
                                                 @if (selectedctr == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                               @bind-SelectedValue="selectedycg"
+                                                               @bind-SelectedValue="selectedycg" Label="Center Grinding Detail"
                                                                ValueChanged="OnycgChanged"
                                                                FullWidth="true" Variant="Variant.Outlined"
                                                                Class="custom-select">
@@ -365,7 +365,10 @@
 
                                                 @if (selectedwelding == "Yes")
                                                 {
-                                                    <MudTextField @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" />
+                                                    <MudNumericField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" />
+                                         
+@*                                                     <MudTextField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" Type="number" />
+                                                 *@
                                                 }
                                             </MudItem>
 
