@@ -45,10 +45,16 @@ namespace MES.Server.Data.Repositories
         {
             try
             {
+                //var partImages = await _imagecontext.SalesAttachedFile
+                //                    .Where(i => i.SerialNumber == serialnumber)
+                //                    .Include(i => i.File)
+                //                    .FirstOrDefaultAsync();
+
                 var partImages = await _imagecontext.SalesAttachedFile
-                                    .Where(i => i.SerialNumber == serialnumber)
-                                    .Include(i => i.File)
-                                    .FirstOrDefaultAsync();
+                     .Where(i => i.SerialNumber == serialnumber)
+                     .Include(i => i.File)
+                     .OrderByDescending(i => i.Id)
+                     .FirstOrDefaultAsync();
 
                 if (partImages != null)
                 {

@@ -203,7 +203,7 @@ function printincomingImage(imageDataUrl, labelText) {
 
 
 
-function printImage(imageData, partOrLoc, customer) {
+function printImage(imageData, partOrLoc, customer, date) {
     const dpi = 96;
     const canvasWidth = 2.4 * dpi;
     const canvasHeight = 4 * dpi;
@@ -225,10 +225,28 @@ function printImage(imageData, partOrLoc, customer) {
         context.fillStyle = 'black';
         context.font = '14px Arial';
 
-        // Top label - reduced gap
-        if (partOrLoc) {
-            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY - 5);
+        if (date) {
+            const dateObj = new Date(date);
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+            };
+            const formatted = dateObj.toLocaleString('en-US', options); // e.g., "04/30/2025, 10:42:40 AM"
+
+            context.fillText(formatted, canvasWidth / 2, qrCodeY - 45); // Display full date + time + AM/PM in one line
         }
+
+
+        // Top label (e.g., Rotor) below date/time
+        if (partOrLoc) {
+            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY - 25); // Rotor label
+        }
+
 
         // Draw QR code
         context.drawImage(img, qrCodeX, qrCodeY, qrCodeSize, qrCodeSize);

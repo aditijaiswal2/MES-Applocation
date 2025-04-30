@@ -54,8 +54,9 @@
                 var imageData = $"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}";
                 var partOrLoc = LocQR.SelectedOption;
                 var customer = LocQR.Customer;
+                var date = LocQR.Date;
 
-                await JSRuntime.InvokeVoidAsync("printImage", imageData, partOrLoc, customer);
+                await JSRuntime.InvokeVoidAsync("printImage", imageData, partOrLoc, customer, date);
 
             }
         }

@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr")
+            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr" && route != "/shippingvc")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -37,7 +37,7 @@
         }
 
 
-        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/svc") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi"))
+        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/svc") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/shippingvc"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
             <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
@@ -71,6 +71,8 @@
                     <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
                 } *@
             </MudNavGroup>
+
+            <MudNavLink Href="/shippingvc" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">Shipping</MudNavLink>
         }
 
 
@@ -148,6 +150,9 @@
                 return Icons.Material.Filled.AutoAwesomeMosaic;
             case "/rfi":
                 return Icons.Material.Filled.Dehaze;
+
+            case "/shippingvc":
+                return Icons.Material.Filled.LocalShipping;
            
          
            
@@ -184,6 +189,9 @@
 
             case "/rfi":
                 return "Rotors Final Inspection";
+
+            case "/shippingvc":
+                return "Shipping";
 
            
 

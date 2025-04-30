@@ -111,7 +111,7 @@
         public const string GetAllInspectionData = $"{BaseUrl}/IncomingInspection/GetAll";
         public const string AddFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/AddFinalInspection";
         public const string AddImagesFinal = $"{BaseUrl}/FinalInspectionImages/addbi";
-
+        public const string GetAllFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/GetAllFIData";
 
         // Sales AttachedFile 
         public const string AddSalesAttachedFile = $"{BaseUrl}/SalesAttachedFile/addpi";

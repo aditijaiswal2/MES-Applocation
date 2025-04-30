@@ -36,6 +36,17 @@ namespace YourAppNamespace.Controllers
             return await _context.RotorsFinalInspections.ToListAsync();
         }
 
+        [HttpGet("GetAllFIData")]
+        public async Task<ActionResult<IEnumerable<RotorsFinalInspection>>> GetAll()
+        {
+            var records = await _context.RotorsFinalInspections.ToListAsync();
+
+            if (records == null || !records.Any())
+                return NotFound("No final inspection records found.");
+
+            return Ok(records);
+        }
+
         // GET: api/RotorsFinalInspection/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RotorsFinalInspection>> GetRotorsFinalInspection(int id)
