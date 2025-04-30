@@ -3352,6 +3352,27 @@ namespace MES.Server.Migrations
                     b.ToTable("SalesAttachedFile");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.RotorsStyle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RotorsStyleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("rotorsStyles");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.ShipmentImage", b =>
                 {
                     b.Property<int>("Id")
@@ -3370,6 +3391,27 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShipmentImage");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Typesdetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("types");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

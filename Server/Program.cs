@@ -38,6 +38,12 @@ builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<IFinalInspectionImages, FinalImagesRepository>();
 builder.Services.AddTransient<FinalImagesRepository>();
 
+builder.Services.AddTransient<IRotorsStyleRepository, RotorsStyleRepository>();
+builder.Services.AddTransient<RotorsStyleRepository>();
+
+builder.Services.AddTransient<ITypedetailsRepository, TypedetailsRepository>();
+builder.Services.AddTransient<TypedetailsRepository>();
+
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));

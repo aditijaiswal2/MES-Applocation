@@ -30,6 +30,13 @@
         public const string EditLocation = $"{BaseUrl}/MESWorkCenters/editwc";
         public const string DeleteLocation = $"{BaseUrl}/MESWorkCenters";
 
+        // Manaage RotorsStyle : MES WorkCenter
+        public const string GetRotorsStyle = $"{BaseUrl}/MESWorkCenters/getwc";
+        public const string LocationRotorsStyle = $"{BaseUrl}/MESWorkCenters/wcQR";
+        public const string AddRotorsStyle = $"{BaseUrl}/MESWorkCenters/addwc";
+        public const string EditRotorsStyle = $"{BaseUrl}/MESWorkCenters/editwc";
+        public const string DeleteRotorsStyle = $"{BaseUrl}/MESWorkCenters";
+
         //Receiving   
         public const string GetReceiving = $"{BaseUrl}/ReceivingData/getrd";
         public const string DeleteReceiving = $"{BaseUrl}/ReceivingData";

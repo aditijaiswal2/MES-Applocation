@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1148,6 +1148,20 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "rotorsStyles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RotorsStyleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rotorsStyles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SalesAttachedFile",
                 columns: table => new
                 {
@@ -1172,6 +1186,20 @@ namespace MES.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShipmentImage", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "types",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TypeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_types", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1531,6 +1559,12 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "RotorsFinalInspections");
+
+            migrationBuilder.DropTable(
+                name: "rotorsStyles");
+
+            migrationBuilder.DropTable(
+                name: "types");
 
             migrationBuilder.DropTable(
                 name: "WorkCenters");
