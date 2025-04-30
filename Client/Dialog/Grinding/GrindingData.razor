@@ -361,6 +361,40 @@
             return;
         }
 
+        // CHECK FOR THIS SERIAL NUMBER IS STARTED OR NOT
+
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var Response = await HttpClient.GetAsync($"{ApiConstants.GetRotorGrindingSavedDatabyserialnumber}/{selectedData.SerialNumber}");
+
+        if (Response.IsSuccessStatusCode)
+        {
+            var savedDataJson = await Response.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(savedDataJson))
+            {
+                var rotorData = JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(savedDataJson,
+                   new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingSavedData>();
+
+                if (rotorData.Count == 0 || string.IsNullOrEmpty(rotorData.First().SerialNumber))
+                {
+                    Snackbar.Add("Before submitting, you need to start the rotor.", Severity.Error);
+                    return;
+                }
+
+            }
+            else
+            {
+                Snackbar.Add("Before submitting, you need to start the rotor.", Severity.Error);
+                return;
+            }
+
+
+        }
+        else
+        {
+            Snackbar.Add("Before submitting, you need to start the rotor.", Severity.Error);
+            return;
+        }
+
         if (IsMoveoutsideoperation)
         {
             await submitIsMoveoutsideoperation();

@@ -19,6 +19,9 @@
         <div style="width: 2in; padding: 0.05in 0.25in 0.1in 0.25in; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             @if (LocQR != null)
             {
+                <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px; white-space: nowrap;">
+                    @(LocQR.Date.HasValue ? LocQR.Date.Value.ToString("M/d/yyyy hh:mm:ss tt") : "")
+                </p>
                 <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px;">@LocQR.SelectedOption</p>
 
                 <!-- QR Image -->
