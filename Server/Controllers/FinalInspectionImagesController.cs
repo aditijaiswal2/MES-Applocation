@@ -92,14 +92,26 @@ namespace MES.Server.Controllers
 
             try
             {
-                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FinalInspection");
+                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
                 //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
-                var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
+                // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
 
+                var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}", "FinalInspection");
+
+                // Automatically create the directory if it doesn't exist
                 if (!Directory.Exists(partNumberFolder))
                 {
                     Directory.CreateDirectory(partNumberFolder);
                 }
+
+                //var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FinalInspection");
+                ////var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
+                //var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
+
+                //if (!Directory.Exists(partNumberFolder))
+                //{
+                //    Directory.CreateDirectory(partNumberFolder);
+                //}
 
                 var images = IncomingImagesDTO.Images.Select(imageDto => new FinalImagedata { Data = imageDto.Data }).ToList();
 

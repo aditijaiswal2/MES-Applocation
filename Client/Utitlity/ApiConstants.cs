@@ -3,7 +3,7 @@
     public class ApiConstants
     {
        private const string BaseUrl = "https://localhost:7172/api";
-        // private const string BaseUrl = "http://maag-image-capture.dover-global.net/api";
+       // private const string BaseUrl = "https://maag-mes.dover-global.net/api";
 
         public const string GetUserRoles = $"{BaseUrl}/Users/getuserroles";
         public const string GetRole = $"{BaseUrl}/Role/getrole";
@@ -103,6 +103,7 @@
         public const string CheckGrindingSerial = $"{BaseUrl}/RotorGrinding/CheckSerialExists";
         public const string GetAllInspectionData = $"{BaseUrl}/IncomingInspection/GetAll";
         public const string AddFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/AddFinalInspection";
+        public const string AddImagesFinal = $"{BaseUrl}/FinalInspectionImages/addbi";
 
 
         // Sales AttachedFile 

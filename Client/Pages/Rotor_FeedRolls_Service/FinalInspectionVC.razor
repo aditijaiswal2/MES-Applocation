@@ -165,7 +165,7 @@
                                                         </MudItem>
 
                                                         <MudItem xs="12" md="6">
-                                                            <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                            <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" Required/>
                                                         </MudItem>
                                                     </MudGrid>
 
@@ -176,7 +176,7 @@
                                                         </MudItem>
 
                                                         <MudItem xs="12" md="6">
-                                                            <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                            <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined"  Required/>
                                                         </MudItem>
 
                                                     </MudGrid>
@@ -187,7 +187,7 @@
                                                         </MudItem>
 
                                                         <MudItem xs="12" md="4">
-                                                            <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                            <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" Required />
                                                         </MudItem>
 
                                                         <MudItem xs="12" md="4">
@@ -423,6 +423,11 @@
 
     private async Task Submitdata()
     {
+        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.CustomerPoNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
+        {
+            Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
+            return;
+        }
         try
         {
             var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
@@ -531,9 +536,9 @@
                 var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
                 var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
 
-                //  var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
-                // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
-                var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspection/addbi", projectimagecontent);
+                 // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
+             //   var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/FinalInspectionImages/addbi", projectimagecontent);
+                var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
 
                 if (projectimageresponse.IsSuccessStatusCode)
                 {

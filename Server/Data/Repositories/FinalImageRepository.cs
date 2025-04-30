@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MES.Server.Data.Repositories
 {
-    public class FinalRepository : IFinalInspectionImages
+    public class FinalImagesRepository : IFinalInspectionImages
     {
         private readonly ProjectdbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
 
-        public FinalRepository(ProjectdbContext context, IWebHostEnvironment webHostEnvironment)
+        public FinalImagesRepository(ProjectdbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;

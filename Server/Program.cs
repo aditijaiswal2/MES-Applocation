@@ -35,6 +35,9 @@ builder.Services.AddTransient<ImageRepository>();
 builder.Services.AddTransient<IFileRepository, FileRepository>();
 builder.Services.AddTransient<FileRepository>();
 builder.Services.AddSingleton<HttpClient>();
+builder.Services.AddTransient<IFinalInspectionImages, FinalImagesRepository>();
+builder.Services.AddTransient<FinalImagesRepository>();
+
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));
