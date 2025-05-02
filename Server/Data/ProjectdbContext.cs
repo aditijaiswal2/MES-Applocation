@@ -54,6 +54,7 @@ namespace MES.Server.Data
         public DbSet<RotorGrindingSecondaryWorkCentersData> RotorGrindingSecondaryWorkCentersData { get; set; }
         public DbSet<RotorsStyle> rotorsStyles { get; set; }
         public DbSet<Typesdetails> types { get; set; }
+        public DbSet<RotorSalesClearance> RotorSalesClearance { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

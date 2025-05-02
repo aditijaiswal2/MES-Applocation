@@ -6,6 +6,7 @@
 @using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
 @using System.Text
+@using static MES.Client.Pages.LoginVC
 
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -41,15 +42,24 @@
                 {
                     <MudGrid>
 
-                        <MudItem xs="4">
-                            <MudTextField Label="Customer" @bind-Value="selectedInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudItem md="12" sm="12" xs="12">
+                            <MudTextField Label="Additional Comments"
+                                          @bind-Value="AdditionalComments"
+                                          Variant="Variant.Outlined"
+                                          FullWidth="true" />
                         </MudItem>
-                        <MudItem xs="4">
-                            <MudTextField Label="Location" @bind-Value="selectedInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                        </MudItem>
-
-
                     </MudGrid>
+
+                    <br />
+
+                    <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+
+                       
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>                       
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                    </MudItem>
+                   
 
 
 
@@ -87,9 +97,9 @@
     private RotorsFinalInspection selectedInspection;
     private string searchTerm = "";
     private RotorsFinalInspection? hoveredInspection;
-
-
-
+    private string? AdditionalComments { get; set; }
+    private List<RotorSalesClearance> rotorSalesClearanceDatas = new();
+    
 
 
     protected override async Task OnInitializedAsync()
@@ -103,7 +113,15 @@
     {
         try
         {
-
+            // Fetch rotor sales CLEARENCE DATA data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorSalesDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
+            if (rotorSalesDatasresponse.IsSuccessStatusCode)
+            {
+                var data = await rotorSalesDatasresponse.Content.ReadAsStringAsync();
+                rotorSalesClearanceDatas = JsonSerializer.Deserialize<List<RotorSalesClearance>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorSalesClearance>();
+            }
 
             isLoading = true;
             // Fetch Rotors FinalInspection data
@@ -116,7 +134,10 @@
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorsFinalInspection>();
 
 
+                // Exclude inspections that already exist in rotorSales clearence Datas (based on SerialNumber)
                 inspections = allInspections
+                    .Where(i => !rotorSalesClearanceDatas.Any(r =>
+                        string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
 
             }
@@ -140,6 +161,68 @@
         selectedInspection = inspection;
 
 
+    }
+
+    private async Task Submit()
+    {
+       
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }       
+
+        var submissionData = new SalesClearenceSubmission
+            {
+                SelectedInspection = selectedInspection,               
+            AdditionalComments = string.IsNullOrWhiteSpace(AdditionalComments) ? "N/A" : AdditionalComments,
+                SubmitedBy = useradd,
+                SubmitDate = DateTime.Now
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorSalesClearanceData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Sales Clearance Data submitted successfully!", Severity.Success);
+                ClearAll();
+                await FetchAllInspections();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to submit the sales clearance data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error submitting sales clearance data: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ClearAll()
+    {
+        selectedInspection = null;
+        AdditionalComments = string.Empty;
+        errorMessage = string.Empty;
+        isLoading = false;
+       
+
+        StateHasChanged();
+    }
+
+    public class SalesClearenceSubmission
+    {
+        public RotorsFinalInspection SelectedInspection { get; set; }      
+        public string AdditionalComments { get; set; }
+        public DateTime? SubmitDate { get; set; }
+        public string SubmitedBy { get; set; }
     }
 
 

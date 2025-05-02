@@ -130,5 +130,9 @@
         public const string AddSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/AddSWData";
         public const string GetAllSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/GetAllSWData";
 
+        // RotorSales Cleareance 
+        public const string AddRotorSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/AddRotorSalesClearance";
+        public const string GetAllSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/GetAllSalesClearanceData";
+
     }
 }

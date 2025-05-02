@@ -1,7 +1,131 @@
 ﻿@page "/shippingvc"
 
-<h3>Shipping Page</h3>
+
+@using MES.Client.Dialog
+@using MES.Client.Utitlity
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using ReactorBlazorQRCodeScanner
+@using System.Text
+@using static MES.Client.Pages.LoginVC
+
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
+
+
+<MudContainer Fixed="true">
+    <MudGrid Class="d-flex">
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
+                <div class="table-container">
+                    <MudTable Items="@rotorSalesClearanceDatas" Class="table table-bordered table-striped"
+                              Filter="new Func<RotorSalesClearance, bool>(FilterFunc1)">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Serial Number</MudTh>
+                            <MudTh Style="text-align:center">Customer Name</MudTh>
+                            <MudTh Style="text-align:center">Module</MudTh>
+                            <MudTh Style="text-align:center">Rotor Number</MudTh>                           
+                            <MudTh Style="text-align:center">Actions</MudTh>
+                          
+                        </HeaderContent>
+                        <RowTemplate Context="data">
+                            <MudTd>@data.SerialNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.Customer</MudTd>
+                            <MudTd Style="text-align:center">@data.Module</MudTd>
+                            <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
+                            <MudTd Style="text-align:center">
+                                <MudButton StartIcon="@Icons.Material.Filled.AddAPhoto" Color="Color.Primary" OnClick="@(() => AddImages(data))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.LocalShipping" Color="Color.Success" OnClick="@(() => Shipping(data))" />
+                               
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
+                        </PagerContent>
+                    </MudTable>
+                </div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private string searchString1 = "";
+    private bool isLoading = false;
+    private string errorMessage = "";   
+    private List<RotorSalesClearance> rotorSalesClearanceDatas = new();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchAllInspections();
+    }
+
+    private async Task FetchAllInspections()
+    {
+        try
+        {
+            // Fetch rotor sales CLEARENCE DATA data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorSalesDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
+            if (rotorSalesDatasresponse.IsSuccessStatusCode)
+            {
+                var data = await rotorSalesDatasresponse.Content.ReadAsStringAsync();
+                rotorSalesClearanceDatas = JsonSerializer.Deserialize<List<RotorSalesClearance>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorSalesClearance>();
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool FilterFunc1(RotorSalesClearance element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(RotorSalesClearance element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.SerialNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await FetchAllInspections();
+        }
+    }
+
+    async Task AddImages(RotorSalesClearance salesClearance)
+    {
+        // add the images
+    }
+
+    async Task Shipping(RotorSalesClearance salesClearance)
+    {
+        // shipping the data 
+    }
 
 }
