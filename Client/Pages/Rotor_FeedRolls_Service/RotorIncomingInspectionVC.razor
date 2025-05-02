@@ -64,8 +64,8 @@
                             @foreach (var item in Receivealldata.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                             {
                                 <MudListItem OnClick="() => SelectReceive(item)" Button="true" Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                             @onmouseover="() => hoveredReceive = item"
-                                             @onmouseout="() => hoveredReceive = null">
+                                @onmouseover="() => hoveredReceive = item"
+                                @onmouseout="() => hoveredReceive = null">
                                     <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
                                 </MudListItem>
                             }
@@ -187,7 +187,25 @@
                                         </MudGrid>
 
                                         <MudGrid Spacing="2">
-                                            <MudItem xs="12" md="4">
+
+
+                                            <MudItem md="4"  xs="12">
+                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRotorsStyle"
+                                                AnchorOrigin="Origin.BottomCenter" Label="Rotor Style"
+                                                >
+                                                    @if (rotorsStyle != null)
+                                                    {
+                                                        @foreach (var location in rotorsStyle.OrderBy(l => l.RotorsStyleName))
+                                                        {
+                                                            <MudSelectItem Value="@location.RotorsStyleName">@location.RotorsStyleName</MudSelectItem>
+                                                        }
+                                                    }
+                                                </MudSelect>
+                                            </MudItem>
+
+
+
+                                            @*  <MudItem xs="12" md="4">
                                                 <MudSelect T="string" Label="Rotor Style" @bind-SelectedValue="selectedRotorStyle" ValueChanged="OnRotorStyleChanged" Variant="Variant.Outlined" FullWidth="true">
                                                     @foreach (var rotorstyle in RotorStyle)
                                                     {
@@ -195,7 +213,7 @@
                                                     }
                                                 </MudSelect>
                                             </MudItem>
-
+ *@
                                             <MudItem xs="12" md="4">
                                                 <MudSelect T="string" Label="Type" @bind-SelectedValue="selectedType" FullWidth="true" Variant="Variant.Outlined" ValueChanged="OnTypeChanged">
                                                     @foreach (var type in Type)
@@ -286,10 +304,10 @@
                                                 @if (selectedbs == "Yes")
                                                 {
                                                     <MudSelect T="string" Label="Basic Sharpening Detail"
-                                                               @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
-                                                               ValueChanged="OnybasicsharpChanged"
-                                                               FullWidth="true"
-                                                               Class="custom-select">
+                                                    @bind-SelectedValue="selectedybasicsharp" Variant="Variant.Outlined"
+                                                    ValueChanged="OnybasicsharpChanged"
+                                                    FullWidth="true"
+                                                    Class="custom-select">
                                                         @foreach (var ber in ybasicsharp)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -320,10 +338,10 @@
                                                 @if (selectedctr == "Yes")
                                                 {
                                                     <MudSelect T="string"
-                                                               @bind-SelectedValue="selectedycg" Label="Center Grinding Detail"
-                                                               ValueChanged="OnycgChanged"
-                                                               FullWidth="true" Variant="Variant.Outlined"
-                                                               Class="custom-select">
+                                                    @bind-SelectedValue="selectedycg" Label="Center Grinding Detail"
+                                                    ValueChanged="OnycgChanged"
+                                                    FullWidth="true" Variant="Variant.Outlined"
+                                                    Class="custom-select">
                                                         @foreach (var ber in ycg)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -366,8 +384,8 @@
                                                 @if (selectedwelding == "Yes")
                                                 {
                                                     <MudNumericField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" />
-                                         
-@*                                                     <MudTextField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" Type="number" />
+
+                                                    @*                                                     <MudTextField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" Type="number" />
                                                  *@
                                                 }
                                             </MudItem>
@@ -544,33 +562,33 @@
 
 <style>
     .bordered-container {
-        width: 100%;
-        max-width: 100%;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-        padding: 30px;
-        margin-bottom: 16px;
-        box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
     }
 
     .no-checkbox .mud-selected-item-checkbox {
-        display: none !important;
+    display: none !important;
     }
 
     .qr-item {
-        margin: 1.5rem;
-        font-size: 16px;
-        white-space: nowrap; /* Ensures text stays in one line */
+    margin: 1.5rem;
+    font-size: 16px;
+    white-space: nowrap; /* Ensures text stays in one line */
     }
 
 
     .full-width-grid {
-        width: 100%;
-        margin: 0;
+    width: 100%;
+    margin: 0;
     }
 
     .spaced-select .mud-input-label {
-        margin-bottom: 6px; /* Adjust as needed */
+    margin-bottom: 6px; /* Adjust as needed */
     }
 
 </style>
@@ -589,6 +607,8 @@
     // private List<Receiving> Receive = new ();
     private IEnumerable<Receiving> Receive { get; set; } = new List<Receiving>();
     private List<Receiving> Receivealldata = new();
+    private List<RotorsStyle>? rotorsStyle { get; set; } = new List<RotorsStyle>();
+    private string? SelectedRotorsStyle { get; set; }
     private string currentuser;
     private Receiving? hoveredReceive;
     private bool showContent = false;
@@ -611,6 +631,19 @@
         inspection.Inspected = currentuser;
         inspection.Received = currentDateTime.ToString();
 
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetRotorsStyle);
+
+        if (workcenterResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await workcenterResponse.Content.ReadFromJsonAsync<List<RotorsStyle>>();
+
+            if (locationResult != null)
+            {
+                rotorsStyle = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+
+        }
     }
 
 
@@ -1074,6 +1107,7 @@
         selectedtb = value;
     }
 
+   
     private async void SubmitForm()
     {
         try

@@ -1,0 +1,58 @@
+﻿@using System.ComponentModel.DataAnnotations;
+@using MES.Shared.DTOs
+@using Newtonsoft.Json
+@using System.Text
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+
+<MudDialog>
+    <TitleContent>
+        <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+            <MudButton OnClick="PrintQRCode" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Outlined.Print">Print</MudButton>
+            <MudButton OnClick="Cancel" Color="Color.Error" Size="Size.Small" StartIcon="@Icons.Material.Outlined.Cancel">Cancel</MudButton>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div style="width: 2in; height: 2in;  padding: 0.25in; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="mt-2">
+                @if (LocQR != null)
+                {
+                    <img src="@($"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}")" alt="QR Code" style="width: 1.5in; height: 1.5in;" />
+                }
+                <div style="padding-top: 2px; text-align:center; font-size: 15px; margin-bottom:1rem">@LocQR.RotorsStyleName</div>
+            </div>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public RotorsStyleQRDTO LocQR { get; set; }
+
+    private async Task Cancel()
+    {
+        MudDialog?.Cancel();
+        StateHasChanged();
+    }
+
+    private async Task PrintQRCode()
+    {
+        try
+        {
+            if (LocQR != null)
+            {
+
+                var imageData = $"data:image/png;base64,{Convert.ToBase64String(LocQR.QRData)}";
+                var partOrLoc = LocQR.RotorsStyleName;
+                await JSRuntime.InvokeVoidAsync("printImage", imageData, partOrLoc);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error printing QR code: {ex.Message}", Severity.Error);
+        }
+    }
+}

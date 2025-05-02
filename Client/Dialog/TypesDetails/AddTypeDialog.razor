@@ -1,0 +1,91 @@
+﻿@using MES.Client.Utitlity;
+@using MES.Shared.Models
+@using System.ComponentModel.DataAnnotations;
+@using Newtonsoft.Json
+@using System.Text
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.AddLocation" Class="mr-2 mb-n1" />
+                Add Type
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Type" @bind-Value="typesdetails.TypeName" Variant="Variant.Outlined" Class="mb-6" />
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Type Description" @bind-Value="typesdetails.Description" Variant="Variant.Outlined" Class="mb-4" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Add">Add</MudButton>
+            @* <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    public Typesdetails typesdetails = new Typesdetails();
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
+            yield return "Max 250 characters";
+    }
+
+    private async Task Add()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(typesdetails);
+
+        if (!Validator.TryValidateObject(typesdetails, validationContext, validationResults, true))
+        {
+            foreach (var validationResult in validationResults)
+            {
+                Snackbar.Add(validationResult.ErrorMessage, Severity.Error);
+            }
+            return;
+        }
+
+        try
+        {
+            var jsonPart = JsonConvert.SerializeObject(typesdetails);
+
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+            //var response = await HttpClient.PostAsync("https://localhost:7006/api/ITSLocation/addloc", content);
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddType, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Type added successfully.", Severity.Success);
+                CompletionService.IsCompleted = true;
+            }
+            else
+            {
+                Snackbar.Add($"Failed to add Type,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                CompletionService.IsCompleted = false;
+            }
+            MudDialog?.Close();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+    }
+}

@@ -1,6 +1,7 @@
-﻿@page "/tt"
+﻿@page "/rs"
 
 @using MES.Client.Dialog
+@using MES.Client.Dialog.MESworkcenters
 @using MES.Client.Utitlity;
 @using MES.Shared.DTOs
 @using MES.Shared.Models
@@ -10,7 +11,7 @@
 @using Newtonsoft.Json
 @using QRCoder;
 
-@using MES.Client.Dialog.TypesDetails
+@using MES.Client.Dialog.RotorsStyle
 
 @inject IDialogService DialogService
 @inject IJSRuntime jsRuntime
@@ -30,7 +31,7 @@
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
                 <div class="table-container">
                     <MudTable Items="@iTSLocations" Class="table table-bordered table-striped"
-                              Filter="new Func<Typesdetails, bool>(FilterFunc1)">
+                              Filter="new Func<RotorsStyle, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
@@ -38,17 +39,17 @@
                                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
-                            <MudTh>Type</MudTh>
+                            <MudTh>Rotors Style</MudTh>
                             <MudTh Style="text-align:center">Description</MudTh>
                             <MudTh Style="text-align:center">Actions</MudTh>
                         </HeaderContent>
-                        <RowTemplate Context="typesdetails">
-                            <MudTd>@typesdetails.TypeName</MudTd>
-                            <MudTd Style="text-align:center">@typesdetails.Description</MudTd>
+                        <RowTemplate Context="rotors">
+                            <MudTd>@rotors.RotorsStyleName</MudTd>
+                            <MudTd Style="text-align:center">@rotors.Description</MudTd>
                             <MudTd Style="text-align:center">
-                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(typesdetails))" />
-                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(typesdetails))" />
-                                <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(typesdetails))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(rotors))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(rotors))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(rotors))" />
                             </MudTd>
                         </RowTemplate>
                         <PagerContent>
@@ -64,7 +65,7 @@
 
 
 @code {
-    private IEnumerable<Typesdetails> iTSLocations = new List<Typesdetails>();
+    private IEnumerable<RotorsStyle> iTSLocations = new List<RotorsStyle>();
     private Stream pdfStream;
     private string pdfDataUrl;
     private int currentPage = 1;
@@ -84,10 +85,10 @@
         {
             //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetType);
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetRotorsStyle);
             if (locationsResponse.IsSuccessStatusCode)
             {
-                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<Typesdetails>>();
+                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<RotorsStyle>>();
                 if (locationResult != null)
                 {
                     iTSLocations = locationResult.ToList().OrderByDescending(l => l.Id);
@@ -102,7 +103,7 @@
 
     async Task AddLocation()
     {
-        DialogService.Show<AddTypeDialog>("ADD Rotors Style", DialogSettings.DialogOptionsAddEditDelete);
+        DialogService.Show<AddRotorsDialog>("ADD Rotors Style", DialogSettings.DialogOptionsAddEditDelete);
 
         CompletionService.CompletionChanged += async (sender, args) =>
         {
@@ -110,12 +111,12 @@
         };
     }
 
-    async Task EditLocation(Typesdetails typesdetails)
+    async Task EditLocation(RotorsStyle rotors)
     {
-        var parameters = new DialogParameters { ["typesdetails"] = typesdetails };
+        var parameters = new DialogParameters { ["rotors"] = rotors };
 
-        //  var parameters = new DialogParameters<EditRotorsDialog> { { x => x.RotorsStyleName, rotors } };
-        var dialog = await DialogService.ShowAsync<EditTypeDialog>("EDIT Rotors Style", parameters, DialogSettings.DialogOptionsAddEditDelete);
+      //  var parameters = new DialogParameters<EditRotorsDialog> { { x => x.RotorsStyleName, rotors } };
+        var dialog = await DialogService.ShowAsync<EditRotorsDialog>("EDIT Rotors Style", parameters, DialogSettings.DialogOptionsAddEditDelete);
 
         CompletionService.CompletionChanged += async (sender, args) =>
         {
@@ -123,12 +124,12 @@
         };
     }
 
-    async Task DeleteLocation(Typesdetails typesdetails)
+    async Task DeleteLocation(RotorsStyle rotors)
     {
-        var parameters = new DialogParameters { ["typesdetails"] = typesdetails };
+        var parameters = new DialogParameters { ["rotors"] = rotors };
 
-        // var parameters = new DialogParameters<DeleteRotorsDialog> { { x => x.RotorsStyleName, rotors } };
-        var dialog = await DialogService.ShowAsync<DeleteTypesDialog>("DELETE Rotors Style", parameters, DialogSettings.DialogOptionsAddEditDelete);
+       // var parameters = new DialogParameters<DeleteRotorsDialog> { { x => x.RotorsStyleName, rotors } };
+        var dialog = await DialogService.ShowAsync<DeleteRotorsDialog>("DELETE Rotors Style", parameters, DialogSettings.DialogOptionsAddEditDelete);
 
         CompletionService.CompletionChanged += async (sender, args) =>
         {
@@ -136,21 +137,21 @@
         };
     }
 
-    public async Task GenerateQR(Typesdetails typesdetails)
+    public async Task GenerateQR(RotorsStyle rotors)
     {
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
         try
         {
-            string locationData = $"Location: {typesdetails.TypeName}, Description: {typesdetails.Description}, Date: {DateTime.Now}";
+            string locationData = $"Location: {rotors.RotorsStyleName}, Description: {rotors.Description}, Date: {DateTime.Now}";
 
-            var jsonPart = JsonConvert.SerializeObject(typesdetails);
+            var jsonPart = JsonConvert.SerializeObject(rotors);
             var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
 
             //var response = await HttpClient.PostAsync("https://localhost:7006/api/QRCode/locQR", content);
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var response = await HttpClient.PostAsync(ApiConstants.LocationType, content);
+            var response = await HttpClient.PostAsync(ApiConstants.LocationRotorsStyle, content);
 
             byte[] qrCodeBytes = null;
 
@@ -165,17 +166,17 @@
                     }
                 }
 
-                TypesDetailsDTO locationQr = new TypesDetailsDTO()
+                RotorsStyleQRDTO locationQr = new RotorsStyleQRDTO()
                     {
-                        TypeName = typesdetails.TypeName,
-                        Description = typesdetails.Description,
+                        RotorsStyleName = rotors.RotorsStyleName,
+                        Description = rotors.Description,
                         QRData = qrCodeBytes,
                     };
 
                 var options = new DialogOptions { FullWidth = false, DisableBackdropClick = true };
                 var parameters = new DialogParameters { ["LocQR"] = locationQr };
 
-                var dialog = await DialogService.ShowAsync<TypesQRCodeDialog>("Show QR", parameters, options);
+                var dialog = await DialogService.ShowAsync<RotorsQRCodeDialog>("Show QR", parameters, options);
             }
             else
             {
@@ -194,10 +195,10 @@
         {
             //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetType);
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetRotorsStyle);
             if (locationsResponse.IsSuccessStatusCode)
             {
-                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<Typesdetails>>();
+                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<RotorsStyle>>();
                 if (locationResult != null)
                 {
                     iTSLocations = locationResult.ToList().OrderByDescending(l => l.Id);
@@ -206,13 +207,13 @@
             }
         }
     }
-    private bool FilterFunc1(Typesdetails element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(RotorsStyle element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(Typesdetails element, string searchString)
+    private bool FilterFunc(RotorsStyle element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.TypeName.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.RotorsStyleName.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
