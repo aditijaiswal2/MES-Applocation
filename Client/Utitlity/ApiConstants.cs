@@ -134,5 +134,12 @@
         public const string AddRotorSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/AddRotorSalesClearance";
         public const string GetAllSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/GetAllSalesClearanceData";
 
+        //shipping page 
+        public const string AddShippingImages = $"{BaseUrl}/ShipmentImage/addbi";
+        public const string ShipData = $"{BaseUrl}/Shipping/Ship";
+        public const string GetAllShippedData = $"{BaseUrl}/Shipping/GetAllShippedData";
+
+
+
     }
 }

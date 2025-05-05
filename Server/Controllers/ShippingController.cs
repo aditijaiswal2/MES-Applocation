@@ -5,35 +5,33 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static MES.Client.Dialog.Grinding.GrindingData;
 using static MES.Client.Pages.Rotor_FeedRolls_Service.RotorWaitingSalesClearanceVC;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static MES.Client.Pages.ShippingVC;
 
 namespace MES.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RotorSalesClearanceController : ControllerBase
+    public class ShippingController : ControllerBase
     {
         private readonly ProjectdbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
-        public RotorSalesClearanceController(ProjectdbContext context, UserManager<AppUser> userManager)
+        public ShippingController(ProjectdbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-
-        [HttpPost("AddRotorSalesClearance")]
-        public async Task<IActionResult> AffRotorSalesClearance([FromBody] SalesClearenceSubmission submission)
+        [HttpPost("Ship")]
+        public async Task<IActionResult> AffRotorSalesClearance([FromBody] ShippingSubmission submission)
         {
             if (submission == null || submission.SelectedInspection == null)
                 return BadRequest("Submission is invalid.");
 
             try
             {
-                var rotorData = new RotorSalesClearance
+                var rotorData = new RotorShipping
                 {
                     SerialNumber = submission.SelectedInspection.SerialNumber,
                     Module = submission.SelectedInspection.Module,
@@ -108,12 +106,12 @@ namespace MES.Server.Controllers
                     Notes = submission.SelectedInspection.Notes,
                     GrindingStartDate = submission.SelectedInspection.GrindingStartDate,
                     DelayReasonTracking = submission.SelectedInspection.DelayReasonTracking,
-                   GrindingSubmiteddBy = submission.SelectedInspection.GrindingSubmiteddBy,
-                   GrindingEndDate = submission.SelectedInspection.GrindingEndDate,
-                   CustomerPoNum = submission.SelectedInspection.CustomerPoNum,
-                   DWGNum = submission.SelectedInspection.DWGNum,
-                   AGNum = submission.SelectedInspection.AGNum,
-                   SpecialNoteComment = submission.SelectedInspection.SpecialNoteComment,
+                    GrindingSubmiteddBy = submission.SelectedInspection.GrindingSubmiteddBy,
+                    GrindingEndDate = submission.SelectedInspection.GrindingEndDate,
+                    CustomerPoNum = submission.SelectedInspection.CustomerPoNum,
+                    DWGNum = submission.SelectedInspection.DWGNum,
+                    AGNum = submission.SelectedInspection.AGNum,
+                    SpecialNoteComment = submission.SelectedInspection.SpecialNoteComment,
                     Dressedwithnewbearing = submission.SelectedInspection.Dressedwithnewbearing,
                     InspectorSing = submission.SelectedInspection.InspectorSing,
                     Description = submission.SelectedInspection.Description,
@@ -125,29 +123,31 @@ namespace MES.Server.Controllers
                     Date = submission.SelectedInspection.Date,
                     FinalInspectionSubmiteddBy = submission.SelectedInspection.FinalInspectionSubmiteddBy,
                     FinalInspectionSubmitedByDate = submission.SelectedInspection.FinalInspectionSubmitedByDate,
-                    AdditionalWSalesComments = submission.AdditionalComments,
-                    WSalesSubmitedByDate = submission.SubmitDate,
-                    WSalesSubmiteddBy = submission.SubmitedBy
+                    AdditionalWSalesComments = submission.SelectedInspection.AdditionalWSalesComments,
+                    WSalesSubmitedByDate = submission.SelectedInspection.WSalesSubmitedByDate,
+                    WSalesSubmiteddBy = submission.SelectedInspection.WSalesSubmiteddBy,
+                    ShipSubmiteddBy = submission.SubmitedBy,
+                    ShipSubmitedByDate = submission.SubmitDate
                 };
 
-                _context.RotorSalesClearance.Add(rotorData);
+                _context.RotorShipping.Add(rotorData);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { Message = "Rotors Sales Clearance data saved successfully!" });
+                return Ok(new { Message = "data shipped successfully!" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error saving rotor sales clearance data: {ex.Message}");
+                return StatusCode(500, $"Error shipped data: {ex.Message}");
             }
         }
 
-        [HttpGet("GetAllSalesClearanceData")]
-        public async Task<ActionResult<IEnumerable<RotorSalesClearance>>> GetAllSalesClearanceData()
+        [HttpGet("GetAllShippedData")]
+        public async Task<ActionResult<IEnumerable<RotorShipping>>> GetAllSalesClearanceData()
         {
-            var records = await _context.RotorSalesClearance.ToListAsync();
+            var records = await _context.RotorShipping.ToListAsync();
 
             if (records == null || !records.Any())
-                return NotFound("No Rotor Sales Clearance Data records found.");
+                return NotFound("No shipped Data records found.");
 
             return Ok(records);
         }

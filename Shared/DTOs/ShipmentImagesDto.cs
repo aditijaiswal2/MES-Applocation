@@ -8,8 +8,7 @@ namespace MES.Shared.DTOs
 {
     public class ShipmentImagesDto
     {
-        public int SerialNumber { get; set; }
-        public string Module { get; set; }
+        public string SerialNumber { get; set; }
         public List<ImageDataDto> Images { get; set; }
     }
 
@@ -20,3 +19,5 @@ namespace MES.Shared.DTOs
         public int ITSImageID { get; set; }
     }
 }
+
+

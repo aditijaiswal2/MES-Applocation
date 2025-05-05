@@ -1,61 +1,92 @@
 ﻿using MES.Server.Contracts;
+using MES.Shared.DTOs;
 using MES.Shared.Models;
+using MES.Shared.Models.Rotors;
 using Microsoft.EntityFrameworkCore;
 
 namespace MES.Server.Data.Repositories
 {
-    public class ShipmentImageRepository : RepositoryBase<ShipmentImage>, IShipmentImageRepository
+    public class ShipmentImageRepository : IShipmentImageRepository
     {
-        private readonly ProjectdbContext _imagecontext;
+        private readonly ProjectdbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ShipmentImageRepository(ProjectdbContext context, IWebHostEnvironment webHostEnvironment) : base(context)
+
+        public ShipmentImageRepository(ProjectdbContext context, IWebHostEnvironment webHostEnvironment)
         {
-            _imagecontext = context;
+            _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<IEnumerable<ShipmentImage>> GetAllImagesAsync()
+        public async Task AddIncomingImageAsync(ShipmentImage image)
         {
-            try
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            // Ensure the foreign key relationship is correctly established
+            foreach (var imageData in image.Images)
             {
-                var allImages = await _imagecontext.ShipmentImage
-                    .Include(i => i.Images)
-                    .ToListAsync();
-
-                foreach (var itsImage in allImages)
-                {
-                    foreach (var image in itsImage.Images)
-                    {
-                        if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
-                        {
-                            try
-                            {
-                                var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
-                                image.Data = await File.ReadAllBytesAsync(imagePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
-                        }
-                    }
-                }
-
-                return allImages;
+                imageData.ShipmentImage = image; // Link each Imagedata object to the parent MaagAmericansImage
             }
-            catch (Exception ex)
+
+            // Add the MaagAmericansImage object to the DbContext
+            await _context.ShipmentImage.AddAsync(image);
+
+            // Save changes to persist the data
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> SerialNumberExistsAsync(string serialNumber)
+        {
+            return await _context.FinalInspections.AnyAsync(x => x.SerialNumber == serialNumber);
+        }
+
+        public async Task DeleteIncomingImageAsync(int id)
+        {
+            var image = await _context.FinalInspections.FindAsync(id);
+            if (image != null)
             {
-                throw;
+                _context.FinalInspections.Remove(image);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<ShipmentImage> GetImagesByPartNumberAsync(int serialNumber)
+        public async Task<IEnumerable<ShipmentImage>> GetAllAsync()
+        {
+            return await _context.ShipmentImage.Include(m => m.Images).ToListAsync();
+        }
+
+
+        public async Task<ShipmentImage> AddImagesAsync(ShipmentImage wIPForProjectJOB)
+        {
+            if (wIPForProjectJOB.Images == null || !wIPForProjectJOB.Images.Any())
+            {
+                return wIPForProjectJOB;
+            }
+
+            foreach (var image in wIPForProjectJOB.Images)
+            {
+                if (image.Data == null)
+                {
+                    continue;
+                }
+
+                image.ShipmentImageId = wIPForProjectJOB.Id;
+                _context.Set<Image>().Add(image);
+            }
+
+            _context.Set<ShipmentImage>().Update(wIPForProjectJOB);
+            await _context.SaveChangesAsync();
+
+            return wIPForProjectJOB;
+        }
+
+
+        public async Task<ShipmentImage> GetImagesByDTOAsync(ShipmentImagesDto wIPForProjectJOBDTO)
         {
             try
             {
-                var partImages = await _imagecontext.ShipmentImage
-                                    .Where(i => i.SerialNumber == serialNumber)
+                var partImages = await _context.ShipmentImage
+                                    .Where(i => i.SerialNumber == wIPForProjectJOBDTO.SerialNumber)
                                     .Include(i => i.Images)
                                     .FirstOrDefaultAsync();
 
@@ -88,160 +119,59 @@ namespace MES.Server.Data.Repositories
             }
         }
 
-        public async Task<ShipmentImage> AddImagesAsync(ShipmentImage iTSImage)
+
+
+        public async Task<ShipmentImage?> GetByIdAsync(int id)
         {
-            if (iTSImage.Images == null || !iTSImage.Images.Any())
-            {
-                return iTSImage;
-            }
-
-            foreach (var image in iTSImage.Images)
-            {
-                if (image.Data == null)
-                {
-                    continue;
-                }
-
-                image.ShipmentImageId = iTSImage.Id;
-                _imagecontext.Set<MES.Shared.Models.Image>().Add(image);
-            }
-
-            _imagecontext.Set<ShipmentImage>().Update(iTSImage);
-            await _imagecontext.SaveChangesAsync();
-
-            return iTSImage;
+            return await _context.ShipmentImage
+                .Include(m => m.Images)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<ShipmentImage> UpdateImagesAsync(ShipmentImage iTSImage)
+        public async Task UpdateIncomingImageAsync(ShipmentImage image)
         {
-            _imagecontext.Set<ShipmentImage>().Update(iTSImage);
-            await _imagecontext.SaveChangesAsync();
-
-            return iTSImage;
+            _context.ShipmentImage.Update(image);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAllImagesByIdPartNumberAsync(int serialNumber)
+
+        public async Task<ShipmentImage> GetImagesBySerialNumberAsync(string serialNumber)
         {
             try
             {
-                var imagesToDelete = await _imagecontext.ShipmentImage
-                    .Where(i => i.SerialNumber == serialNumber)
-                    .Include(i => i.Images)
-                    .ToListAsync();
+                var partImages = await _context.ShipmentImage
+                                    .Where(i => i.SerialNumber == serialNumber)
+                                    .Include(i => i.Images)
+                                    .FirstOrDefaultAsync();
 
-                if (imagesToDelete == null || imagesToDelete.Count == 0)
+                if (partImages != null)
                 {
-                    return false;
-                }
-
-                foreach (var image in imagesToDelete.SelectMany(itsImage => itsImage.Images))
-                {
-                    if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
+                    foreach (var image in partImages.Images)
                     {
-                        try
+                        if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
                         {
-                            File.Delete(image.ImageFilePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error deleting file at path {image.ImageFilePath}: {ex.Message}");
+                            try
+                            {
+                                var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
+                                image.Data = await File.ReadAllBytesAsync(imagePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error reading file at path {image.ImageFilePath}: {ex.Message}");
+                                throw;
+                            }
                         }
                     }
                 }
 
-                _imagecontext.RemoveRange(imagesToDelete.SelectMany(itsImage => itsImage.Images));
-                _imagecontext.RemoveRange(imagesToDelete);
-
-                await _imagecontext.SaveChangesAsync();
-
-
-                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads", serialNumber.ToString());
-
-                if (Directory.Exists(uploadsFolderPath))
-                {
-                    try
-                    {
-                        Directory.Delete(uploadsFolderPath, true); // Recursive delete
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error deleting folder at path {uploadsFolderPath}: {ex.Message}");
-                    }
-                }
-
-                return true;
+                return partImages;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error deleting images: {ex.Message}");
+                Console.WriteLine($"An error occurred: {ex.Message}");
                 throw;
             }
         }
-
-
-      
-
-        #region Old Method
-
-        //public async Task<bool> DeleteAllImagesByIdPartNumberAsync(int partNumber)
-        //{
-        //    var imagesToDelete = await _imagecontext.ITSImages.Where(i => i.PartNumber == partNumber)
-        //       .Include(i => i.Images)
-        //        .ToListAsync();
-
-
-        //    if (imagesToDelete == null )
-        //    {
-        //        return false;
-        //    }
-
-        //    foreach (var image in imagesToDelete)
-        //    {
-        //        _imagecontext.Remove(image);
-        //    }
-
-        //    await _imagecontext.SaveChangesAsync();
-
-        //    return true;
-        //}
-
-        public async Task<bool> DeleteImageByIdAsync(int id)
-        {
-            var imageToDelete = _imagecontext.ShipmentImage.Where(i => i.Id == id)
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync();
-
-            if (imageToDelete == null)
-            {
-                return false;
-            }
-
-            _imagecontext.Remove(imageToDelete);
-            await _imagecontext.SaveChangesAsync();
-
-            return true;
-        }
-        public async Task<Shared.Models.Image> AddImagesToExistingPartAsync(List<Shared.Models.Image> img)
-        {
-            if (img == null || img.Count == 0)
-            {
-                return null;
-            }
-
-            try
-            {
-                _imagecontext.Images.AddRange(img);
-                await _imagecontext.SaveChangesAsync();
-
-                return img.LastOrDefault();
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        #endregion
-
     }
 }
+

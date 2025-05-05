@@ -1,0 +1,101 @@
+﻿@using MES.Shared.Models.Rotors
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                Final Inspection Report
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Customer" @bind-Value="FinalInspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Oktoship" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="InspectorComments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Start" @bind-Value="FinalInspectionData.Start" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Finish" @bind-Value="FinalInspectionData.Finish" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Name" @bind-Value="FinalInspectionData.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Date" @bind-Value="FinalInspectionData.Date" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>             
+
+
+
+            </MudGrid>
+
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
+    }
+
+</style>
+
+
+
+
+
+@code {
+
+    [Parameter]
+
+    public RotorsFinalInspection FinalInspectionData { get; set; }
+
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+}

@@ -1,16 +1,21 @@
-﻿using MES.Shared.Models;
+﻿using MES.Shared.DTOs;
+using MES.Shared.Models;
+using MES.Shared.Models.Rotors;
 
 namespace MES.Server.Contracts
 {
-    public interface IShipmentImageRepository : IRepositoryBase<ShipmentImage>
+    public interface IShipmentImageRepository 
     {
-        Task<IEnumerable<ShipmentImage>> GetAllImagesAsync();
-        Task<ShipmentImage> GetImagesByPartNumberAsync(int id);
-        Task<ShipmentImage> AddImagesAsync(ShipmentImage shipmentImage);
+        Task<IEnumerable<ShipmentImage>> GetAllAsync();
+        Task<ShipmentImage?> GetByIdAsync(int id);
+        Task<bool> SerialNumberExistsAsync(string serialNumber);
+        Task AddIncomingImageAsync(ShipmentImage image);
+        Task UpdateIncomingImageAsync(ShipmentImage image);
+        Task DeleteIncomingImageAsync(int id);
+        Task<ShipmentImage> AddImagesAsync(ShipmentImage wIPForProjectJOB);
 
-        Task<Image> AddImagesToExistingPartAsync(List<Image> img);
-        Task<ShipmentImage> UpdateImagesAsync(ShipmentImage shipmentImage);
-        Task<bool> DeleteImageByIdAsync(int id);
-        Task<bool> DeleteAllImagesByIdPartNumberAsync(int serialNumber);
+        Task<ShipmentImage> GetImagesByDTOAsync(ShipmentImagesDto wIPForProjectJOBDTO);
+
+        Task<ShipmentImage> GetImagesBySerialNumberAsync(string serialnumber);
     }
 }

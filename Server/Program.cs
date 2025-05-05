@@ -37,6 +37,8 @@ builder.Services.AddTransient<FileRepository>();
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<IFinalInspectionImages, FinalImagesRepository>();
 builder.Services.AddTransient<FinalImagesRepository>();
+builder.Services.AddTransient<IShipmentImageRepository, ShipmentImageRepository>();
+builder.Services.AddTransient<ShipmentImageRepository>();
 
 builder.Services.AddTransient<IRotorsStyleRepository, RotorsStyleRepository>();
 builder.Services.AddTransient<RotorsStyleRepository>();

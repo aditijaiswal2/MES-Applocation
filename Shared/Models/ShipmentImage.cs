@@ -10,8 +10,7 @@ namespace MES.Shared.Models
 {
     public class ShipmentImage : BaseEntity
     {
-        public int SerialNumber { get; set; }
-        public string Module{ get; set; }
+        public string? SerialNumber { get; set; }
         public required List<Image> Images { get; set; }
     }
 

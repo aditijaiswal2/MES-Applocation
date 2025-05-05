@@ -2,11 +2,15 @@
 
 
 @using MES.Client.Dialog
+@using MES.Client.Dialog.Rotors
+@using MES.Client.Dialog.ShipmentImages
 @using MES.Client.Utitlity
+@using MES.Shared.DTOs
 @using MES.Shared.Models
 @using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
 @using System.Text
+@using static MES.Client.Pages.Rotor_FeedRolls_Service.FinalInspectionVC
 @using static MES.Client.Pages.LoginVC
 
 
@@ -24,27 +28,41 @@
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
                 <div class="table-container">
                     <MudTable Items="@rotorSalesClearanceDatas" Class="table table-bordered table-striped"
-                              Filter="new Func<RotorSalesClearance, bool>(FilterFunc1)">
+                    Filter="new Func<RotorSalesClearance, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
                             <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
-                            <MudTh>Serial Number</MudTh>
+                            <MudTh>Report Number</MudTh>
                             <MudTh Style="text-align:center">Customer Name</MudTh>
                             <MudTh Style="text-align:center">Module</MudTh>
-                            <MudTh Style="text-align:center">Rotor Number</MudTh>                           
+                            <MudTh Style="text-align:center">Rotor Number</MudTh>   
+                            <MudTh Style="text-align:center">Sales Order Number</MudTh>
                             <MudTh Style="text-align:center">Actions</MudTh>
-                          
+
                         </HeaderContent>
                         <RowTemplate Context="data">
                             <MudTd>@data.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@data.Customer</MudTd>
                             <MudTd Style="text-align:center">@data.Module</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
-                            <MudTd Style="text-align:center">
+                            <MudTd Style="text-align:center">@data.SalesOrderNumber</MudTd>
+                            <MudTd Style="text-align:center">                        
+                                                              
+                                @if (selectedImagesFromSM.Any(x => x.SerialNumber == data.SerialNumber))
+                                {
+                                    var matchingImages = selectedImagesFromSM.FirstOrDefault(x => x.SerialNumber == data.SerialNumber);
+                                    if (matchingImages?.Images != null && matchingImages.Images.Any())
+                                    {
+                                        <div style="margin-top:10px;">
+                                            <p><b>Total Images:</b> @matchingImages.Images.Count()</p>
+                                        </div>
+                                    }
+                                   
+                                }
                                 <MudButton StartIcon="@Icons.Material.Filled.AddAPhoto" Color="Color.Primary" OnClick="@(() => AddImages(data))" />
                                 <MudButton StartIcon="@Icons.Material.Filled.LocalShipping" Color="Color.Success" OnClick="@(() => Shipping(data))" />
                                
@@ -66,8 +84,10 @@
     private bool isLoading = false;
     private string errorMessage = "";   
     private List<RotorSalesClearance> rotorSalesClearanceDatas = new();
-
-
+    private List<ShipmentImage> selectedImagesFromSM = new List<ShipmentImage>();
+    public FinalInspectionImageDTO? ProjectimagesData { get; set; }
+    private bool isSubmitted = false;
+    private List<RotorShipping> shippingdata = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,14 +98,33 @@
     {
         try
         {
+            // Fetch rotor sales alredy shipped data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorShipDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllShippedData);
+            if (rotorShipDatasresponse.IsSuccessStatusCode)
+            {
+                var shipdata = await rotorShipDatasresponse.Content.ReadAsStringAsync();
+                shippingdata = JsonSerializer.Deserialize<List<RotorShipping>>(shipdata,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorShipping>();
+            }
+
+
             // Fetch rotor sales CLEARENCE DATA data
             HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
             var rotorSalesDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
             if (rotorSalesDatasresponse.IsSuccessStatusCode)
             {
                 var data = await rotorSalesDatasresponse.Content.ReadAsStringAsync();
-                rotorSalesClearanceDatas = JsonSerializer.Deserialize<List<RotorSalesClearance>>(data,
+               var allInspections = JsonSerializer.Deserialize<List<RotorSalesClearance>>(data,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorSalesClearance>();
+
+                     // Exclude data which are already shipped
+                rotorSalesClearanceDatas = allInspections
+                .DistinctBy(i => i.SerialNumber)
+                .Where(i => !shippingdata.Any(r =>
+                    string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase)))
+                   .ToList();
+
             }
             
         }
@@ -105,7 +144,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.SerialNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.SalesOrderNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
@@ -118,14 +157,99 @@
         }
     }
 
-    async Task AddImages(RotorSalesClearance salesClearance)
-    {
-        // add the images
+    private async Task AddImages(RotorSalesClearance salesClearance)
+    {      
+
+        var options = new DialogOptions { FullWidth = true };
+        var parameters = new DialogParameters<ImageDisplayDialog>();
+       
+        parameters.Add("SerialNumber", salesClearance.SerialNumber);
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await UpdateProjectImageAsync();
+        };
+
+        DialogService.Show<AddShipImageDialog>("PROJECTIMAGES", parameters, DialogSettings.DialogOptionsAddEditDelete);
     }
 
-    async Task Shipping(RotorSalesClearance salesClearance)
+    private async Task Shipping(RotorSalesClearance salesClearance)
     {
-        // shipping the data 
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+
+        var submissionData = new ShippingSubmission
+            {
+                SelectedInspection = salesClearance,
+                SubmitedBy = useradd,
+                SubmitDate = DateTime.Now
+            };
+
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.ShipData, content);
+            if (response.IsSuccessStatusCode)
+            {
+                // // save the images
+
+                // var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+                // var projectjsonData =Newtonsoft.Json.JsonConvert.SerializeObject(ProjectImageData);
+                // var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");               
+                // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddShippingImages, projectimagecontent);
+                // if (projectimageresponse.IsSuccessStatusCode)
+                // {
+                //     await localStorage.RemoveItemAsync("IncomingImageData");                    
+
+                // }
+                Snackbar.Add("Data Shipped successfully!", Severity.Success);               
+                await FetchAllInspections();
+                isSubmitted = true;
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to ship the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error shipping data: {ex.Message}", Severity.Error);
+        }
     }
 
+
+    private async Task UpdateProjectImageAsync()
+    {
+        ProjectimagesData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+
+        selectedImagesFromSM.Clear(); 
+
+        if (ProjectimagesData?.Images != null && ProjectimagesData.Images.Any())
+        {
+            selectedImagesFromSM.Add(new ShipmentImage
+                {
+                    SerialNumber = ProjectimagesData.SerialNumber?.Trim(),
+                    Images = ProjectimagesData.Images.Select(img => new Image
+                    {                        
+                    }).ToList()
+                });
+        }
+
+        StateHasChanged(); 
+    }
+
+
+    public class ShippingSubmission
+    {
+        public RotorSalesClearance SelectedInspection { get; set; }      
+        public DateTime? SubmitDate { get; set; }
+        public string SubmitedBy { get; set; }
+    }
 }

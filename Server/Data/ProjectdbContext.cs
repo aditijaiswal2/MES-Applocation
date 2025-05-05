@@ -55,6 +55,7 @@ namespace MES.Server.Data
         public DbSet<RotorsStyle> rotorsStyles { get; set; }
         public DbSet<Typesdetails> types { get; set; }
         public DbSet<RotorSalesClearance> RotorSalesClearance { get; set; }
+        public DbSet<RotorShipping> RotorShipping { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

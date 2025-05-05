@@ -2,6 +2,7 @@
 using MES.Server.Contracts;
 using MES.Shared.DTOs;
 using MES.Shared.Models;
+using MES.Shared.Models.Rotors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,65 +10,112 @@ namespace MES.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShipmentImageController : BaseApiController
+    public class ShipmentImageController : ControllerBase
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IShipmentImageRepository _imageRepository;
-        private readonly IMapper _mapper;
-
-        public ShipmentImageController(IShipmentImageRepository imageService, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ShipmentImageController(IShipmentImageRepository imageRepository, IWebHostEnvironment webHostEnvironment)
         {
-            _imageRepository = imageService;
-            _mapper = mapper;
+            _imageRepository = imageRepository;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet("gall")]
-        public async Task<IActionResult> GetAllImages()
+        [HttpGet("getall")]
+        public async Task<ActionResult<IEnumerable<ShipmentImage>>> GetAll()
         {
-            try
-            {
-                var allImages = await _imageRepository.GetAllImagesAsync();
-                return Ok(allImages);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("{partNumber}")]
-        public async Task<IActionResult> GetImagesByPartNumber(int partNumber)
-        {
-            var images = await _imageRepository.GetImagesByPartNumberAsync(partNumber);
-
-            if (images == null)
-            {
-                return NotFound();
-            }
-
+            var images = await _imageRepository.GetAllAsync();
             return Ok(images);
         }
 
-        [HttpPost("addpi")]
-        public async Task<IActionResult> AddImages([FromBody] ShipmentImagesDto iTSImageDto)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ShipmentImage>> GetById(int id)
         {
-            if (iTSImageDto == null || iTSImageDto.Images == null || !iTSImageDto.Images.Any())
+            var image = await _imageRepository.GetByIdAsync(id);
+            if (image == null)
+                return NotFound();
+
+            return Ok(image);
+        }
+
+        [HttpPost("maagdata")]
+        public async Task<ActionResult> Add(ShipmentImage image)
+        {
+            // Set the MAAGImage navigation property for each Imagedata object
+            foreach (var imageData in image.Images)
+            {
+                imageData.ShipmentImage = image;  // Link the imageData to the parent MaagAmericansImage
+                imageData.ShipmentImageId = image.Id;
+            }
+
+            await _imageRepository.AddIncomingImageAsync(image);
+            return CreatedAtAction(nameof(GetById), new { id = image.Id }, image);
+        }
+
+        [HttpGet("GetCurrentUsername")]
+        public IActionResult GetCurrentUsername()
+        {
+            try
+            {
+                var username = Environment.UserName; // Fetch the system username.
+                return Ok(username);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, ShipmentImage image)
+        {
+            if (id != image.Id)
+                return BadRequest();
+
+            await _imageRepository.UpdateIncomingImageAsync(image);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _imageRepository.DeleteIncomingImageAsync(id);
+            return NoContent();
+        }
+
+        [HttpPost("addbi")]
+        public async Task<IActionResult> AddImages([FromBody] ShipmentImagesDto IncomingImagesDTO)
+        {
+            if (IncomingImagesDTO == null || IncomingImagesDTO.Images == null || !IncomingImagesDTO.Images.Any())
             {
                 return BadRequest("Invalid image data");
             }
 
             try
             {
-                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads");
-                var partNumberFolder = Path.Combine(uploadsFolderPath, iTSImageDto.SerialNumber.ToString());
+                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
+                //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
+                // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
 
+                var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}", "ShippingImage");
+
+                // Automatically create the directory if it doesn't exist
                 if (!Directory.Exists(partNumberFolder))
                 {
                     Directory.CreateDirectory(partNumberFolder);
                 }
 
-                var images = iTSImageDto.Images.Select(imageDto => new MES.Shared.Models.Image { Data = imageDto.Data }).ToList();
+                //var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FinalInspection");
+                ////var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
+                //var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
+
+                //if (!Directory.Exists(partNumberFolder))
+                //{
+                //    Directory.CreateDirectory(partNumberFolder);
+                //}
+
+                var images = IncomingImagesDTO.Images.Select(imageDto => new Image { Data = imageDto.Data }).ToList();
 
                 foreach (var image in images)
                 {
@@ -81,16 +129,16 @@ namespace MES.Server.Controllers
                     image.ImageFilePath = filePath;
                 }
 
-                var iTSImages = new ShipmentImage()
+                var bOMImage = new ShipmentImage
                 {
-                    SerialNumber = iTSImageDto.SerialNumber,
-                    Module = iTSImageDto.Module,
+                    SerialNumber = IncomingImagesDTO.SerialNumber,
+                    // Project = projectJobImagesDTO.Project,
                     Images = images
                 };
 
-                var result = await _imageRepository.AddImagesAsync(iTSImages);
+                var result = await _imageRepository.AddImagesAsync(bOMImage);
 
-                return CreatedAtAction(nameof(GetImagesByPartNumber), new { partNumber = result.SerialNumber }, result);
+                return CreatedAtAction(nameof(GetImagesByDTO), new { wipDTO = new ShipmentImagesDto { SerialNumber = result.SerialNumber } }, result);
             }
             catch (Exception ex)
             {
@@ -98,83 +146,34 @@ namespace MES.Server.Controllers
             }
         }
 
-        [HttpPut("upi")]
-        public async Task<IActionResult> UpdateImages([FromBody] ShipmentImagesDto iTSImageDto)
+        [HttpPost("gd")]
+        public async Task<IActionResult> GetImagesByDTO(ShipmentImagesDto wIPForProjectJOBDTO)
         {
-            if (iTSImageDto == null || iTSImageDto.Images == null || !iTSImageDto.Images.Any())
-            {
-                return BadRequest("Invalid image data or ID mismatch");
-            }
+            var images = await _imageRepository.GetImagesByDTOAsync(wIPForProjectJOBDTO);
 
-            try
-            {
-                var existingITSImage = await _imageRepository.GetImagesByPartNumberAsync(iTSImageDto.SerialNumber);
-
-                if (existingITSImage == null)
-                {
-                    return NotFound($"ITSImage with part number {iTSImageDto.SerialNumber} not found");
-                }
-
-                var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Uploads", iTSImageDto.SerialNumber.ToString());
-
-                if (Directory.Exists(uploadsFolderPath))
-                {
-                    var existingFiles = Directory.EnumerateFiles(uploadsFolderPath);
-                    foreach (var file in existingFiles)
-                    {
-                        try
-                        {
-                            System.IO.File.Delete(file);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error deleting file {file}: {ex.Message}");
-                        }
-                    }
-                }
-                else
-                {
-                    return NotFound($"Folder for part number {iTSImageDto.SerialNumber} does not exist");
-                }
-
-                existingITSImage.Images.Clear();
-
-                existingITSImage.Images.AddRange(iTSImageDto.Images.Select(image => new MES.Shared.Models.Image { Data = image.Data }));
-
-                foreach (var image in existingITSImage.Images)
-                {
-                    var fileName = $"{Guid.NewGuid()}.png";
-                    var filePath = Path.Combine(uploadsFolderPath, fileName);
-
-                    await System.IO.File.WriteAllBytesAsync(filePath, image.Data);
-
-                    image.Data = new byte[0];
-
-                    image.ImageFilePath = filePath;
-                }
-
-                var result = await _imageRepository.UpdateImagesAsync(existingITSImage);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-
-        [HttpDelete("part/{partNumber}")]
-        public async Task<IActionResult> DeleteAllImagesByPartNumber(int partNumber)
-        {
-            var result = await _imageRepository.DeleteAllImagesByIdPartNumberAsync(partNumber);
-
-            if (!result)
+            if (images == null)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok(images);
         }
+
+
+        [HttpGet("getImages/{serialNumber}")]
+        public async Task<IActionResult> GetImagesByserialNumber(string serialNumber)
+        {
+            var images = await _imageRepository.GetImagesBySerialNumberAsync(serialNumber);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(images);
+        }
+
+
     }
 }
+
