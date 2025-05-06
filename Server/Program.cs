@@ -46,6 +46,15 @@ builder.Services.AddTransient<RotorsStyleRepository>();
 builder.Services.AddTransient<ITypedetailsRepository, TypedetailsRepository>();
 builder.Services.AddTransient<TypedetailsRepository>();
 
+builder.Services.AddTransient<IOtherRepository, OtherRepository>();
+builder.Services.AddTransient<OtherRepository>();
+
+builder.Services.AddTransient<ISaddlePartNumberRepository, SaddlePartNumberRepository>();
+builder.Services.AddTransient<SaddlePartNumberRepository>();
+
+builder.Services.AddTransient<IMaterialRepository, MaterialRepository>();
+builder.Services.AddTransient<MaterialRepository>();
+
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));

@@ -46,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IncomingInspection\" />
     <Folder Include="MES\Rotors and Feed Rolls\" />
   </ItemGroup>
 

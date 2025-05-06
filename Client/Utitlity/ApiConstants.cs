@@ -37,7 +37,28 @@
         public const string EditRotorsStyle = $"{BaseUrl}/RotorsStyle/editwc";
         public const string DeleteRotorsStyle = $"{BaseUrl}/RotorsStyle";
 
-        // Manaage Type 
+        // Manage SaddlePartNumber 
+        public const string GetSPN = $"{BaseUrl}/SaddlePartNumber/getwc";
+        public const string LocationSPN = $"{BaseUrl}/SaddlePartNumber/wcQR";
+        public const string AddSPN = $"{BaseUrl}/SaddlePartNumber/addwc";
+        public const string EditSPN = $"{BaseUrl}/SaddlePartNumber/editwc";
+        public const string DeleteSPN = $"{BaseUrl}/SaddlePartNumber";
+
+      // Manage Other
+        public const string GetOther = $"{BaseUrl}/Other/getwc";
+        public const string LocationOther = $"{BaseUrl}/Other/wcQR";
+        public const string AddOther = $"{BaseUrl}/Other/addwc";
+        public const string EditOther = $"{BaseUrl}/Other/editwc";
+        public const string DeleteOther = $"{BaseUrl}/Other";
+
+        // Manage Material
+        public const string GetMaterial = $"{BaseUrl}/Material/getwc";
+        public const string LocationMaterial = $"{BaseUrl}/Material/wcQR";
+        public const string AddMaterial = $"{BaseUrl}/Material/addwc";
+        public const string EditMaterial = $"{BaseUrl}/Material/editwc";
+        public const string DeleteMaterial = $"{BaseUrl}/Material";
+
+        // Manage Type 
         public const string GetType = $"{BaseUrl}/TypeDetails/getwc";
         public const string LocationType = $"{BaseUrl}/TypeDetails/wcQR";
         public const string AddType = $"{BaseUrl}/TypeDetails/addwc";

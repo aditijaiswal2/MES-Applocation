@@ -72,7 +72,6 @@ namespace MES.Server.Data.Repositories
             return result;
         }
 
-
         private async Task<bool> CheckIfLocationDescriptionExists(string workcenters, string description)
         {
             return await _loccontext.rotorsStyles.AnyAsync(x => x.RotorsStyleName == workcenters && x.Description == description);

@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr" && route != "/rs" && route != "/tt" && route != "/shippingvc")
+            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr" && route != "/rs"  && route != "/shippingvc")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -76,7 +76,7 @@
         }
 
 
-        if (UserData.Router.Contains("/adduser") || UserData.Router.Contains("/rs") || UserData.Router.Contains("/tt") || UserData.Router.Contains("/wc"))
+        if (UserData.Router.Contains("/adduser") || UserData.Router.Contains("/rs") || UserData.Router.Contains("/wc"))
         {
 
             <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
@@ -87,12 +87,9 @@
                 }
                 @if (UserData.Router.Contains("/rs"))
                 {
-                    <MudNavLink Href="/rs" Icon="@Icons.Material.Filled.AccountTree" IconColor="Color.Primary" Class="custom-navlink">Rotors Style</MudNavLink>
+                    <MudNavLink Href="/rs" Icon="@Icons.Material.Filled.AccountTree" IconColor="Color.Primary" Class="custom-navlink">Manage Rotors</MudNavLink>
                 }
-                @if (UserData.Router.Contains("/tt"))
-                {
-                    <MudNavLink Href="/tt" Icon="@Icons.Material.Filled.MergeType" IconColor="Color.Primary" Class="custom-navlink">Type</MudNavLink>
-                }
+           
 
                 @if (UserData.Router.Contains("/wc"))
                 {
@@ -161,9 +158,7 @@
             case "/rs":
                 return Icons.Material.Filled.AccountTree;
 
-            case "/tt":
-                return Icons.Material.Filled.MergeType;
-
+         
 
             case "/shippingvc":
                 return Icons.Material.Filled.LocalShipping;
@@ -205,12 +200,10 @@
                 return "Rotors Final Inspection";
 
             case "/rs":
-                return "Rotors Style";
+                return "Manage Rotors";
 
             case "/shippingvc":
                 return "Shipping";
-
-           
 
             default:
                 return "";

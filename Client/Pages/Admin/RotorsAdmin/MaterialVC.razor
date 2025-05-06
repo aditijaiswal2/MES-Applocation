@@ -1,0 +1,226 @@
+﻿@using MES.Client.Dialog.Materials
+@using MES.Client.Utitlity;
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+@using MudBlazor
+@using System.Collections.Generic
+@using System.Text
+@using Newtonsoft.Json
+@using QRCoder;
+
+@using MES.Client.Dialog.TypesDetails
+
+@inject IDialogService DialogService
+@inject IJSRuntime jsRuntime
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+ @inject IHttpClientFactory _httpClient
+
+<MudContainer Fixed="true">
+    <MudGrid Class="d-flex">
+        <MudItem md="12" sm="12" xs="12">
+            <div style="margin-top:20px">
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Primary" OnClick="@AddLocation">ADD</MudButton>
+            </div>
+        </MudItem>
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
+                <div class="table-container">
+                    <MudTable Items="@iTSLocations" Class="table table-bordered table-striped"
+                              Filter="new Func<Materials, bool>(FilterFunc1)">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Material</MudTh>
+                            <MudTh Style="text-align:center">Description</MudTh>
+                            <MudTh Style="text-align:center">Actions</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="typesdetails">
+                            <MudTd>@typesdetails.MaterialName</MudTd>
+                            <MudTd Style="text-align:center">@typesdetails.Description</MudTd>
+                            <MudTd Style="text-align:center">
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(typesdetails))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(typesdetails))" />
+                               @*  <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(typesdetails))" />
+                           *@  </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
+                        </PagerContent>
+                    </MudTable>
+                </div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+
+@code {
+    private IEnumerable<Materials> iTSLocations = new List<Materials>();
+    private Stream pdfStream;
+    private string pdfDataUrl;
+    private int currentPage = 1;
+    private string searchString1 = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLocations();
+    }
+
+    private async Task LoadLocations()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        try
+        {
+            //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetMaterial);
+            if (locationsResponse.IsSuccessStatusCode)
+            {
+                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<Materials>>();
+                if (locationResult != null)
+                {
+                    iTSLocations = locationResult.ToList().OrderByDescending(l => l.Id);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+    }
+
+    async Task AddLocation()
+    {
+        DialogService.Show<AddMaterialDialog>("ADD Material", DialogSettings.DialogOptionsAddEditDelete);
+
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await UpdateLocationDataAsync();
+        };
+    }
+
+    async Task EditLocation(Materials typesdetails)
+    {
+        var parameters = new DialogParameters { ["typesdetails"] = typesdetails };
+
+        //  var parameters = new DialogParameters<EditRotorsDialog> { { x => x.RotorsStyleName, rotors } };
+        var dialog = await DialogService.ShowAsync<EditMaterialDialog>("EDIT Material", parameters, DialogSettings.DialogOptionsAddEditDelete);
+
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await UpdateLocationDataAsync();
+        };
+    }
+
+    async Task DeleteLocation(Materials typesdetails)
+    {
+        var parameters = new DialogParameters { ["typesdetails"] = typesdetails };
+
+        // var parameters = new DialogParameters<DeleteRotorsDialog> { { x => x.RotorsStyleName, rotors } };
+        var dialog = await DialogService.ShowAsync<DeleteMaterialDialog>("DELETE Rotors Style", parameters, DialogSettings.DialogOptionsAddEditDelete);
+
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await UpdateLocationDataAsync();
+        };
+    }
+
+    // public async Task GenerateQR(Typesdetails typesdetails)
+    // {
+    //     Snackbar.Clear();
+    //     Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+    //     try
+    //     {
+    //         string locationData = $"Location: {typesdetails.TypeName}, Description: {typesdetails.Description}, Date: {DateTime.Now}";
+
+    //         var jsonPart = JsonConvert.SerializeObject(typesdetails);
+    //         var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+    //         //var response = await HttpClient.PostAsync("https://localhost:7006/api/QRCode/locQR", content);
+    //         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+    //         var response = await HttpClient.PostAsync(ApiConstants.LocationType, content);
+
+    //         byte[] qrCodeBytes = null;
+
+    //         if (response.IsSuccessStatusCode)
+    //         {
+    //             using (var pdfStream = await response.Content.ReadAsStreamAsync())
+    //             {
+    //                 using (var memoryStream = new MemoryStream())
+    //                 {
+    //                     await pdfStream.CopyToAsync(memoryStream);
+    //                     qrCodeBytes = memoryStream.ToArray();
+    //                 }
+    //             }
+
+    //             TypesDetailsDTO locationQr = new TypesDetailsDTO()
+    //                 {
+    //                     TypeName = typesdetails.TypeName,
+    //                     Description = typesdetails.Description,
+    //                     QRData = qrCodeBytes,
+    //                 };
+
+    //             var options = new DialogOptions { FullWidth = false, DisableBackdropClick = true };
+    //             var parameters = new DialogParameters { ["LocQR"] = locationQr };
+
+    //             var dialog = await DialogService.ShowAsync<TypesQRCodeDialog>("Show QR", parameters, options);
+    //         }
+    //         else
+    //         {
+    //             Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
+    //     }
+    // }
+
+    private async Task UpdateLocationDataAsync()
+    {
+        if (CompletionService.IsCompleted)
+        {
+            //var locationsResponse = await HttpClient.GetAsync("https://localhost:7006/api/ITSLocation/getloc");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var locationsResponse = await HttpClient.GetAsync(ApiConstants.GetMaterial);
+            if (locationsResponse.IsSuccessStatusCode)
+            {
+                var locationResult = await locationsResponse.Content.ReadFromJsonAsync<IEnumerable<Materials>>();
+                if (locationResult != null)
+                {
+                    iTSLocations = locationResult.ToList().OrderByDescending(l => l.Id);
+                    StateHasChanged();
+                }
+            }
+        }
+    }
+    private bool FilterFunc1(Materials element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(Materials element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.MaterialName.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadLocations();
+        }
+    }
+}
+
