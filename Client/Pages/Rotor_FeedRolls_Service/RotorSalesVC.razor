@@ -30,8 +30,8 @@
                 @foreach (var item in inspections.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                 {
                     <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
-                    @onmouseover="() => hoveredInspection = item"
-                    @onmouseout="() => hoveredInspection = null">
+                                 @onmouseover="() => hoveredInspection = item"
+                                 @onmouseout="() => hoveredInspection = null">
                         <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                     </MudListItem>
                 }
@@ -247,7 +247,7 @@
                             <MudTextField Label="Sales Order" @bind-Value="@selectedInspection.SalesOrderNumber" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="4">
-                            <MudTextField Label="Work Order" @bind-Value="@selectedInspection.WorkOrder" Variant="Variant.Outlined" />
+                            <MudTextField Label="Job Order" @bind-Value="@selectedInspection.WorkOrder" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="4">
                             <MudTextField Label="Mat#" @bind-Value="@selectedInspection.MatNumber" Variant="Variant.Outlined" />
@@ -258,12 +258,12 @@
                     <MudGrid>
                         <MudItem md="6" sm="12" xs="12">
                             <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="fromDate"
-                            Variant="Variant.Outlined"
-                            Label="Target Date Entry"
-                            MinDate="DateTime.Today" />
+                                           Variant="Variant.Outlined"
+                                           Label="Target Date Entry"
+                                           MinDate="DateTime.Today" />
                         </MudItem>
 
-                        <MudItem md="6" sm="12" xs="12">
+                        @*  <MudItem md="6" sm="12" xs="12">
                             <MudTimePicker @bind-Time="PlannedHours"
                             Label="Planned Hours"
                             TimeFormat="HH:mm"
@@ -271,6 +271,29 @@
                             OpenTo="OpenTo.Hours"
                             Variant="Variant.Outlined"
                             PickerVariant="PickerVariant.Dialog" />
+                        </MudItem> *@
+
+
+                        <MudItem md="3" sm="12" xs="12">
+                            <MudNumericField @bind-Value="Hours"
+                                             Label="Hours"
+                                             Min="0"
+                                             Max="150"
+                                             Required="true"
+                                             Immediate="true"
+                                             Variant="Variant.Outlined"
+                                             ErrorText="Enter a value between 0 and 150" />
+                        </MudItem>
+
+                        <MudItem md="3" sm="12" xs="12">
+                            <MudNumericField @bind-Value="Minutes"
+                                             Label="Minutes"
+                                             Min="1"
+                                             Max="59"
+                                             Required="true"
+                                             Immediate="true"
+                                             Variant="Variant.Outlined"
+                                             ErrorText="Enter a value between 1 and 59" />
                         </MudItem>
 
 
@@ -286,9 +309,9 @@
 
                         <MudItem md="6" sm="12" xs="12">
                             <MudTextField Label="Customer Instructions"
-                            @bind-Value="CustomerInstructions"
-                            Variant="Variant.Outlined"
-                            FullWidth="true" />
+                                          @bind-Value="CustomerInstructions"
+                                          Variant="Variant.Outlined"
+                                          FullWidth="true" />
                         </MudItem>
                     </MudGrid>
                     <br />
@@ -300,11 +323,11 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
                         @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
                         <MudButton Class="mr-2"
-                        Variant="Variant.Filled"
-                        Size="Size.Small"
-                        Color="@((isFileAttached ? Color.Success : Color.Primary))"
-                        Disabled="@(isFileAttached)"
-                        OnClick="AttacheFile">
+                                   Variant="Variant.Filled"
+                                   Size="Size.Small"
+                                   Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                                   Disabled="@(isFileAttached)"
+                                   OnClick="AttacheFile">
                             @(isFileAttached ? "Done" : "Attach File")
                         </MudButton>
 
@@ -331,14 +354,13 @@
 <style>
 
     .hover-highlight {
-    background-color: #c4c4c4;
-    cursor: pointer;
+        background-color: #c4c4c4;
+        cursor: pointer;
     }
 
     .overflow-visible {
-    overflow: visible !important;
+        overflow: visible !important;
     }
-
 
 </style>
 
@@ -362,7 +384,11 @@
     public IncomingImages? serialImages;
     private ElementReference pdfFileInput;
     private bool isFileAttached = false;
-    private TimeSpan? PlannedHours { get; set; }
+    // private TimeSpan? PlannedHours { get; set; }
+
+    private int Hours { get; set; }
+    private int Minutes { get; set; }
+    private string? plannedHours { get; set; }
 
 
     private SalesAttachedFileDto uploadedFileDto;
@@ -465,7 +491,19 @@
             SelectedPriority = latest.CustomerImportance ?? string.Empty;
             CustomerInstructions = latest.CustomerInstructions ?? string.Empty;
             fromDate = latest.TargetDate ?? DateTime.Today;
-            PlannedHours = latest.PlannedHours ?? (TimeSpan?)null;
+            plannedHours = latest.PlannedHours ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(plannedHours))
+            {
+                var parts = plannedHours.Split(':');
+                if (parts.Length == 2 &&
+                    int.TryParse(parts[0], out int h) &&
+                    int.TryParse(parts[1], out int m))
+                {
+                    Hours = h;
+                    Minutes = m;
+                }
+            }
+
 
         }
         else
@@ -473,7 +511,7 @@
             SelectedPriority = string.Empty;
             CustomerInstructions = string.Empty;
             fromDate = DateTime.Today;
-            PlannedHours = null;
+            plannedHours = $"{Hours:D2}:{Minutes:D2}";
         }
     }
 
@@ -481,12 +519,12 @@
 
     private async Task Save()
     {
-         if (fromDate == null)
+        if (fromDate == null)
         {
             Snackbar.Add("Please select target date.", Severity.Error);
             return;
         }
-        if (PlannedHours == null)
+        if (plannedHours == null)
         {
             Snackbar.Add("Please select Planned Hours.", Severity.Error);
             return;
@@ -504,6 +542,14 @@
             return;
         }
 
+        plannedHours = $"{Hours:D2}:{Minutes:D2}";
+
+        if (plannedHours == "00:00")
+        {
+            Snackbar.Add("Planned hours is required.", Severity.Error);
+            return;
+        }
+
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
         string useradd = userData?.UserName ?? "User";
         if (userData != null)
@@ -511,14 +557,14 @@
             useradd = userData.UserName;
         }
         tempSubmission = new InspectionSubmission
-                {
-                    SelectedInspection = selectedInspection,
-                    TargetDate = fromDate,
-                    PlannedHours = PlannedHours,
-                    CustomerPriority = SelectedPriority,
-                    CustomerInstructions = CustomerInstructions,
-                    SubmitedBy = useradd,
-                    SubmitDate = DateTime.Now
+            {
+                SelectedInspection = selectedInspection,
+                TargetDate = fromDate,
+                PlannedHours = plannedHours,
+                CustomerPriority = SelectedPriority,
+                CustomerInstructions = CustomerInstructions,
+                SubmitedBy = useradd,
+                SubmitDate = DateTime.Now
             };
         try
         {
@@ -547,14 +593,14 @@
     }
 
     private async Task Submit()
-    {       
+    {
 
         if (fromDate == null)
         {
             Snackbar.Add("Please select target date.", Severity.Error);
             return;
         }
-        if (PlannedHours == null)
+        if (plannedHours == null)
         {
             Snackbar.Add("Please select Planned Hours.", Severity.Error);
             return;
@@ -571,6 +617,15 @@
             Snackbar.Add("Please enter customer instructions.", Severity.Error);
             return;
         }
+
+        plannedHours = $"{Hours:D2}:{Minutes:D2}";
+
+        if (plannedHours == "00:00")
+        {
+            Snackbar.Add("Planned hours is required.", Severity.Error);
+            return;
+        }
+
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
         string useradd = userData?.UserName ?? "User";
         if (userData != null)
@@ -579,15 +634,15 @@
         }
 
         var submissionData = new InspectionSubmission
-        {
+            {
                 SelectedInspection = selectedInspection,
                 TargetDate = fromDate,
-                PlannedHours = PlannedHours,
+                PlannedHours = plannedHours,
                 CustomerPriority = SelectedPriority,
                 CustomerInstructions = CustomerInstructions,
                 SubmitedBy = useradd,
                 SubmitDate = DateTime.Now
-        };
+            };
 
         try
         {
@@ -736,8 +791,12 @@
         //     selectedInspection.WorkOrder = null;
         //     selectedInspection.MatNumber = null;
         // }
-        PlannedHours = null;
-        selectedInspection = null;        
+        Hours = 0;
+        Minutes = 0;
+        Hours = 0;
+        Minutes = 0;
+        plannedHours = $"{Hours:D2}:{Minutes:D2}"; // This will now be "00:00"
+        selectedInspection = null;
         SelectedPriority = string.Empty;
         CustomerInstructions = string.Empty;
         errorMessage = string.Empty;
@@ -774,7 +833,7 @@
     {
         public IncomingInspection SelectedInspection { get; set; }
         public DateTime? TargetDate { get; set; }
-        public TimeSpan? PlannedHours { get; set; }
+        public string? PlannedHours { get; set; }
         public string CustomerPriority { get; set; }
         public string CustomerInstructions { get; set; }
         public DateTime? SubmitDate { get; set; }

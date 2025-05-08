@@ -22,6 +22,9 @@
                 <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px; white-space: nowrap;">
                     @(LocQR.Date.HasValue ? LocQR.Date.Value.ToString("M/d/yyyy hh:mm:ss tt") : "")
                 </p>
+
+                <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px; white-space: nowrap;">@LocQR.SerialNumber</p>
+
                 <p style="text-align:center; font-size: 14px; margin-bottom: 7px; margin-top: 0px;">@LocQR.SelectedOption</p>
 
                 <!-- QR Image -->
@@ -55,8 +58,9 @@
                 var partOrLoc = LocQR.SelectedOption;
                 var customer = LocQR.Customer;
                 var date = LocQR.Date;
+                var reportnumber = LocQR.SerialNumber;
 
-                await JSRuntime.InvokeVoidAsync("printImage", imageData, partOrLoc, customer, date);
+                await JSRuntime.InvokeVoidAsync("printImage", imageData, partOrLoc, customer, date, reportnumber);
 
             }
         }

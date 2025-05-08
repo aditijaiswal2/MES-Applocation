@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250507063629_Initial")]
-    partial class Initial
+    [Migration("20250508055137_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3298,8 +3298,8 @@ namespace MES.Server.Migrations
                     b.Property<string>("Others")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
                         .HasColumnType("nvarchar(max)");
@@ -3498,8 +3498,8 @@ namespace MES.Server.Migrations
                     b.Property<string>("Others")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
                         .HasColumnType("nvarchar(max)");

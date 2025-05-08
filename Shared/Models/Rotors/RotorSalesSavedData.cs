@@ -61,7 +61,7 @@ namespace MES.Shared.Models.Rotors
         public string ComponentType { get; set; }
         public string Users { get; set; }
         public DateTime? TargetDate { get; set; }
-        public TimeSpan? PlannedHours { get; set; }
+        public string? PlannedHours { get; set; }
         public string CustomerInstructions { get; set; }
         public string CustomerImportance { get; set; }
         public DateTime? SavedDate { get; set; }

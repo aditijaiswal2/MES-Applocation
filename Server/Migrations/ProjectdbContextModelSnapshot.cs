@@ -3295,8 +3295,8 @@ namespace MES.Server.Migrations
                     b.Property<string>("Others")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
                         .HasColumnType("nvarchar(max)");
@@ -3495,8 +3495,8 @@ namespace MES.Server.Migrations
                     b.Property<string>("Others")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan?>("PlannedHours")
-                        .HasColumnType("time");
+                    b.Property<string>("PlannedHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
                         .HasColumnType("nvarchar(max)");

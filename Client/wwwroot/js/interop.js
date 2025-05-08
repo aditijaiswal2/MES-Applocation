@@ -202,8 +202,7 @@ function printincomingImage(imageDataUrl, labelText) {
 }
 
 
-
-function printImage(imageData, partOrLoc, customer, date) {
+function printImage(imageData, partOrLoc, customer, date, reportnumber) {
     const dpi = 96;
     const canvasWidth = 2.4 * dpi;
     const canvasHeight = 4 * dpi;
@@ -225,6 +224,8 @@ function printImage(imageData, partOrLoc, customer, date) {
         context.fillStyle = 'black';
         context.font = '14px Arial';
 
+        let nextLineY = qrCodeY - 45;
+
         if (date) {
             const dateObj = new Date(date);
             const options = {
@@ -236,16 +237,20 @@ function printImage(imageData, partOrLoc, customer, date) {
                 second: '2-digit',
                 hour12: true,
             };
-            const formatted = dateObj.toLocaleString('en-US', options); // e.g., "04/30/2025, 10:42:40 AM"
-
-            context.fillText(formatted, canvasWidth / 2, qrCodeY - 45); // Display full date + time + AM/PM in one line
+            const formatted = dateObj.toLocaleString('en-US', options);
+            context.fillText(formatted, canvasWidth / 2, nextLineY);
+            nextLineY += 18; // Move down for next line
         }
 
+        if (reportnumber) {
+            context.fillText(reportnumber, canvasWidth / 2, nextLineY);
+            nextLineY += 18;
+        }
 
-        // Top label (e.g., Rotor) below date/time
         if (partOrLoc) {
-            context.fillText(partOrLoc, canvasWidth / 2, qrCodeY - 25); // Rotor label
+            context.fillText(partOrLoc, canvasWidth / 2, nextLineY);
         }
+
 
 
         // Draw QR code

@@ -114,13 +114,20 @@ namespace MES.Server.Controllers
 
             try
             {
+                //var recentData = await _context.RotorProductionSavedData
+                //    .Where(r =>
+                //        r.SerialNumber == serialNumber &&
+                //        r.Module == module &&
+                //        r.RotorsNumber == rotorsNumber)
+                //    .OrderByDescending(r => r.ProductionSavedDate)
+                //    .FirstOrDefaultAsync();
+
                 var recentData = await _context.RotorProductionSavedData
-                    .Where(r =>
-                        r.SerialNumber == serialNumber &&
-                        r.Module == module &&
-                        r.RotorsNumber == rotorsNumber)
-                    .OrderByDescending(r => r.ProductionSavedDate)
-                    .FirstOrDefaultAsync();
+               .Where(r =>
+                   r.SerialNumber == serialNumber &&
+                   r.Module == module &&
+                   r.RotorsNumber == rotorsNumber)
+               .ToListAsync();
 
                 if (recentData == null)
                     return NotFound("No matching rotor production save data found.");
