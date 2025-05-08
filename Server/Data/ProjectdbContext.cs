@@ -34,7 +34,8 @@ namespace MES.Server.Data
         public DbSet<MES.Shared.Models.Rotors.FinalImagedata> FinalImagedatas { get; set; }
         
         public DbSet<IncomingInspection> IncomingInspections { get; set; }
-       // public DbSet<Imagedata> Imagedatas { get; set; }
+        public DbSet<RotorIncominInspectionSavedData> rotorIncominInspectionSavedDatas { get; set; }
+        // public DbSet<Imagedata> Imagedatas { get; set; }
         public DbSet<MES.Shared.Models.Image> Images { get; set; }
         public DbSet<RotorSalesData> RotorSalesData { get; set; }
         public DbSet<Other> Others { get; set; }

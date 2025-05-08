@@ -116,19 +116,17 @@ namespace MES.Server.Controllers
                 }
                 AddRow("Serial Number:", IncomingDataDTO.SerialNumber);
                 AddRow("Module:", IncomingDataDTO.Module);
-                AddRow("Sales Order Number:", IncomingDataDTO.SalesOrderNumber);
-                AddRow("Work Order:", IncomingDataDTO.WorkOrder);
-                AddRow("Material Number:", IncomingDataDTO.MatNumber);
+             
                 AddRow("Customer:", IncomingDataDTO.Customer);
                 AddRow("Location:", IncomingDataDTO.Location);
                 AddRow("Received:", IncomingDataDTO.Received);
                 AddRow("Inspected:", IncomingDataDTO.Inspected);
                 AddRow("Rotors:", IncomingDataDTO.RotorsNumber);
-                AddRow("Initials:", IncomingDataDTO.Initials);
+            
                 AddRow("Make:", IncomingDataDTO.Make);
                 AddRow("Dia:", IncomingDataDTO.Dia);
                 AddRow("Len:", IncomingDataDTO.Len);
-                AddRow("Fits:", IncomingDataDTO.Fits);
+                AddRow("Flts:", IncomingDataDTO.Fits);
                 AddRow("Material:", IncomingDataDTO.Materials);
                 AddRow("Other:", IncomingDataDTO.Others);
                 AddRow("Rotors Dia:", IncomingDataDTO.RotorsDia);
@@ -151,11 +149,12 @@ namespace MES.Server.Controllers
                 AddRow("Welding Num:", IncomingDataDTO.WeldingNum);
                 AddRow("Bed knife in box:", IncomingDataDTO.BedKnife);
                 AddRow("Replace Blades:", IncomingDataDTO.BoxReceivedWithSaddles);
+                AddRow("Qty:", IncomingDataDTO.ADDQTYdata);
                 AddRow("Re-Profile:", IncomingDataDTO.ReProfile);
                 AddRow("Sand Blasting:", IncomingDataDTO.SandBlasting);
                 AddRow("Manual Labor:", IncomingDataDTO.ManualLabor);
-                AddRow("TIR Left Journal:", IncomingDataDTO.TirLeftJournal);
-                AddRow("TIR Right Journal:", IncomingDataDTO.TirRightJournal);
+                AddRow("New Box Required:", IncomingDataDTO.NewBoxRequired);
+                AddRow("New Box Number:", IncomingDataDTO.NewBoxRequiredBox);
                 AddRow("Box Received with Saddles(Bottom):", IncomingDataDTO.Bottom);
                 AddRow("Box Received with Saddles(Top):", IncomingDataDTO.Top);
                 AddRow("Add Qty:", IncomingDataDTO.AddQty.ToString());

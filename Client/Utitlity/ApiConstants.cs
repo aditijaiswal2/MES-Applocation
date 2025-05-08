@@ -80,6 +80,11 @@
         public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImages";
         public const string GetsalesEmails = $"{BaseUrl}/Users/getuserlist";
 
+        // RotorInspection Save data  
+        public const string AddRotorIISavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/AddIncomingSaveData";
+        public const string GetAllIIsavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/GetRecentIncomingData";
+        public const string UpdateRotorIISavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/UpdateRotorIISavedData";
+        public const string CheckIfRotorExists = $"{BaseUrl}/RotorIncomingInspectionSaveData/CheckIfRotorExists";
 
 
         // RotorSales 

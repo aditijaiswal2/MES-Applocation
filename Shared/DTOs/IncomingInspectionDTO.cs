@@ -14,6 +14,9 @@ namespace MES.Shared.DTOs
             public string? SalesOrderNumber { get; set; }
             public string? WorkOrder { get; set; }
             public string? MatNumber { get; set; }
+            public string? ADDQTYdata { get; set; }
+            public string? NewBoxRequired { get; set; }
+            public string? NewBoxRequiredBox { get; set; }
             public string Customer { get; set; }
             public string Location { get; set; }
             public string Received { get; set; }
