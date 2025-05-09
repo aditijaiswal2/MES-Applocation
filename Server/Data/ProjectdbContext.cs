@@ -60,6 +60,8 @@ namespace MES.Server.Data
         public DbSet<Typesdetails> types { get; set; }
         public DbSet<RotorSalesClearance> RotorSalesClearance { get; set; }
         public DbSet<RotorShipping> RotorShipping { get; set; }
+        public DbSet<SaveEnterdRotorGrindingDetails> SaveEnterdRotorGrindingDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

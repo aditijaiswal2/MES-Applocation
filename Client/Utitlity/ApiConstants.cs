@@ -166,6 +166,11 @@
         public const string GetAllShippedData = $"{BaseUrl}/Shipping/GetAllShippedData";
 
 
+        // SaveEnterd Rotor Grinding Details
+        public const string AddSaveEnterdRotorGrindingDetails = $"{BaseUrl}/SaveEnterdRotorGrindingDetails/AddGrindingSaveData";
+        public const string GetAllSavedEnterdRotorGrindingDetails = $"{BaseUrl}/SaveEnterdRotorGrindingDetails/GetAllSavedGrindingData";
+        public const string GetSaveEnterdRotorGrindingDetailsbyserialnumber = $"{BaseUrl}/SaveEnterdRotorGrindingDetails/GGSDBSN";
+
 
     }
 }

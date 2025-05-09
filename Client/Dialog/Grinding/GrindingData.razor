@@ -69,20 +69,38 @@
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
+                        <MudTextField Label="T.I.R - Centers Left" @bind-Value="@GetRotorProcess.CentersLeft" Variant="Variant.Outlined" />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
+                        <MudTextField Label="T.I.R - Centers Right" @bind-Value="@GetRotorProcess.CentersRight" Variant="Variant.Outlined" />
                     </MudItem>
 
-                    <MudItem xs="4">
+                    <MudItem md="4" sm="12" xs="12">
+                        <MudSelect Variant="Variant.Outlined" @bind-Value="@GetRotorProcess.ReliefLand" AnchorOrigin="Origin.BottomCenter" Label="Relief Land" OpenIcon="@Icons.Material.Filled.ArrowDropDown" AdornmentColor="Color.Primary">
+                            @foreach (var cup in ReliefLandStatus)
+                            {
+                                <MudSelectItem Value="@cup">@cup</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    @*  <MudItem xs="4">
                         <MudTextField Label="Relief Land" @bind-Value="@GetRotorProcess.ReliefLand" Variant="Variant.Outlined" />
+                    </MudItem> *@
+
+                    <MudItem md="4" sm="12" xs="12">
+                        <MudSelect Variant="Variant.Outlined" @bind-Value="@GetRotorProcess.VisualChecks" AnchorOrigin="Origin.BottomCenter" Label="Visual Checks" OpenIcon="@Icons.Material.Filled.ArrowDropDown" AdornmentColor="Color.Primary">
+                            @foreach (var cup in ReliefLandStatus)
+                            {
+                                <MudSelectItem Value="@cup">@cup</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
 
-                    <MudItem xs="4">
+                    @*  <MudItem xs="4">
                         <MudTextField Label="Visual Checks" @bind-Value="@GetRotorProcess.VisualChecks" Variant="Variant.Outlined" />
-                    </MudItem>
+                    </MudItem> *@
 
                     <MudItem xs="4">
                         <MudTextField Label="Inspected By" @bind-Value="@GetRotorProcess.InspectedBy" Variant="Variant.Outlined" />
@@ -101,11 +119,20 @@
                     </MudItem>
 
                     <MudItem md="6" sm="12" xs="12">
-                        <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
+                        <MudSelect Variant="Variant.Outlined" @bind-Value="@DelayReasonTracking" AnchorOrigin="Origin.BottomCenter" Label="Delay Reason Tracking" OpenIcon="@Icons.Material.Filled.ArrowDropDown" AdornmentColor="Color.Primary">
+                            @foreach (var cup in DelayReasonTrackingStatus)
+                            {
+                                <MudSelectItem Value="@cup">@cup</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
 
+                    @*   <MudItem md="6" sm="12" xs="12">
+                        <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
+                    </MudItem> *@
+
                     <MudItem md="12" sm="12" xs="12">
-                        <MudTextField Label="Additional Sales Comments" @bind-Value="@GetRotorProcess.AdditionalSalesComments" Variant="Variant.Outlined" />
+                        <MudTextField Label="Comments" @bind-Value="@GetRotorProcess.AdditionalSalesComments" Variant="Variant.Outlined" />
                     </MudItem>
 
                     <div style="margin-top:-4px;margin-bottom:1.5rem;margin-left:-12px">
@@ -148,10 +175,8 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
                     } *@
 
-
+                    <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="SaveData">SAVE</MudButton>
                     <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
-
-
                     <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
                 </MudItem>
 
@@ -182,6 +207,7 @@
 
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public RotorProductionData selectedData { get; set; }
+    [Parameter] public string currentWorkCenter { get; set; }
     private RotorGrindingData GetRotorProcess { get; set; } = new RotorGrindingData();
     // private DateTime? Date = DateTime.Today;
     // private DateTime MinDate = DateTime.Today;
@@ -194,9 +220,24 @@
     public bool IsSecondaryWorkCenters { get; set; } = false;
     private string? SelectedSecondaryWorkCenters { get; set; }
     private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
+    private List<string> ReliefLandStatus = new List<string>();
+    private List<string> DelayReasonTrackingStatus = new List<string>();
+    private List<SaveEnterdRotorGrindingDetails> SaveEnterdRotorGrindingDetails = new();
 
     protected override async Task OnInitializedAsync()
     {
+        ReliefLandStatus.Add("Okay");
+        ReliefLandStatus.Add("N/A");
+
+        DelayReasonTrackingStatus.Add("No operator");
+        DelayReasonTrackingStatus.Add("Inspection");
+        DelayReasonTrackingStatus.Add("Machine failure/Unscheduled Maintenance");
+        DelayReasonTrackingStatus.Add("Training meetings");
+        DelayReasonTrackingStatus.Add("Programming issues");
+        DelayReasonTrackingStatus.Add("Set-Up / Changeover");
+        DelayReasonTrackingStatus.Add("Outside Operations");
+        DelayReasonTrackingStatus.Add("Process Quality Issues");
+
         // MinDate = DateTime.Today;
         StartMinDate = DateTime.Today;
 
@@ -213,6 +254,63 @@
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
             }
         }
+
+        // get alredy saved grinding data    
+            
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var Response = await HttpClient.GetAsync($"{ApiConstants.GetSaveEnterdRotorGrindingDetailsbyserialnumber}/{selectedData.SerialNumber}");           
+        if (Response.IsSuccessStatusCode)
+        {
+            var data = await Response.Content.ReadAsStringAsync();
+            var recentData = JsonSerializer.Deserialize<SaveEnterdRotorGrindingDetails>(data,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            SaveEnterdRotorGrindingDetails = recentData != null ? new List<SaveEnterdRotorGrindingDetails> { recentData } : new List<SaveEnterdRotorGrindingDetails>();
+        }
+        else
+        {
+            SaveEnterdRotorGrindingDetails = new List<SaveEnterdRotorGrindingDetails>();
+        }
+
+        // Assign values based on retrieved data
+        if (SaveEnterdRotorGrindingDetails.Any())
+        {
+            var latest = SaveEnterdRotorGrindingDetails.First();
+            GetRotorProcess.RotorsDiaLeft = latest.RotorsDiaLeft ?? string.Empty;
+            GetRotorProcess.RotorsDiaRight = latest.RotorsDiaRight ?? string.Empty;
+            GetRotorProcess.ReliefLand = latest.ReliefLand ?? string.Empty;
+            GetRotorProcess.ToothFaceLeft = latest.ToothFaceLeft ?? string.Empty;
+            GetRotorProcess.ToothFaceRight = latest.ToothFaceRight ?? string.Empty;
+            GetRotorProcess.CentersLeft = latest.CentersLeft ?? string.Empty;
+            GetRotorProcess.CentersRight = latest.CentersRight ?? string.Empty;
+            GetRotorProcess.VisualChecks= latest.VisualChecks ?? string.Empty;
+            GetRotorProcess.InspectedBy = latest.InspectedBy ?? string.Empty;
+            GetRotorProcess.Notes = latest.Notes ?? string.Empty;
+            DelayReasonTracking = latest.DelayReasonTracking ?? string.Empty;
+            GetRotorProcess.AdditionalSalesComments = latest.AdditionalSalesComments ?? string.Empty;
+          
+
+
+        }
+        else
+        {            
+            GetRotorProcess.RotorsDiaLeft = string.Empty;
+            GetRotorProcess.RotorsDiaRight = string.Empty;
+            GetRotorProcess.ReliefLand = string.Empty;
+            GetRotorProcess.ToothFaceLeft = string.Empty;
+            GetRotorProcess.ToothFaceRight = string.Empty;
+            GetRotorProcess.CentersLeft = string.Empty;
+            GetRotorProcess.CentersRight = string.Empty;
+            GetRotorProcess.VisualChecks = string.Empty;
+            GetRotorProcess.InspectedBy = string.Empty;
+            GetRotorProcess.Notes = string.Empty;
+            DelayReasonTracking = string.Empty;
+            GetRotorProcess.AdditionalSalesComments = string.Empty;
+        }     
+           
+           
+        
+       
     }
 
     private bool IsAllFieldsFilled()
@@ -671,6 +769,61 @@
         }
     }
 
+    private async Task SaveData()
+    {
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+        }
+        var submissionData = new GrindingsaveddataSubmission
+            {
+
+                SelectedProductionInspection = selectedData,
+                RotorsDiaLeft = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaLeft) ? "N/A" : GetRotorProcess.RotorsDiaLeft,
+                RotorsDiaRight = string.IsNullOrWhiteSpace(GetRotorProcess.RotorsDiaRight) ? "N/A" : GetRotorProcess.RotorsDiaRight,
+                ReliefLand = string.IsNullOrWhiteSpace(GetRotorProcess.ReliefLand) ? "N/A" : GetRotorProcess.ReliefLand,
+                ToothFaceLeft = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceLeft) ? "N/A" : GetRotorProcess.ToothFaceLeft,
+                ToothFaceRight = string.IsNullOrWhiteSpace(GetRotorProcess.ToothFaceRight) ? "N/A" : GetRotorProcess.ToothFaceRight,
+                CentersLeft = string.IsNullOrWhiteSpace(GetRotorProcess.CentersLeft) ? "N/A" : GetRotorProcess.CentersLeft,
+                CentersRight = string.IsNullOrWhiteSpace(GetRotorProcess.CentersRight) ? "N/A" : GetRotorProcess.CentersRight,
+                VisualChecks = string.IsNullOrWhiteSpace(GetRotorProcess.VisualChecks) ? "N/A" : GetRotorProcess.VisualChecks,
+                InspectedBy = string.IsNullOrWhiteSpace(GetRotorProcess.InspectedBy) ? "N/A" : GetRotorProcess.InspectedBy,
+                Notes = string.IsNullOrWhiteSpace(GetRotorProcess.Notes) ? "N/A" : GetRotorProcess.Notes,
+                GrindingStartDate = StartDate,
+                DelayReasonTracking = string.IsNullOrWhiteSpace(DelayReasonTracking) ? "N/A" : DelayReasonTracking,
+                AdditionalSalesComments = string.IsNullOrWhiteSpace(GetRotorProcess.AdditionalSalesComments) ? "N/A" : GetRotorProcess.AdditionalSalesComments,
+                GrindingdataSavedBy = useradd,
+                GrindingdataSavedByDate = DateTime.Now.ToString(),
+               
+
+            };
+        try
+        {
+            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PostAsync(ApiConstants.AddSaveEnterdRotorGrindingDetails, content);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Rotor Grinding Data  Saved successfully!", Severity.Success);
+                ClearAll();
+                StateHasChanged();                
+                MudDialog?.Close();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save the Grinding data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error save Grinding data: {ex.Message}", Severity.Error);
+        }
+    }
+
 
     private async Task ClearAll()
     {
@@ -701,6 +854,28 @@
         public string GrindingdataSavedBy { get; set; }
         public string GrindingdataSavedByDate { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
+    }
+
+
+    public class GrindingsaveddataSubmission
+    {
+        public RotorProductionData SelectedProductionInspection { get; set; }
+        public string RotorsDiaLeft { get; set; }
+        public string RotorsDiaRight { get; set; }
+        public string ReliefLand { get; set; }
+        public string ToothFaceLeft { get; set; }
+        public string ToothFaceRight { get; set; }
+        public string CentersLeft { get; set; }
+        public string CentersRight { get; set; }
+        public string VisualChecks { get; set; }
+        public string InspectedBy { get; set; }
+        public DateTime? GrindingStartDate { get; set; }
+        public string Notes { get; set; }
+        public string DelayReasonTracking { get; set; }
+        public string AdditionalSalesComments { get; set; }
+        public string GrindingdataSavedBy { get; set; }
+        public string GrindingdataSavedByDate { get; set; }
+       
     }
 
 
