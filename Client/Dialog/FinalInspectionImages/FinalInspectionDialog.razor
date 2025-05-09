@@ -32,167 +32,195 @@
         <DialogContent>
 
             <MudForm Class="mt-4 p-4 w-100" id="printForm-section">
-                <MudCardContent>
 
-                    <MudGrid Class="w-100">
 
-                        <MudGrid Spacing="3">
+                <MudGrid Spacing="3">
 
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Sales Order</MudText>
-                                <MudText Typo="Typo.body1">@Grinding.SalesOrderNumber</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Customer PO#</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.CustomerPoNum</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Customer</MudText>
-                                <MudText Typo="Typo.body1">@Grinding.Customer</MudText>
-                            </MudItem>
-
-                        </MudGrid>
-
-                        <MudGrid Spacing="3">
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Dwg#</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.DWGNum</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">AG#</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.AGNum</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Description</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.Description</MudText>
-                            </MudItem>
-
-                        </MudGrid>
-
-                        <MudGrid Spacing="3">
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Material</MudText>
-                                <MudText Typo="Typo.body1">@Grinding.Materials</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Special notes / comments</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.SpecialNoteComment</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Dressed With New Bearings</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.Dressedwithnewbearing</MudText>
-                            </MudItem>
-
-                        </MudGrid>
-
-                    </MudGrid>
-                </MudCardContent>
-                <!-- Table Section -->
-             <MudGrid Class="full-width-grid">
-                                            <MudItem xs="12" style="text-align: center; width: 100%;">
-                                                <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
-                                                    <div style=" padding: 10px; text-align: center; width: auto; height: auto">
-                    <MudTable T="RotorsFinalInspection" Items="@TableData" Elevation="1">
-                        <HeaderContent>
-                            <MudTh class="text-center">Description</MudTh>
-                            <MudTh class="text-center">Start</MudTh>
-                            <MudTh class="text-center">Finish</MudTh>
-                         
-                        </HeaderContent>
-                        <RowTemplate>
-                           
-                            <MudTd DataLabel="Description" class="text-center">
-                                            <MudTextField class="text-center" T="string" Label="Flute Diameter" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Land Width" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Relief Angle" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="T.I.R" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Taper" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Locknut Threads" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Is the Rotor clean?" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Journals O.K.?" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Wedgelock assembly" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Special Part Wash (if Applicable )" ReadOnly />
-                            </MudTd>
-                            <MudTd DataLabel="Start" class="text-center">
-                                            <MudTextField class="text-center" @bind-Value="Grinding.RotorsDia" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthStart" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleStart" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="Grinding.CentersLeft" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.TaperStart" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="selectedLocknutThreads" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="selectedIstheRotorclean" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="selectedJournalsOK" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="selectedWedgelockassembly" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="selectedSpecialPartWash" ReadOnly />
-                            </MudTd>
-                            <MudTd DataLabel="Finish" class="text-center">
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.FluteDiameterFinish" ReadOnly />
-                                <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="Grinding.CentersRight" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.Taperfinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.LocknutThreadsFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.IstheRotorcleanfinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.JournalsOKfinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.WedgelockassemblyFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.SpecialPartWashFinish" ReadOnly />
-                            </MudTd>
-                           
-                        </RowTemplate>
-                    </MudTable>
-                    </div>
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Sales Order</MudText>
+                        <MudText Typo="Typo.body1">@Grinding.SalesOrderNumber</MudText>
                     </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Customer PO#</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.CustomerPoNum</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Customer</MudText>
+                        <MudText Typo="Typo.body1">@Grinding.Customer</MudText>
                     </MudItem>
 
                 </MudGrid>
 
-                <MudCardContent>
+                <MudGrid Spacing="3">
 
-                    <MudGrid Class="w-100" Style="margin-top:10px;">
-
-                        <MudGrid Spacing="3">
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
-                                <MudText style="font-family:'Brush Script MT'" Typo="Typo.body1">@InspectionData.InspectorSing</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
-                                <MudText Typo="Typo.body1">@InspectionData.InspectorComments</MudText>
-                            </MudItem>
-
-                            <MudItem md="4" xs="4" class="outlined-box pa-2">
-                                <MudText Typo="Typo.h6" Color="Color.Success">OK TO SHIP</MudText>
-                                <MudText style="font-family:'Brush Script MT'" Typo="Typo.body1">@InspectionData.Oktoship</MudText>
-                            </MudItem>
-
-
-                        </MudGrid>
-                    </MudGrid>
-                </MudCardContent>
-
-                 <MudGrid Class="full-width-grid">
-                                            <MudItem xs="12" style="text-align: center; width: 100%;">
-                                                <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
-                                                    <div style=" padding: 10px; text-align: center; width: auto; height: auto">
-                                                         <MudItem xs="12" md="6" Class="text-center">
-                        <h5>For New Rotors and Spare Parts</h5>
-                        <p Class="text-center">Please Call</p>
-                        <h6>1.800.844.2927 or 330.677.2225</h6>
-                        <p>8:00 am - 5:00 pm, M-F</p>
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Dwg#</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.DWGNum</MudText>
                     </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">AG#</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.AGNum</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Description</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.Description</MudText>
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudGrid Spacing="3">
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Material</MudText>
+                        <MudText Typo="Typo.body1">@Grinding.Materials</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Special notes / comments</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.SpecialNoteComment</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Dressed With New Bearings</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.Dressedwithnewbearing</MudText>
+                    </MudItem>
+
+                </MudGrid>
+
+                <!-- Table Section -->
+                <MudGrid Class="full-width-grid">
+                    <MudItem xs="12" style="text-align: center; width: 100%;">
+                        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
+                            <div style=" padding: 10px; text-align: center; width: auto; height: auto">
+                                <MudTable T="RotorsFinalInspection" Items="@TableData" Elevation="1">
+                                    <HeaderContent>
+                                        <MudTh class="text-center">Description</MudTh>
+                                        <MudTh class="text-center">Start</MudTh>
+                                        <MudTh class="text-center">Finish</MudTh>
+
+                                    </HeaderContent>
+                                    <RowTemplate>
+
+                                        <MudTd DataLabel="Description" class="text-center">
+                                            <MudTextField class="text-center" T="string" Label="Flute Diameter" ReadOnly />
+                                            <MudTextField class="text-center" T="string" Label="Land Width" ReadOnly />
+                                            <MudTextField class="text-center" T="string" Label="Relief Angle" ReadOnly />
+                                        </MudTd>
+                                        <MudTd DataLabel="Start" class="text-center">
+                                            <MudTextField class="text-center" @bind-Value="Grinding.RotorsDia" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthStart" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleStart" ReadOnly />
+
+                                        </MudTd>
+                                        <MudTd DataLabel="Finish" class="text-center">
+                                            <MudTextField class="text-center" @bind-Value="InspectionData.FluteDiameterFinish" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthFinish" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleFinish" ReadOnly />
+                                        </MudTd>
+
+                                    </RowTemplate>
+                                </MudTable>
+                            </div>
+                        </MudItem>
+                    </MudItem>
+
+
+
+                </MudGrid>
+                <MudGrid Spacing="3">
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">T.I.R - centers Left</MudText>
+                        <MudText Typo="Typo.body1">@Grinding.CentersLeft</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">T.I.R - centers Right</MudText>
+                        <MudText Typo="Typo.body1">@Grinding.CentersRight</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Taper Left</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.TaperStart</MudText>
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudGrid Spacing="3">
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Taper Right</MudText>
+                        <MudText Typo="Typo.body1">@FinalInspectionData.Taperfinish</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Locknut Threads</MudText>
+                        <MudText Typo="Typo.body1">@selectedLocknutThreads</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Is the Rotor clean?</MudText>
+                        <MudText Typo="Typo.body1">@selectedIstheRotorclean</MudText>
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudGrid Spacing="3">
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Journals O.K.?</MudText>
+                        <MudText Typo="Typo.body1">@selectedJournalsOK</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Wedgelock assembly</MudText>
+                        <MudText Typo="Typo.body1">@selectedWedgelockassembly</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Special Part Wash (if Applicable)</MudText>
+                        <MudText Typo="Typo.body1">@selectedSpecialPartWash</MudText>
+                    </MudItem>
+
+                </MudGrid>
+
+                <MudGrid Spacing="3">
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Inspector Signature</MudText>
+                        <MudText style="font-family:'Brush Script MT'" Typo="Typo.body1">@InspectionData.InspectorSing</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Comments</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.InspectorComments</MudText>
+                    </MudItem>
+
+                    <MudItem md="4" xs="4" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Success">OK TO SHIP</MudText>
+                        <MudText style="font-family:'Brush Script MT'" Typo="Typo.body1">@InspectionData.Oktoship</MudText>
+                    </MudItem>
+
+
+                </MudGrid>
+
+
+
+                <MudGrid style="text-align: center; width: 100%;" Class="d-flex justify-center">
+                    <div style=" padding: 10px; text-align: center; width: 500px; height: auto">
+                        <MudItem xs="12" md="6" Class="text-center">
+                            <h5>For New Rotors and Spare Parts</h5>
+                            <p Class="text-center">Please Call</p>
+                            <h6>1.800.844.2927 or 330.677.2225</h6>
+                            <p>8:00 am - 5:00 pm, M-F</p>
+                        </MudItem>
                     </div>
-                    </MudItem>
-                    </MudItem>
+
+
                 </MudGrid>
 
             </MudForm>
@@ -224,7 +252,7 @@
     [Parameter]
     public string selectedJournalsOK { get; set; }
 
-     [Parameter]
+    [Parameter]
     public string selectedWedgelockassembly { get; set; }
 
     [Parameter]
@@ -251,7 +279,7 @@
 
     private async Task Print()
     {
-       // await JSRuntime.InvokeVoidAsync("printElementById", "printForm-section");
+        // await JSRuntime.InvokeVoidAsync("printElementById", "printForm-section");
         await JSRuntime.InvokeVoidAsync("printForm");
     }
 

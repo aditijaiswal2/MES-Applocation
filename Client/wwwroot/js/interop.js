@@ -95,7 +95,8 @@
             }
         </style>
     `;
-    var printWindow = window.open('', '_blank');
+  //  var printWindow = window.open('', '_blank');
+    var printWindow = window.open('', 'PrintWindow', 'width=900,height=650,top=100,left=100,scrollbars=yes,resizable=no');
 
 
    // var printWindow = window.open('', '', 'height=650,width=900');
@@ -213,13 +214,16 @@ function printincomingImage(imageDataUrl, labelText) {
 </html>
     `;
 
-
-    const printWindow = window.open('', '_blank');
-
-
-
+    const printWindow = window.open('', 'PrintWindow', 'width=900,height=700,left=100,top=100,toolbar=no,scrollbars=no,resizable=no');
     printWindow.document.write(htmlContent);
     printWindow.document.close();
+
+    //const printWindow = window.open('', '_blank');
+
+
+
+    //printWindow.document.write(htmlContent);
+    //printWindow.document.close();
 
 }
 
