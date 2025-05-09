@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1339,6 +1339,26 @@ namespace MES.Server.Migrations
                     Oktoship = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InspectorComments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Start = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FluteDiameterStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FluteDiameterFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LandWidthStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LandWidthFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TIRStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TIRfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TaperStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Taperfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReliefAngleStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReliefAngleFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IstheRotorcleanStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IstheRotorcleanfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JournalsOKStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JournalsOKfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockassemblyStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockassemblyFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialPartWashStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialPartWashFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Finish = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250508055137_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250508062935_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3989,6 +3989,12 @@ namespace MES.Server.Migrations
                     b.Property<string>("Fits")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FluteDiameterFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FluteDiameterStart")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("GrindingEndDate")
                         .HasColumnType("nvarchar(max)");
 
@@ -4019,6 +4025,24 @@ namespace MES.Server.Migrations
                     b.Property<string>("InspectorSing")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IstheRotorcleanStart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IstheRotorcleanfinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JournalsOKStart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JournalsOKfinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LandWidthFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LandWidthStart")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Left")
                         .HasColumnType("nvarchar(max)");
 
@@ -4026,6 +4050,12 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocknutThreadsFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocknutThreadsStart")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Make")
@@ -4070,6 +4100,12 @@ namespace MES.Server.Migrations
                     b.Property<string>("Received")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReliefAngleFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReliefAngleStart")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ReliefLand")
                         .HasColumnType("nvarchar(max)");
 
@@ -4109,6 +4145,12 @@ namespace MES.Server.Migrations
                     b.Property<string>("SpecialNoteComment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SpecialPartWashFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecialPartWashStart")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Start")
                         .HasColumnType("nvarchar(max)");
 
@@ -4116,6 +4158,18 @@ namespace MES.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SubmitedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TIRStart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TIRfinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaperStart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Taperfinish")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("TargetDate")
@@ -4146,6 +4200,12 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WedgelockAlignmentMarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WedgelockassemblyFinish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WedgelockassemblyStart")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Welding")

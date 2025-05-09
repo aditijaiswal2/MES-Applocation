@@ -29,21 +29,13 @@
                     <MudTextField Label="Module" @bind-Value="InspectionData.Module" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Sales Order" @bind-Value="InspectionData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>              
+                            
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Work Order" @bind-Value="InspectionData.WorkOrder" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Mat#" @bind-Value="InspectionData.MatNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
+             
 
                 <MudItem xs="12" md="4">
                     <MudTextField Label="Customer" @bind-Value="InspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
@@ -336,9 +328,6 @@
     {
         return new List<(string, string)>
     {
-        ("Sales Order", InspectionData.SalesOrderNumber),
-        ("Work Order", InspectionData.WorkOrder),
-        ("Mat#", InspectionData.MatNumber),
         ("Customer", InspectionData.Customer),
         ("Location", InspectionData.Location),
         ("Received", InspectionData.Received),

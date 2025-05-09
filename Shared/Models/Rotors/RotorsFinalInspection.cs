@@ -71,7 +71,7 @@ namespace MES.Shared.Models.Rotors
         public string? ProductionSubmitBy { get; set; }
         public string? RotorsDiaLeft { get; set; }
         public string? RotorsDiaRight { get; set; }
-        public string?   ReliefLand { get; set; }
+        public string? ReliefLand { get; set; }
         public string? ToothFaceLeft { get; set; }
         public string? ToothFaceRight { get; set; }
         public string? CentersLeft { get; set; }
@@ -92,11 +92,31 @@ namespace MES.Shared.Models.Rotors
         public string? Oktoship { get; set; }
         public string? InspectorComments { get; set; }
         public string? Start { get; set; }
+        public string? FluteDiameterStart { get; set; }
+        public string? FluteDiameterFinish { get; set; }
+        public string? LandWidthStart { get; set; }
+        public string? LandWidthFinish { get; set; }
+        public string? TIRStart { get; set; }
+        public string? TIRfinish { get; set; }
+        public string? TaperStart { get; set; }
+        public string? Taperfinish { get; set; }
+        public string? ReliefAngleStart { get; set; }
+        public string? ReliefAngleFinish { get; set; }
+        public string? LocknutThreadsStart { get; set; }
+        public string? LocknutThreadsFinish { get; set; }
+        public string? IstheRotorcleanStart { get; set; }
+        public string? IstheRotorcleanfinish { get; set; }
+        public string? JournalsOKStart { get; set; }
+        public string? JournalsOKfinish { get; set; }
+        public string? WedgelockassemblyStart { get; set; }
+        public string? WedgelockassemblyFinish { get; set; }
+        public string? SpecialPartWashStart { get; set; }
+        public string? SpecialPartWashFinish { get; set; }
         public string? Finish { get; set; }
         public string? Name { get; set; }
         public DateTime? Date { get; set; }
         public string? GrindingSubmiteddBy { get; set; }
         public string? FinalInspectionSubmiteddBy { get; set; }
-        public DateTime ? FinalInspectionSubmitedByDate { get; set; }
+        public DateTime? FinalInspectionSubmitedByDate { get; set; }
     }
 }

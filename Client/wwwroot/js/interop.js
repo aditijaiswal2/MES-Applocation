@@ -18,7 +18,7 @@
 
     var styles = `
         <style>
-            body, * {
+      body, * {
                 font-family: Arial, sans-serif !important;
                 font-size: 16px !important;
                 background-color: white;
@@ -26,66 +26,80 @@
                 margin: 3px;
                 padding: 0;
             }
-            .dialog-title {
+
+             .dialog-title {
                 text-align: center;
                 margin: 0;
-                font-size: 14px !important;
+                font-size: 18px !important;
             }
-            .mud-dialog, .mud-paper {
+
+            .mud-dialog,
+            .mud-paper {
                 box-shadow: none !important;
                 border: 1px solid #000;
                 padding: 20px;
                 margin: 10px;
                 background-color: white;
             }
-             table, th, td {
-            text-align: center;
-            vertical-align: middle;
-        }
+
             .mud-dialog-title {
                 font-weight: bold;
-                margin-bottom: 16px;
+                margin-bottom: 20px;
                 border-bottom: 1px solid #000;
+                padding-bottom: 8px;
             }
-             .mud-grid {
-                display: flex;
-                flex-wrap: wrap;
-            }
-            .mud-item {
-                flex: 0 0 33.3333%; /* Three columns */
-                box-sizing: border-box;
-                padding: 10px;
-            }
-            .outlined-box {
-                border: 1px solid #000;
-                padding: 10px;
-                min-height: 80px;
-            }
-            .mud-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-                text-align: center; /* Center table text */
-            }
-            .mud-table th, .mud-table td {
-                border: 1px solid #000;
-                padding: 8px;
-            }
-            .mud-card-content, .mud-dialog {
-                box-shadow: none;
-                border: none;
-                margin: 0;
-                padding: 0;
-            }
-            h5, h6, p {
+
+           .mud-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px;
+}
+@media print {
+    .mud-grid, .full-width-grid {
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+
+    .mud-item {
+        flex: 1 1 25%;
+    }
+
+    table {
+        width: 100% !important;
+    }
+}
+
+.mud-item {
+    flex: 1 1 calc(25% - 12px); /* 4 items per row, minus gap */
+    box-sizing: border-box;
+    padding: 4px;
+    min-width: 200px; /* Optional: ensures good display on small screens */
+}
+
+
+            .qr-container {
                 text-align: center;
-                margin: 5px 0;
+                margin-top: 20px;
+            }
+
+            .qr-container img {
+                width: 75px !important;
+                height: 75px !important;
+                object-fit: contain;
+            }
+
+            @media print {
+                @page {
+                    margin: 10mm;
+                }
             }
         </style>
     `;
+    var printWindow = window.open('', '_blank');
 
-    var printWindow = window.open('', '', 'height=650,width=900');
-    printWindow.document.write('<html><head><title>Final Inspection Report</title>');
+
+   // var printWindow = window.open('', '', 'height=650,width=900');
+    printWindow.document.write('<html><head><title>Final Inspection Report</title></style>');
     printWindow.document.write(styles);
     printWindow.document.write('</head><body>');
     printWindow.document.write(content);
@@ -97,6 +111,14 @@
     printWindow.close();
 }
 
+window.printElementById = (elementId) => {
+    const originalContents = document.body.innerHTML;
+    const printContents = document.getElementById(elementId).innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload(); // optional: reload to restore any dynamic state
+};
 function printincomingImage(imageDataUrl, labelText) {
     const previewContent = document.getElementById("print-section");
 
