@@ -80,6 +80,9 @@
             }
 
         </MudItem>
+
+        @if (showForm)
+{
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
             @if ((!string.IsNullOrEmpty(qrCodeData)) || (selectedReceive != null))
             {
@@ -258,27 +261,28 @@
 
 
                                             <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Bearing Seals" MultiSelection="true" @bind-Values="selectedBearSeals" ValueExpression="() => selectedBearSeals" ValueChanged="OnbearingselasChanged" Variant="Variant.Outlined" FullWidth="true">
+                                                <MudSelect @ref="mudSelectMetal" T="string" ValueChanged="OnbearingselasChanged" Label="Bearing Seals" @bind-Values="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
                                                     @foreach (var bearseal in BearSeals)
                                                     {
-
-                                                        @* <MudSelectItem Value="@bearseal" Disabled="@(bearseal == "Okay" || bearseal == "Replace")">@bearseal</MudSelectItem>
- *@
-                                                        var cssClass = (bearseal == "Okay" || bearseal == "Replace") ? "no-checkbox" : null;
-
-                                                        <MudSelectItem Value="@bearseal" Class="@cssClass"></MudSelectItem>
+                                                        <MudSelectItem Value="@bearseal"/>
                                                     }
                                                 </MudSelect>
                                             </MudItem>
 
                                             <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Ceramic Seals" @bind-Values="selectedCerSeals" MultiSelection="true" Variant="Variant.Outlined" ValueChanged="OnbearcerChanged" FullWidth="true">
+                                                <MudSelect @ref="mudSelect"  T="string" ValueChanged="OnbearcerChanged"
+                                                Label="Ceramic Seals"
+                                                @bind-Values="selectedCerSeals"
+                                                MultiSelection="true"
+                                                Variant="Variant.Outlined"
+                                                FullWidth="true">
                                                     @foreach (var cerseal in CerSeals)
                                                     {
-                                                        <MudSelectItem Value="@cerseal"></MudSelectItem>
+                                                        <MudSelectItem Value="@cerseal" />
                                                     }
                                                 </MudSelect>
                                             </MudItem>
+
                                             <MudItem xs="12" md="3">
                                                 <MudSelect T="string" Label="Bearing Journal Dia (Left)" Value="selectedLR" ValueExpression="() => selectedLR" Variant="Variant.Outlined" ValueChanged="OnlrChanged" FullWidth="true">
                                                     @foreach (var rl in LR)
@@ -416,7 +420,7 @@
 
                                                 <MudItem xs="12" md="3">
                                                     <MudTextField Label="Welding Comments"
-                                                    @bind-Value="inspection.SalesOrderNumber"
+                                                    @bind-Value="inspection.Initials"
                                                     FullWidth="true"
                                                     Variant="Variant.Outlined"
                                                     InputClass="text-right" />
@@ -596,6 +600,8 @@
 
                                                     </div>
                                                 </MudItem>
+
+
                                             </MudItem>
                                         </MudGrid>
 
@@ -625,6 +631,8 @@
                 <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
             }
         </MudItem>
+
+        }
     </MudGrid>
 </MudContainer>
 
@@ -688,6 +696,8 @@
     private List<SaddlepartNumber>? SaddleData { get; set; } = new List<SaddlepartNumber>();
     private string? SelectedRotorsStyle { get; set; }
     private string? SelectedType { get; set; }
+    private MudSelect<string> mudSelect;
+    private MudSelect<string> mudSelectMetal;
     private string? SelectedMaterials { get; set; }
     private string? SelectedOthers { get; set; }
     private string? SelectedSaddlePartNumber { get; set; }
@@ -700,6 +710,7 @@
     private IncomingInspectionSubmit tempSubmission = new();
     private string searchTerm = "";
     bool isFormOpen = false;
+    private bool showForm = true;
     string SelectedSerialNumber;
     string SelectedModuleName;
 
@@ -780,7 +791,6 @@
             }
 
         }
-
     }
 
     public async Task SelectReceive(Receiving item)
@@ -820,8 +830,13 @@
                 SelectedType = response.Type;
                 selectedberrem = response.BearingRemoved;
                 selectedBearings = response.Bearing;
-                selectedBearSeals = response.BearingSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
-                selectedCerSeals = response.CeramicSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
+                // selectedBearSeals = response.BearingSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
+                //selectedCerSeals = response.CeramicSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
+                var validBearSeals = BearSeals.Select(s => s.Trim().ToLower()).ToList();
+                selectedBearSeals = response.BearingSeals?.Split(',').Select(s => s.Trim().ToLower()).Where(s => validBearSeals.Contains(s)).ToList() ?? new List<string>();
+
+                var validCerSeals = CerSeals.Select(s => s.Trim().ToLower()).ToList();
+                selectedCerSeals = response.CeramicSeals?.Split(',').Select(s => s.Trim().ToLower()).Where(s => validCerSeals.Contains(s)).ToList() ?? new List<string>();
                 selectedLR = response.Left;
                 inspection.yLeft = response.yLeft;
                 selectedRL = response.Right;
@@ -848,15 +863,34 @@
                 SelectedSaddlePartNumber = response.SaddlePartNumber;
                 selectedddrc = response.RotorCategorization;
                 selecteddd = response.ComponentType;
+                 showForm = true;
 
+                ProjectimagesData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
+
+                selectedImagesFromSM.Clear(); // Clear old data
+
+                if (ProjectimagesData?.Images != null &&
+                    ProjectimagesData.SerialNumber?.Trim() == SelectedSerialNumber &&
+                    ProjectimagesData.Images.Any())
+                {
+                    selectedImagesFromSM.Add(new IncomingImages
+                        {
+                            SerialNumber = ProjectimagesData.SerialNumber?.Trim(),
+                            Images = ProjectimagesData.Images.Select(img => new Imagedata
+                            {
+                                Data = img.Data,
+                                ID = img.IncomingImageId
+                            }).ToList()
+                        });
+                }
             }
-
         }
         catch (HttpRequestException ex)
         {
             // Log or handle if no data found
             //  Console.WriteLine("No matching data found: " + ex.Message);
             showContent = false; // Still show content if you want to allow fresh input
+            showForm = true;
             ClearAll();
         }
 
@@ -1164,6 +1198,7 @@
     };
 
     private List<string> selectedCerSeals = new List<string>();
+    // private List<string> selectedCerSeals = new();
 
     private List<string> BearSeals = new()
      {
@@ -1242,13 +1277,17 @@
     }
 
 
-
+    //  private void OnCerSealsChanged(List<string> values)
     private async Task OnbearcerChanged(string values)
     {
-        selectedCerSeals = values.Split(',').ToList();
-
+        selectedCerSeals = values.Split(',').ToList();      
     }
 
+    // private Task OnCerSealsChanged(IEnumerable<string> values)
+    // {
+    //     selectedCerSeals = values.ToList();
+    //     return Task.CompletedTask;
+    // }
     //OnddChanged
 
     private async Task OnddChanged(string value)
@@ -1432,9 +1471,10 @@
                 //Type = selectedType,
                     BearingRemoved = selectedberrem,
                     Bearing = selectedBearings,
-                    BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
-                    CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
-
+                // BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
+                //   CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
+                 BearingSeals=  string.Join(", ", selectedBearSeals),               
+                    CeramicSeals = string.Join(",", selectedCerSeals),
                     Right = selectedRL,
                     yRight = inspection.yRight,
                     Left = selectedLR,
@@ -1517,11 +1557,11 @@
 
                     Snackbar.Add("Incoming Inspection form submitted successfully!", Severity.Success);
                     Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
-
+                    showForm = false;
                     ClearAll();
                     showContent = false;
                     await OnInitializedAsync();
-                    isSubmitted = true;
+
                     StateHasChanged();
                 }
                 else
@@ -1596,9 +1636,10 @@
                 Type = SelectedType,
                 BearingRemoved = selectedberrem,
                 Bearing = selectedBearings,
-                BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
-                CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
-
+            //  BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
+            //CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
+                BearingSeals = string.Join(", ", selectedBearSeals),
+                CeramicSeals = string.Join(",", selectedCerSeals),
                 Right = selectedRL,
                 yRight = inspection.yRight,
                 Left = selectedLR,
@@ -1665,7 +1706,7 @@
                 if (response.IsSuccessStatusCode)
                 {
                     Snackbar.Add("Incoming Inspection Data saved successfully!", Severity.Success);
-                    isSubmitted = true;
+                    showForm = false;
                     ClearAll();
                     StateHasChanged();
                 }
@@ -1778,6 +1819,7 @@
                 isExistingSerial = false;
                 await StopScanning();
                 showScanDetails = true;
+                showForm = true;
                 StateHasChanged();
             };
 
@@ -1992,9 +2034,19 @@
 
     private async Task ClearAll()
     {
-      //  inspection = new IncomingInspection();
-        selectedCerSeals = new();
-        selectedBearSeals = new();
+        //  inspection = new IncomingInspection();
+   
+        //  selectedCerSeals = new();
+        selectedBearSeals.Clear();
+        mudSelectMetal?.Reset();
+        //   selectedBearSeals = new();
+        //   selectedBearSeals = new List<string>();
+        //  selectedCerSeals = new List<string>();
+        //OnCerSealsChanged(selectedCerSeals);
+          selectedCerSeals.Clear();
+
+        mudSelect?.Reset();
+    //    selectedCerSeals = new List<string>();
         inspection.Customer = null;
         inspection.Location = null;
         inspection.SerialNumber = null;
@@ -2011,7 +2063,7 @@
         SelectedType = null;
         selectedBearings = null;
         selectedberrem = null;
-
+     
         selectedRL = null;
         inspection.yLeft = null;
         inspection.yRight = null;
@@ -2022,6 +2074,11 @@
         selectedctr = null;
         selectedycg = null;
         selectedalign = null;
+      
+        qrCodeData = string.Empty;
+        SelectedProject = null;
+        ProjectimagesData = null;
+        selectedImagesFromSM.Clear();
         selectedps = null;
         selectedwelding = null;
         inspection.WeldingNum = null;
