@@ -32,7 +32,7 @@
                 {
                     <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">Cancel</MudButton>
                 }
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled Style="width: 300px; margin-left:8px;">
+                <MudButton @onclick="OpenFinalrecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px; margin-left:8px;">
                     Final Inspection
                 </MudButton>
             </div>
@@ -43,21 +43,38 @@
             <MudItem xs="12">
                 <div class="d-flex justify-content-start mt-2">
                     <MudPaper Elevation="3" Class="pa-3" Style="width: 300px;">
-                        @* You can adjust width *@
                         <MudList Dense="true">
-                            @foreach (var item in Grindingalldata.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                            @{
+                                var filteredList = Receivealldata
+                                .Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                                .ToList();
+                            }
+
+                            @if (filteredList.Any())
                             {
-                                <MudListItem OnClick="() => SelectReceive(item)" Button="true" Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                             @onmouseover="() => hoveredReceive = item"
-                                             @onmouseout="() => hoveredReceive = null">
-                                    <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
-                                </MudListItem>
+                                foreach (var item in filteredList)
+                                {
+                                    <MudListItem OnClick="() => SelectReceive(item)"
+                                                 Button="true"
+                                                 Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                                 @onmouseover="() => hoveredReceive = item"
+                                                 @onmouseout="() => hoveredReceive = null">
+                                        <MudText>@item.SerialNumber - @item.Customer - @item.Module</MudText>
+                                    </MudListItem>
+                                }
+                            }
+                            else
+                            {
+                                <MudText Class="pa-2 text-muted">No record found</MudText>
                             }
                         </MudList>
                     </MudPaper>
                 </div>
             </MudItem>
+
         }
+
+
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
             @if (isScanning)
             {
@@ -68,346 +85,369 @@
 
         </MudItem>
 
-        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
-            @if (!string.IsNullOrEmpty(qrCodeData) && !isSubmitted)
-            {
-                <div>
-                    <div class="border border-primary p-10 mt-2 d-flex flex-wrap">
-                        @foreach (var item in qrCodeData.Split(','))
-                        {
-                            <p class="qr-item">@item.Trim()</p>
-                        }
-                    </div>
 
-                    @if (!isExistingSerial)
-                    {
-                        <div style="margin-top:10px">
-                            <MudButton OnClick="OpenPreviewDialogBox"
-                                       Class="mr-2"
-                                       Color="Color.Primary"
-                                       Variant="Variant.Filled">
-                                Incoming Inspection Report
-                            </MudButton>
+        @if (showForm )
+        {
 
-                            <MudButton Class="mr-2"
-                                       Color="Color.Secondary"
-                                       Variant="Variant.Filled" OnClick="ViewAttachedFile">
-                                Production Order Report
-                            </MudButton>
+            <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
+
+                @if ((!string.IsNullOrEmpty(qrCodeData)) || (selectedReceive != null) || (serialNumberData != null))
+                {
+                    <div>
+                        <div class="border border-primary p-10 mt-2 d-flex flex-wrap qr-container">
+
+                            @if (!string.IsNullOrEmpty(qrCodeData))
+                            {
+                                foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    <p class="qr-item">@item.Trim()</p>
+                                }
+                            }
+
+                            else if (selectedReceive != null )
+                            {
+                                <p class="qr-item">Report Number: @selectedReceive.SerialNumber</p>
+                                <p class="qr-item">Module: @selectedReceive.Module</p>
+                                <p class="qr-item">Customer: @selectedReceive.Customer</p>
+                                <p class="qr-item">Received Date: @selectedReceive.DateTime</p>
+
+                            }
+
                         </div>
-                        <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
-                            <MudCardContent>
-
-                                <MudForm Class="w-100">
-
-                                    <MudGrid>
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Grinding Start Date" @bind-Value="serialNumberData.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Grinding End Date" @bind-Value="serialNumberData.GrindingdataSubmitedByDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Workcenters" @bind-Value="serialNumberData.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Rotors Dia Left" @bind-Value="serialNumberData.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Rotors Dia Right" @bind-Value="serialNumberData.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Relief Land" @bind-Value="serialNumberData.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                        </MudGrid>
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Tooth Face Left" @bind-Value="serialNumberData.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Tooth Face Right" @bind-Value="serialNumberData.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Visual Checks" @bind-Value="serialNumberData.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
 
 
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Inspected By" @bind-Value=" FinalInspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Notes" @bind-Value="serialNumberData.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
+                        @if (!isExistingSerial  && serialNumberData != null)
+                        {
+                            <div style="margin-top:10px">
+                                <MudButton OnClick="OpenPreviewDialogBox"
+                                Class="mr-2"
+                                Color="Color.Primary"
+                                Variant="Variant.Filled">
+                                    Incoming Inspection Report
+                                </MudButton>
 
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Delay Reason Tracking" @bind-Value="serialNumberData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
+                                <MudButton Class="mr-2"
+                                Color="Color.Secondary"
+                                Variant="Variant.Filled" OnClick="ViewAttachedFile">
+                                    Production Order Report
+                                </MudButton>
+                            </div>
+                            <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
+                                <MudCardContent>
 
-                                        </MudGrid>
-
-
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Sales Order" @bind-Value="serialNumberData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Material" @bind-Value="serialNumberData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Customer" @bind-Value="serialNumberData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
-
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" Required />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" Required />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Rotors Serial Number" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" Required />
-                                            </MudItem>
-                                        </MudGrid>
-                                        <MudGrid Spacing="3">
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-                                        </MudGrid>
-
-                                        <MudGrid Class="full-width-grid">
-                                            <MudItem xs="12" style="text-align: center; width: 100%;">
-                                                <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
-                                                    <div style="border: 2px dotted gray; padding: 10px; text-align: center; width: 250px; height: auto">
-                                                        <p>Add images</p>
-
-                                                        <!-- Add Button -->
-                                                        <MudItem>
-                                                            <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@(async () => await AddProjectImagesAsync(new ProjectImgDTO {
-                                                            SerialNumber = SelectedProject
-                                                        }))">
-                                                                Add
-                                                            </MudButton>
-                                                        </MudItem>
-
-                                                        <!-- Image Preview -->
-                                                        @if (selectedImagesFromSM.Any())
-                                                        {
-                                                            <div style="margin-top:10px;">
-                                                                <p><b>Total Images:</b> @selectedImagesFromSM.SelectMany(x => x.Images).Count()</p>
-                                                                <!-- You can show the images here too -->
-                                                            </div>
-                                                        }
-
-                                                    </div>
-                                                </MudItem>
-                                            </MudItem>
-                                        </MudGrid>
-                                        <MudGrid Class="full-width-grid">
-                                            <MudItem xs="12" style="text-align: center; width: 100%;">
-                                                <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
-                                                    <div style=" padding: 10px; text-align: center; width: auto; height: auto">
-                                                        <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1" Class="my-centered-table">
-                                                            <HeaderContent>
-                                                                <MudTh class="text-center">Description</MudTh>
-                                                                <MudTh class="text-center">Start</MudTh>
-                                                                <MudTh class="text-center">Finish</MudTh>
-
-                                                            </HeaderContent>
-                                                            <RowTemplate>
-                                                                <MudTd DataLabel="Description" class="text-center">
-                                                                    <MudTextField T="string" Label="Flute Diameter" ReadOnly />
-                                                                    <MudTextField T="string" Label="Land Width" ReadOnly />
-                                                                    <MudTextField T="string" Label="Relief Angle" ReadOnly />
-
-                                                                </MudTd>
-                                                                <MudTd DataLabel="Start" class="text-center">
-                                                                    <MudTextField @bind-Value="serialNumberData.RotorsDia" ReadOnly />
-                                                                    <MudTextField @bind-Value="FinalInspectionData.LandWidthStart" />
-                                                                    <MudTextField @bind-Value="FinalInspectionData.ReliefAngleStart" />
-
-                                                                </MudTd>
-                                                                <MudTd DataLabel="Finish" class="text-center">
-                                                                    <MudTextField @bind-Value="FinalInspectionData.FluteDiameterFinish" />
-                                                                    <MudTextField @bind-Value="FinalInspectionData.LandWidthFinish" />
-                                                                    <MudTextField @bind-Value="FinalInspectionData.ReliefAngleFinish" />
-
-                                                                </MudTd>
-
-
-                                                            </RowTemplate>
-                                                        </MudTable>
-                                                    </div>
-                                                </MudItem>
-                                            </MudItem>
-                                        </MudGrid>
-
-
-                                        <MudGrid Spacing="3">
-
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Taper Left" @bind-Value="FinalInspectionData.TaperStart" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudTextField Label="Taper Right" @bind-Value="FinalInspectionData.Taperfinish" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudSelect T="string" ValueChanged="OnRBChanged" Label="Locknut Threads" Value="selectedLocknutThreads" Variant="Variant.Outlined" ValueExpression="() => selectedRB" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in LocknutThreads)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudSelect T="string" ValueChanged="OnIstheRotorcleanChanged" Label="Is the Rotor clean?" Variant="Variant.Outlined" Value="selectedIstheRotorclean" ValueExpression="() => selectedIstheRotorclean" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in IstheRotorclean)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="4">
-                                                <MudSelect T="string" ValueChanged="OnselectedJournalsOKChanged" Label="Journals O.K.?" Variant="Variant.Outlined" Value="selectedJournalsOK" ValueExpression="() => selectedJournalsOK" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in JournalsOK)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudSelect T="string" ValueChanged="OnselectedWedgelockassemblyChanged" Variant="Variant.Outlined" Label="Wedgelock assembly" Value="selectedWedgelockassembly" ValueExpression="() => selectedWedgelockassembly" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in Wedgelockassembly)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-                                            <MudItem xs="12" md="4">
-                                                <MudSelect T="string" ValueChanged="OnselectedSpecialPartWashChanged" Variant="Variant.Outlined" Label="Special Part Wash (if Applicable )" Value="selectedSpecialPartWash" ValueExpression="() => selectedSpecialPartWash" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in SpecialPartWash)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="3">
-
-                                            <MudItem xs="12" md="6">
-                                                <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="6">
-                                                <MudTextField Label="Comments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-                                        </MudGrid>
-                                        <MudGrid Spacing="2">
-                                            <MudItem xs="12" md="12">
-                                                <MudTextField Label="OK TO SHIP" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-                                        </MudGrid>
-
+                                    <MudForm Class="w-100">
 
                                         <MudGrid>
-                                            <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
-                                                <div style="display: flex; justify-content: flex-end;">
-                                                    <MudButton OnClick="OpenFinalDialogBox"
-                                                               Class="mr-2"
-                                                               Color="Color.Primary"
-                                                               Variant="Variant.Filled">
-                                                        Preview
-                                                    </MudButton>
-                                                    <MudButton OnClick="Submitdata"
-                                                               Class="mr-2"
-                                                               Color="Color.Primary"
-                                                               Variant="Variant.Filled">
-                                                        Submit
-                                                    </MudButton>
-                                                </div>
-                                            </MudItem>
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Grinding Start Date" @bind-Value="serialNumberData.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Grinding End Date" @bind-Value="serialNumberData.GrindingdataSubmitedByDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Workcenters" @bind-Value="serialNumberData.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Rotors Dia Left" @bind-Value="serialNumberData.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Rotors Dia Right" @bind-Value="serialNumberData.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Relief Land" @bind-Value="serialNumberData.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Tooth Face Left" @bind-Value="serialNumberData.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Tooth Face Right" @bind-Value="serialNumberData.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Visual Checks" @bind-Value="serialNumberData.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Inspected By" @bind-Value=" FinalInspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Notes" @bind-Value="serialNumberData.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Delay Reason Tracking" @bind-Value="serialNumberData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Sales Order" @bind-Value="serialNumberData.SalesOrderNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Material" @bind-Value="serialNumberData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Customer" @bind-Value="serialNumberData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Dwg Number" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Rotors Serial Number" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid Spacing="3">
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid Class="full-width-grid">
+                                                <MudItem xs="12" style="text-align: center; width: 100%;">
+                                                    <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
+                                                        <div style="border: 2px dotted gray; padding: 10px; text-align: center; width: 250px; height: auto">
+                                                            <p>Add images</p>
+
+                                                            <!-- Add Button -->
+                                                            <MudItem>
+                                                                <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@(async () => await AddProjectImagesAsync(new ProjectImgDTO {
+                                                            SerialNumber = SelectedProject
+                                                        }))">
+                                                                    Add
+                                                                </MudButton>
+                                                            </MudItem>
+
+                                                            <!-- Image Preview -->
+                                                            @if (selectedImagesFromSM.Any())
+                                                            {
+                                                                <div style="margin-top:10px;">
+                                                                    <p><b>Total Images:</b> @selectedImagesFromSM.SelectMany(x => x.Images).Count()</p>
+                                                                    <!-- You can show the images here too -->
+                                                                </div>
+                                                            }
+
+                                                        </div>
+                                                    </MudItem>
+                                                </MudItem>
+                                            </MudGrid>
+                                            <MudGrid Class="full-width-grid">
+                                                <MudItem xs="12" style="text-align: center; width: 100%;">
+                                                    <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
+                                                        <div style=" padding: 10px; text-align: center; width: auto; height: auto">
+                                                            <MudTable T="RotorsFinalInspection" Items="@tableData" Elevation="1" Class="my-centered-table">
+                                                                <HeaderContent>
+                                                                    <MudTh class="text-center">Description</MudTh>
+                                                                    <MudTh class="text-center">Start</MudTh>
+                                                                    <MudTh class="text-center">Finish</MudTh>
+
+                                                                </HeaderContent>
+                                                                <RowTemplate>
+                                                                    <MudTd DataLabel="Description" class="text-center">
+                                                                        <MudTextField T="string" Label="Flute Diameter" ReadOnly />
+                                                                        <MudTextField T="string" Label="Land Width" ReadOnly />
+                                                                        <MudTextField T="string" Label="Relief Angle" ReadOnly />
+
+                                                                    </MudTd>
+                                                                    <MudTd DataLabel="Start" class="text-center">
+                                                                        <MudTextField @bind-Value="serialNumberData.RotorsDia" ReadOnly />
+                                                                        <MudTextField @bind-Value="FinalInspectionData.LandWidthStart" />
+                                                                        <MudTextField @bind-Value="FinalInspectionData.ReliefAngleStart" />
+
+                                                                    </MudTd>
+                                                                    <MudTd DataLabel="Finish" class="text-center">
+                                                                        <MudTextField @bind-Value="FinalInspectionData.FluteDiameterFinish" />
+                                                                        <MudTextField @bind-Value="FinalInspectionData.LandWidthFinish" />
+                                                                        <MudTextField @bind-Value="FinalInspectionData.ReliefAngleFinish" />
+
+                                                                    </MudTd>
+
+
+                                                                </RowTemplate>
+                                                            </MudTable>
+                                                        </div>
+                                                    </MudItem>
+                                                </MudItem>
+                                            </MudGrid>
+
+
+                                            <MudGrid Spacing="3">
+
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Taper Left" @bind-Value="FinalInspectionData.TaperStart" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Taper Right" @bind-Value="FinalInspectionData.Taperfinish" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect T="string" ValueChanged="OnRBChanged" Label="Locknut Threads" Value="selectedLocknutThreads" Variant="Variant.Outlined" ValueExpression="() => selectedRB" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in LocknutThreads)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect T="string" ValueChanged="OnIstheRotorcleanChanged" Label="Is the Rotor clean?" Variant="Variant.Outlined" Value="selectedIstheRotorclean" ValueExpression="() => selectedIstheRotorclean" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in IstheRotorclean)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect T="string" ValueChanged="OnselectedJournalsOKChanged" Label="Journals O.K.?" Variant="Variant.Outlined" Value="selectedJournalsOK" ValueExpression="() => selectedJournalsOK" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in JournalsOK)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect T="string" ValueChanged="OnselectedWedgelockassemblyChanged" Variant="Variant.Outlined" Label="Wedgelock assembly" Value="selectedWedgelockassembly" ValueExpression="() => selectedWedgelockassembly" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in Wedgelockassembly)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudSelect T="string" ValueChanged="OnselectedSpecialPartWashChanged" Variant="Variant.Outlined" Label="Special Part Wash (if Applicable )" Value="selectedSpecialPartWash" ValueExpression="() => selectedSpecialPartWash" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in SpecialPartWash)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Comments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                            </MudGrid>
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="12">
+                                                    <MudTextField Label="OK TO SHIP" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+
+                                            <MudGrid>
+                                                <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
+                                                    <div style="display: flex; justify-content: flex-end;">
+                                                        <MudButton OnClick="OpenFinalDialogBox"
+                                                        Class="mr-2"
+                                                        Color="Color.Primary"
+                                                        Variant="Variant.Filled">
+                                                            Preview
+                                                        </MudButton>
+                                                        <MudButton OnClick="ClearAll"
+                                                        Class="mr-2"
+                                                        Color="Color.Error"
+                                                        Variant="Variant.Filled">
+                                                            Cancel
+                                                        </MudButton>
+                                                        <MudButton OnClick="Submitdata"
+                                                        Class="mr-2"
+                                                        Color="Color.Primary"
+                                                        Variant="Variant.Filled">
+                                                            Submit
+                                                        </MudButton>
+                                                    </div>
+                                                </MudItem>
+                                            </MudGrid>
+
                                         </MudGrid>
-
-                                    </MudGrid>
-                                </MudForm>
-                            </MudCardContent>
-                        </MudCard>
+                                    </MudForm>
+                                </MudCardContent>
+                            </MudCard>
 
 
-                    }
-                    else
-                    {
+                        }
 
-                        <MudText Typo="Typo.h6" Color="Color.Error">This serial number already exists. Please check in Waiting.</MudText>
 
-                    }
+                    </div>
 
-                </div>
+                }
+                else if (cameraError)
+                {
+                    <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+                }
+            </MudItem>
 
-            }
-            else if (cameraError)
-            {
-                <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
-            }
-        </MudItem>
+        }
     </MudGrid>
 </MudContainer>
 
@@ -422,6 +462,7 @@
     private QRCodeScanner qrCodeScanner;
     private string qrCodeData;
     private bool isExistingSerial = false;
+    private RotorGrindingData? hoveredReceive;
     private bool showContent = false;
     private string searchTerm = "";
     private DateTime? fromDate = DateTime.Today; // Default to today
@@ -429,101 +470,84 @@
     private List<RotorsFinalInspection> tableData = new();
     private string? SelectedProject { get; set; }
     private RotorFinalInspectionDTO _finalResult;
+    private bool showForm = true;
     private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
     private bool isSubmitted = false;
     private bool isCancel = false;
     private bool cameraError = false;
     private RotorGrindingData serialNumberData;
+    private RotorGrindingData selectedReceive;
     private List<RotorGrindingData> Grindingalldata = new();
-    private RotorGrindingData? hoveredReceive;
-    // private Receiving selectedReceive;
+    // private RotorGrindingData? hoveredReceive;
+    // // private Receiving selectedReceive;
     private RotorsFinalInspection FinalInspectiondta;
+    private List<string> grindingSerialNumbers = new List<string>();
     public RotorProductionData selectedData { get; set; }
+    private List<RotorGrindingData> Receivealldata = new();
+    private string errorMessage = "";
     private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
     private RotorsFinalInspection FinalInspection { get; set; } = new RotorsFinalInspection();
     private HashSet<string> scannedSerialNumbers = new HashSet<string>();
     private bool showScanDetails = false;
     public FinalInspectionImageDTO? ProjectimagesData { get; set; }
     private List<FinalInspection> selectedImagesFromSM = new List<FinalInspection>();
+    string SelectedSerialNumber;
+    string SelectedModuleName;
 
-    public async Task SelectReceive(RotorGrindingData item)
+
+    private async Task OpenFinalrecord()
     {
-        serialNumberData = item;
+        await StopScanning();
 
-        serialNumberData.SerialNumber = item.SerialNumber;
+        showContent = true;
+        showForm = false;
+        ClearAll();
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            var response = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var allInspections = System.Text.Json.JsonSerializer.Deserialize<List<RotorGrindingData>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorGrindingData>();
+
+                // Now filter the list by checking each Serial Number
+                var filteredList = new List<RotorGrindingData>();
+
+                foreach (var item in allInspections)
+                {
+
+                    // Check if Serial Number exists (Call API for each Serial)
+                    var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumbersales}/{item.SerialNumber}");
+
+                    if (!exists)
+                    {
+                        // Only add if Serial does not exist
+                        filteredList.Add(item);
+                    }
 
 
-        qrCodeData = null;
-        showContent = false;
+                }
 
-        // // Call API to check if data is already saved
-        // try
-        // {
-        //     var response = await HttpClient.GetFromJsonAsync<RotorIncominInspectionSavedData>(
-        //         $"{ApiConstants.GetAllIIsavedData}?serialNumber={SelectedSerialNumber}&module={SelectedModuleName}");
-        //     //   var rotorSalesDatasresponse = await HttpClient.GetAsync(
-        //     // $"{ApiConstants.GetAllSalessavedData}?serialNumber={inspection.SerialNumber}&module={inspection.Module}&rotorsNumber={inspection.RotorsNumber}");
+                Receivealldata = filteredList; 
 
-        //     if (response != null)
-        //     {
-
-        //         // Also assign to `inspection`
-
-        //         inspection.Customer = response.Customer;
-        //         inspection.Location = response.Location;
-        //         inspection.RotorsNumber = response.RotorsNumber;
-        //         selectedMake = response.Make;
-        //         inspection.Dia = response.Dia;
-        //         inspection.Len = response.Len;
-        //         inspection.Fits = response.Fits;
-        //         SelectedMaterials = response.Materials;
-        //         SelectedOthers = response.Others;
-        //         inspection.RotorsDia = response.RotorsDia;
-        //         SelectedRotorsStyle = response.RotorStyle;
-        //         SelectedType = response.Type;
-        //         selectedberrem = response.BearingRemoved;
-        //         selectedBearings = response.Bearing;
-        //         selectedBearSeals = response.BearingSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
-        //         selectedCerSeals = response.CeramicSeals?.Split(',').Select(s => s.Trim()).ToList() ?? new List<string>();
-        //         selectedLR = response.Left;
-        //         inspection.yLeft = response.yLeft;
-        //         selectedRL = response.Right;
-        //         inspection.yRight = response.yLeft;
-        //         selectedbs = response.BasicSharpening;
-        //         selectedybasicsharp = response.IfYBasicSharpening;
-        //         selectedpre = response.WedgelockAlignmentMarks;
-        //         selectedctr = response.CenterGrinding;
-        //         selectedycg = response.IfYCenterGrinding;
-        //         selectedalign = response.Aligned;
-        //         selectedps = response.PlasticSleaves;
-        //         selectedwelding = response.Welding;
-        //         inspection.WeldingNum = response.WeldingNum;
-        //         selectebkid = response.BedKnife;
-        //         selectedRB = response.BoxReceivedWithSaddles;
-        //         inspection.ADDQTYdata = response.ADDQTYdata;
-        //         selectedrp = response.ReProfile;
-        //         selectedManualLabour = response.ManualLabor;
-        //         selectedNewBoxRequiredBox = response.NewBoxRequired;
-        //         inspection.NewBoxRequiredBox = response.NewBoxRequiredBox;
-        //         selectedtb = response.Top;
-        //         selectedbt = response.Bottom;
-        //         inspection.AddQty = response.AddQty;
-        //         SelectedSaddlePartNumber = response.SaddlePartNumber;
-        //         selectedddrc = response.RotorCategorization;
-        //         selecteddd = response.ComponentType;
-
-        //     }
-
-        // }
-        // catch (HttpRequestException ex)
-        // {
-        // Log or handle if no data found
-        //  Console.WriteLine("No matching data found: " + ex.Message);
-        //  showContent = false; // Still show content if you want to allow fresh input
-        //  ClearAll();
-        // }
-
-        StateHasChanged();
+            }
+            else
+            {
+                errorMessage = $"Error: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            // isLoading = false;
+        }
     }
 
 
@@ -533,6 +557,24 @@
         "No"
 
     };
+
+
+    public async Task SelectReceive(RotorGrindingData item)
+    {
+        selectedReceive = item;
+        serialNumberData = item;
+
+        SelectedSerialNumber = item.SerialNumber;
+        SelectedModuleName = item.Module;
+
+        qrCodeData = null;
+        showContent = false;
+        showForm = true;
+
+        StateHasChanged();
+    }
+
+
 
     private string selectedSpecialPartWash { get; set; } = "";
 
@@ -631,6 +673,8 @@
 
     private async Task StartScanning()
     {
+        showContent = false;
+        showForm = false;
         try
         {
             isScanning = true;
@@ -798,6 +842,8 @@
 
                 }
                 Snackbar.Add("Final Inspection data saved successfully!", Severity.Success);
+                showForm=false;
+                ClearAll();
                 isSubmitted = true;
 
                 StateHasChanged();
@@ -935,16 +981,21 @@
 
         if (exists)
         {
-            Snackbar.Add($"Serial Number '{serialNumber}' already exists in the table.", Severity.Warning);
+            Snackbar.Add($"Serial Number '{serialNumber}' already exists.", Severity.Warning);
             isExistingSerial = exists;
             await StopScanning();
-            isSubmitted = true;
+            showForm = false;
             StateHasChanged();
             return;
         }
         else if (!string.IsNullOrWhiteSpace(serialNumber))
         {
             await FetchSerialNumberData(serialNumber.Trim());
+            showForm = true;
+        }
+        else
+        {
+            showForm = false;
         }
         StateHasChanged();
     }
@@ -987,6 +1038,13 @@
                 return;
             }
         }
+        else if (selectedReceive != null)
+        {
+            grinding.SerialNumber = selectedReceive.SerialNumber;
+            grinding.Module = selectedReceive.Module;
+            grinding.Users = selectedReceive.Customer;
+            grinding.DateTime = selectedReceive.DateTime;
+        }
 
         projectImagesDTO.SerialNumber = grinding.SerialNumber;
 
@@ -1024,6 +1082,46 @@
         StateHasChanged(); // ✅ This triggers UI refresh
     }
 
+    private async Task ClearAll()
+    {
+
+        FinalInspectionData.CustomerPoNum = null;
+        FinalInspectionData.DWGNum = null;
+        FinalInspectionData.AGNum = null;
+        FinalInspectionData.Description = null;
+        FinalInspectionData.SpecialNoteComment = null;
+        FinalInspectionData.Dressedwithnewbearing = null;
+        FinalInspectionData.FluteDiameterFinish = null;
+        FinalInspectionData.LandWidthFinish = null;
+        FinalInspectionData.LandWidthStart = null;
+        FinalInspectionData.ReliefAngleFinish = null;    
+        FinalInspectionData.ReliefAngleStart = null;
+        FinalInspectionData.TaperStart = null;
+        FinalInspectionData.Taperfinish = null;
+        selectedLocknutThreads = null;
+        selectedIstheRotorclean = null;
+        selectedJournalsOK = null;
+
+        selectedWedgelockassembly = null;
+        selectedSpecialPartWash = null;
+        FinalInspectionData.InspectorSing = null;
+        FinalInspectionData.InspectorComments = null;
+        FinalInspectionData.Oktoship = null;
+
+
+        qrCodeData = string.Empty;
+        SelectedProject = null;
+        ProjectimagesData = null;
+        selectedImagesFromSM.Clear();
+
+        // Reset serial number/module selections
+        SelectedSerialNumber = null;
+        SelectedModuleName = null;
+
+        StateHasChanged();
+
+    }
+
     private async Task FetchSerialNumberData(string serial)
     {
         try
@@ -1041,7 +1139,7 @@
             {
                 Snackbar.Add($"Serial number {serial} not found.", Severity.Warning);
                 serialNumberData = null;
-                isSubmitted = true;
+                showForm = false;
             }
         }
         catch (Exception ex)
@@ -1105,4 +1203,31 @@
         margin: 0;
     }
 
+    .bordered-container {
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+    .no-checkbox .mud-selected-item-checkbox {
+        display: none !important;
+    }
+
+
+    .qr-container {
+        justify-content: center;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .spaced-select .mud-input-label {
+        margin-bottom: 6px; /* Adjust as needed */
+    }
+
+
 </style>
+

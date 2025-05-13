@@ -17,92 +17,75 @@
     var content = formSection.innerHTML;
 
     var styles = `
-        <style>
-      body, * {
-                font-family: Arial, sans-serif !important;
-                font-size: 16px !important;
-                background-color: white;
-                color: black;
-                margin: 3px;
-                padding: 0;
+    <style>
+        body, * {
+            font-family: Arial, sans-serif !important;
+            font-size: 16px !important;
+            background-color: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .mud-grid {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 12px;
+            width: 100% !important;
+        }
+
+        #printForm-section {
+            width: 100%;
+        }
+
+        @media print {
+            @page {
+                margin: 10mm;
             }
 
-             .dialog-title {
-                text-align: center;
-                margin: 0;
-                font-size: 18px !important;
+            .mud-grid, .full-width-grid {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
             }
 
-            .mud-dialog,
-            .mud-paper {
-                box-shadow: none !important;
+            .mud-item {
+                flex: 1 1 25%;
+            }
+
+            table {
+                margin: 0 auto !important; /* Center the table */
+                border-collapse: collapse;
+                width: auto !important; /* Optional: keep table to content width */
+            }
+
+            th, td {
+                padding: 8px 12px;
                 border: 1px solid #000;
-                padding: 20px;
-                margin: 10px;
-                background-color: white;
-            }
-
-            .mud-dialog-title {
-                font-weight: bold;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #000;
-                padding-bottom: 8px;
-            }
-
-           .mud-grid {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 12px;
-}
-@media print {
-    .mud-grid, .full-width-grid {
-        display: flex !important;
-        flex-wrap: wrap !important;
-    }
-
-    .mud-item {
-        flex: 1 1 25%;
-    }
-
-    table {
-        width: 100% !important;
-    }
-}
-
-.mud-item {
-    flex: 1 1 calc(25% - 12px); /* 4 items per row, minus gap */
-    box-sizing: border-box;
-    padding: 4px;
-    min-width: 200px; /* Optional: ensures good display on small screens */
-}
-
-
-            .qr-container {
                 text-align: center;
-                margin-top: 20px;
             }
+        }
+    </style>
+`;
 
-            .qr-container img {
-                width: 75px !important;
-                height: 75px !important;
-                object-fit: contain;
-            }
+  // var logoHtml = '  <img src="" alt="Logo" class="px-4 mt-2 mb-2" Style = "width:200px;height:40px;" />';
+    var headerHtml = `
+  <div style="display: flex; align-items: center; margin-bottom: 20px;">
+      <img src="Image/MAAG-removebg-preview.png" alt="Logo" style="height: 80px; margin-right: 20px;" />
+      <h1 style="font-size: 24px; margin: 0;">SERVICE ROTOR FINAL INSPECTION REPORT</h1>
+  </div>
+`;
 
-            @media print {
-                @page {
-                    margin: 10mm;
-                }
-            }
-        </style>
-    `;
   //  var printWindow = window.open('', '_blank');
     var printWindow = window.open('', 'PrintWindow', 'width=900,height=650,top=100,left=100,scrollbars=yes,resizable=no');
 
 
    // var printWindow = window.open('', '', 'height=650,width=900');
-    printWindow.document.write('<html><head><title>Final Inspection Report</title></style>');
+    printWindow.document.write('<html><head><title> </title>');
     printWindow.document.write(styles);
     printWindow.document.write('</head><body>');
+    printWindow.document.write(headerHtml);
     printWindow.document.write(content);
     printWindow.document.write('</body></html>');
 
