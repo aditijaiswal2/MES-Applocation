@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250509111521_Initial")]
-    partial class Initial
+    [Migration("20250513085032_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -304,6 +304,27 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Logindetails");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.MESDelayReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DelayReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MESDelayReason");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.MESWorkcenters", b =>

@@ -61,6 +61,7 @@ namespace MES.Server.Data
         public DbSet<RotorSalesClearance> RotorSalesClearance { get; set; }
         public DbSet<RotorShipping> RotorShipping { get; set; }
         public DbSet<SaveEnterdRotorGrindingDetails> SaveEnterdRotorGrindingDetails { get; set; }
+        public DbSet<MESDelayReason> MESDelayReason { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

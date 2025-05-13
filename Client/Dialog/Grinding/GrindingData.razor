@@ -118,14 +118,33 @@
                         <MudTextField Label="Notes" @bind-Value="@GetRotorProcess.Notes" Variant="Variant.Outlined" />
                     </MudItem>
 
-                    <MudItem md="6" sm="12" xs="12">
+                  @*   <MudItem md="6" sm="12" xs="12">
                         <MudSelect Variant="Variant.Outlined" @bind-Value="@DelayReasonTracking" AnchorOrigin="Origin.BottomCenter" Label="Delay Reason Tracking" OpenIcon="@Icons.Material.Filled.ArrowDropDown" AdornmentColor="Color.Primary">
                             @foreach (var cup in DelayReasonTrackingStatus)
                             {
                                 <MudSelectItem Value="@cup">@cup</MudSelectItem>
                             }
                         </MudSelect>
+                    </MudItem> *@
+
+                    <MudItem md="6" sm="12" xs="12">
+                        <MudSelect Variant="Variant.Outlined"
+                                   @bind-Value="DelayReasonTracking"
+                                   AnchorOrigin="Origin.BottomCenter"
+                                   Label="Delay Reason Tracking"
+                                   OpenIcon="@Icons.Material.Filled.ArrowDropDown"
+                                   AdornmentColor="Color.Primary">
+                            @if (MESDelayReasons != null)
+                            {
+                                @foreach (var location in MESDelayReasons.OrderBy(l => l.DelayReason))
+                                {
+                                    <MudSelectItem Value="@location.DelayReason">@location.DelayReason</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
                     </MudItem>
+
+
 
                     @*   <MudItem md="6" sm="12" xs="12">
                         <MudTextField Label="Delay Reason Tracking" @bind-Value="@DelayReasonTracking" Variant="Variant.Outlined" />
@@ -221,25 +240,43 @@
     private string? SelectedSecondaryWorkCenters { get; set; }
     private List<MESWorkcenters>? MESWorkcenters { get; set; } = new List<MESWorkcenters>();
     private List<string> ReliefLandStatus = new List<string>();
-    private List<string> DelayReasonTrackingStatus = new List<string>();
+    // private List<string> DelayReasonTrackingStatus = new List<string>();
     private List<SaveEnterdRotorGrindingDetails> SaveEnterdRotorGrindingDetails = new();
+
+    private List<MESDelayReason>? MESDelayReasons { get; set; } = new List<MESDelayReason>();
+   
 
     protected override async Task OnInitializedAsync()
     {
         ReliefLandStatus.Add("Okay");
         ReliefLandStatus.Add("N/A");
 
-        DelayReasonTrackingStatus.Add("No operator");
-        DelayReasonTrackingStatus.Add("Inspection");
-        DelayReasonTrackingStatus.Add("Machine failure/Unscheduled Maintenance");
-        DelayReasonTrackingStatus.Add("Training meetings");
-        DelayReasonTrackingStatus.Add("Programming issues");
-        DelayReasonTrackingStatus.Add("Set-Up / Changeover");
-        DelayReasonTrackingStatus.Add("Outside Operations");
-        DelayReasonTrackingStatus.Add("Process Quality Issues");
+        // DelayReasonTrackingStatus.Add("No operator");
+        // DelayReasonTrackingStatus.Add("Inspection");
+        // DelayReasonTrackingStatus.Add("Machine failure/Unscheduled Maintenance");
+        // DelayReasonTrackingStatus.Add("Training meetings");
+        // DelayReasonTrackingStatus.Add("Programming issues");
+        // DelayReasonTrackingStatus.Add("Set-Up / Changeover");
+        // DelayReasonTrackingStatus.Add("Outside Operations");
+        // DelayReasonTrackingStatus.Add("Process Quality Issues");
 
         // MinDate = DateTime.Today;
         StartMinDate = DateTime.Today;
+
+
+        // get dealy resaons
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+        var drResponse = await HttpClient.GetAsync(ApiConstants.GetMESDealyReason);
+
+        if (drResponse.IsSuccessStatusCode)
+        {
+            var drResult = await drResponse.Content.ReadFromJsonAsync<List<MESDelayReason>>();
+
+            if (drResult != null)
+            {
+                MESDelayReasons = drResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
 
         // get Work Centers
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
@@ -253,7 +290,7 @@
             {
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
             }
-        }
+        }      
 
         // get alredy saved grinding data    
             

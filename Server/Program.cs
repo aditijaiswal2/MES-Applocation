@@ -55,6 +55,9 @@ builder.Services.AddTransient<SaddlePartNumberRepository>();
 builder.Services.AddTransient<IMaterialRepository, MaterialRepository>();
 builder.Services.AddTransient<MaterialRepository>();
 
+builder.Services.AddTransient<IMESDelayReasonRepository,MESDelayReasonRepository>();
+builder.Services.AddTransient<MESDelayReasonRepository>();
+
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));

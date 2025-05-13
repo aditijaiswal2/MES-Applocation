@@ -303,6 +303,27 @@ namespace MES.Server.Migrations
                     b.ToTable("Logindetails");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.MESDelayReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DelayReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MESDelayReason");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.MESWorkcenters", b =>
                 {
                     b.Property<int>("Id")

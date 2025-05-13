@@ -314,10 +314,10 @@
 
 
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    <MudTextField Label="T.I.R - Centers Left" @bind-Value="serialNumberData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                                 </MudItem>
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="T.I.R - centers Left" @bind-Value="serialNumberData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    <MudTextField Label="T.I.R - Centers Right" @bind-Value="serialNumberData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="4">
@@ -373,7 +373,7 @@
                                                     </MudSelect>
                                                 </MudItem>
                                                 <MudItem xs="12" md="4">
-                                                    <MudSelect T="string" ValueChanged="OnselectedSpecialPartWashChanged" Variant="Variant.Outlined" Label="Special Part Wash (if Applicable )" Value="selectedSpecialPartWash" ValueExpression="() => selectedSpecialPartWash" FullWidth="true" Class="custom-select">
+                                                    <MudSelect T="string" ValueChanged="OnselectedSpecialPartWashChanged" Variant="Variant.Outlined" Label="Special Part Wash (if Applicable)" Value="selectedSpecialPartWash" ValueExpression="() => selectedSpecialPartWash" FullWidth="true" Class="custom-select">
                                                         @foreach (var ber in SpecialPartWash)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -811,7 +811,8 @@
                     GrindingSubmiteddBy = serialNumberData.GrindingdataSubmiteddBy,
                     CustomerPoNum = FinalInspectionData.CustomerPoNum,
                     DWGNum = FinalInspectionData.DWGNum,
-                    AGNum = FinalInspectionData.SpecialNoteComment,
+                    AGNum = FinalInspectionData.AGNum,
+                    SpecialNoteComment = FinalInspectionData.SpecialNoteComment,
                     Dressedwithnewbearing = FinalInspectionData.Dressedwithnewbearing,
                     Description = FinalInspectionData.Description,
                     Start = FinalInspectionData.Start,

@@ -1,0 +1,66 @@
+﻿@using MES.Client.Utitlity;
+@using MES.Shared.Models
+@using System.ComponentModel.DataAnnotations;
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1" />
+                Delete Delay Reason
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField Label="Delay Reason" @bind-Value="@delayReason.DelayReason" Variant="Variant.Outlined" Class="mb-6" ReadOnly />
+            <MudTextField Label="Delay Reason Description" @bind-Value="@delayReason.Description" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Delete">Delete</MudButton>
+            @* <MudButton Variant="Variant.Filled" Size = "Size.Small" Color="Color.Error" OnClick="Cancel">Cancel</MudButton> *@
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public MESDelayReason delayReason { get; set; } = new MESDelayReason();
+
+    private async Task Delete()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        try
+        {
+            //HttpResponseMessage response = await HttpClient.DeleteAsync($"https://localhost:7006/api/ITSLocation/{location.Id}");
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            HttpResponseMessage response = await HttpClient.DeleteAsync($"{ApiConstants.DeleteDealyReason}/{delayReason.Id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Delay Reason deleted successfully.", Severity.Success);
+                CompletionService.IsCompleted = true;
+            }
+            else
+            {
+                Snackbar.Add($"Failed to delete Delay Reason,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                CompletionService.IsCompleted = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+
+        MudDialog?.Close();
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+}

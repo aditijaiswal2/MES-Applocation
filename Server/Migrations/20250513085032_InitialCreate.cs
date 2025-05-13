@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -198,6 +198,20 @@ namespace MES.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Material", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MESDelayReason",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DelayReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MESDelayReason", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1949,6 +1963,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Material");
+
+            migrationBuilder.DropTable(
+                name: "MESDelayReason");
 
             migrationBuilder.DropTable(
                 name: "MESWorkcenters");

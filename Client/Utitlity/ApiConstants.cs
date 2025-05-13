@@ -172,5 +172,12 @@
         public const string GetSaveEnterdRotorGrindingDetailsbyserialnumber = $"{BaseUrl}/SaveEnterdRotorGrindingDetails/GGSDBSN";
 
 
+        // Manaage Dealy Reason 
+        public const string GetMESDealyReason = $"{BaseUrl}/MESDelayReason/getdr";
+        public const string DealyReasonQR = $"{BaseUrl}/MESDelayReason/drQR";
+        public const string AddDealyReason = $"{BaseUrl}/MESDelayReason/adddr";
+        public const string EditDealyReason = $"{BaseUrl}/MESDelayReason/editdr";
+        public const string DeleteDealyReason = $"{BaseUrl}/MESDelayReason";
+
     }
 }

@@ -12,19 +12,20 @@
 
             <MudGrid>
                 <MudItem xs="6">
-                    <MudTextField Label="Customer PO#" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+                                
+
+                <MudItem xs="6">
+                    <MudTextField Label="Dwg Number" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField Label="Customer" @bind-Value="FinalInspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Rotors Serial Number" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudTextField Label="Dwg#" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="6">
-                    <MudTextField Label="AG#" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="6">
@@ -34,37 +35,101 @@
                 <MudItem xs="6">
                     <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
+
+
+                <!-- Table Section -->
+                <MudGrid Class="full-width-grid">
+                    <MudItem xs="12" style="text-align: center; width: 100%;">
+                        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
+                            <div style=" padding: 10px; text-align: center; width: auto; height: auto">
+                                <MudTable T="RotorsFinalInspection" Items="@(new List<RotorsFinalInspection> { FinalInspectionData })" Elevation="1">
+
+                                    <HeaderContent>
+                                        <MudTh class="text-center">Description</MudTh>
+                                        <MudTh class="text-center">Start</MudTh>
+                                        <MudTh class="text-center">Finish</MudTh>
+
+                                    </HeaderContent>
+                                    <RowTemplate>
+
+                                        <MudTd DataLabel="Description" class="text-center">
+                                            <MudTextField class="text-center" T="string" Label="Flute Diameter" ReadOnly />
+                                            <MudTextField class="text-center" T="string" Label="Land Width" ReadOnly />
+                                            <MudTextField class="text-center" T="string" Label="Relief Angle" ReadOnly />
+                                        </MudTd>
+                                        <MudTd DataLabel="Start" class="text-center">
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.RotorsDia" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.LandWidthStart" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.ReliefAngleStart" ReadOnly />
+
+                                        </MudTd>
+                                        <MudTd DataLabel="Finish" class="text-center">
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.FluteDiameterFinish" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.LandWidthFinish" ReadOnly />
+                                            <MudTextField class="text-center" @bind-Value="FinalInspectionData.ReliefAngleFinish" ReadOnly />
+                                        </MudTd>
+
+                                    </RowTemplate>
+                                </MudTable>
+                            </div>
+                        </MudItem>
+                    </MudItem>
+
+
+
+                </MudGrid>
+
+                <MudItem xs="6">
+                    <MudTextField Label="T.I.R - Centers Left" @bind-Value="FinalInspectionData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="T.I.R - Centers Right" @bind-Value="FinalInspectionData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Taper Left" @bind-Value="FinalInspectionData.TaperStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Taper Right" @bind-Value="FinalInspectionData.Taperfinish" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Locknut Threads" @bind-Value="FinalInspectionData.LocknutThreadsStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Is the Rotor clean?" @bind-Value="FinalInspectionData.IstheRotorcleanStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Journals O.K.?" @bind-Value="FinalInspectionData.JournalsOKStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Wedgelock assembly" @bind-Value="FinalInspectionData.WedgelockassemblyStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudTextField Label="Special Part Wash (if Applicable)" @bind-Value="FinalInspectionData.SpecialPartWashStart" FullWidth="true" Variant="Variant.Outlined" />
+                </MudItem>
+
+
                 <MudItem xs="6">
                     <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
+
                 <MudItem xs="6">
-                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Comments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
+               
 
                 <MudItem xs="6">
                     <MudTextField Label="Oktoship" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
+                </MudItem>            
 
-                <MudItem xs="6">
-                    <MudTextField Label="InspectorComments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="6">
-                    <MudTextField Label="Start" @bind-Value="FinalInspectionData.Start" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="6">
-                    <MudTextField Label="Finish" @bind-Value="FinalInspectionData.Finish" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="6">
-                    <MudTextField Label="Name" @bind-Value="FinalInspectionData.Name" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="6">
-                    <MudTextField Label="Date" @bind-Value="FinalInspectionData.Date" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>             
-
+               
 
 
             </MudGrid>
