@@ -44,7 +44,14 @@
         public const string EditSPN = $"{BaseUrl}/SaddlePartNumber/editwc";
         public const string DeleteSPN = $"{BaseUrl}/SaddlePartNumber";
 
-      // Manage Other
+        // Manage NewBoxRequiredNumber 
+        public const string GetNewBoxRequiredNumber = $"{BaseUrl}/NewBoxRequiredNumber/getwc";
+        public const string LocationNewBoxRequiredNumber = $"{BaseUrl}/NewBoxRequiredNumber/wcQR";
+        public const string AddNewBoxRequiredNumber = $"{BaseUrl}/NewBoxRequiredNumber/addwc";
+        public const string EditNewBoxRequiredNumber = $"{BaseUrl}/NewBoxRequiredNumber/editwc";
+        public const string DeleteNewBoxRequiredNumber = $"{BaseUrl}/NewBoxRequiredNumber";
+
+        // Manage Other
         public const string GetOther = $"{BaseUrl}/Other/getwc";
         public const string LocationOther = $"{BaseUrl}/Other/wcQR";
         public const string AddOther = $"{BaseUrl}/Other/addwc";

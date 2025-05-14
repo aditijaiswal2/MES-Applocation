@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250513085032_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250514063936_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -367,6 +367,27 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Material");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.NewBoxRequiredNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequiredNumberName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewBoxRequiredNumbers");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Other", b =>

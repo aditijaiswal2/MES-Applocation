@@ -68,9 +68,9 @@
                                 foreach (var item in filteredList)
                                 {
                                     <MudListItem OnClick="() => SelectReceive(item)" Button="true"
-                                                 Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                                 @onmouseover="() => hoveredReceive = item"
-                                                 @onmouseout="() => hoveredReceive = null">
+                                    Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                    @onmouseover="() => hoveredReceive = item"
+                                    @onmouseout="() => hoveredReceive = null">
                                         <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
                                     </MudListItem>
                                 }
@@ -85,7 +85,7 @@
             </MudItem>
 
         }
-      
+
 
         <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
             @if (isScanning)
@@ -98,555 +98,572 @@
         </MudItem>
 
         @if (showForm)
-{
-        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
-            @if ((!string.IsNullOrEmpty(qrCodeData)) || (selectedReceive != null))
-            {
-                <div>
-                    <div class="border border-primary p-10 mt-2 d-flex flex-wrap qr-container">
+        {
+            <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
+                @if ((!string.IsNullOrEmpty(qrCodeData)) || (selectedReceive != null))
+                {
+                    <div>
+                        <div class="border border-primary p-10 mt-2 d-flex flex-wrap qr-container">
 
-                        @if (!string.IsNullOrEmpty(qrCodeData))
-                        {
-                            foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                            @if (!string.IsNullOrEmpty(qrCodeData))
                             {
-                                <p class="qr-item">@item.Trim()</p>
+                                foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    <p class="qr-item">@item.Trim()</p>
+                                }
                             }
-                        }
 
-                        else if (selectedReceive != null)
+                            else if (selectedReceive != null)
+                            {
+                                <p class="qr-item">Report Number: @selectedReceive.SerialNumber</p>
+                                <p class="qr-item">Module: @selectedReceive.SelectedOption</p>
+                                <p class="qr-item">Customer: @selectedReceive.Customer</p>
+                                <p class="qr-item">Received Date: @selectedReceive.Date.ToString("dd-MM-yyyy HH:mm")</p>
+
+                            }
+
+                        </div>
+
+                        @if (!isExistingSerial)
                         {
-                            <p class="qr-item">Report Number: @selectedReceive.SerialNumber</p>
-                            <p class="qr-item">Module: @selectedReceive.SelectedOption</p>
-                            <p class="qr-item">Customer: @selectedReceive.Customer</p>
-                            <p class="qr-item">Received Date: @selectedReceive.Date.ToString("dd-MM-yyyy HH:mm")</p>
+                            <!-- Display Form -->
+                            <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
+                                <MudCardContent>
+                                    <div class="d-flex justify-center">
+                                        <MudText Typo="Typo.h6">INCOMING ROTOR INSPECTION</MudText>
+                                    </div>  <MudForm Class="w-100">
 
-                        }
+                                        <MudGrid Style="margin-top:10px;">
 
-                    </div>
+                                            <MudGrid>
 
-                    @if (!isExistingSerial)
-                    {
-                        <!-- Display Form -->
-                        <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
-                            <MudCardContent>
-                                <div class="d-flex justify-center">
-                                    <MudText Typo="Typo.h6">INCOMING ROTOR INSPECTION</MudText>
-                                </div>  <MudForm Class="w-100">
-
-                                    <MudGrid Style="margin-top:10px;">
-
-                                        <MudGrid>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Customer" @bind-Value="inspection.Customer" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Location" @bind-Value="inspection.Location" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Inspected Date" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Inspected by" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
-                                            </MudItem>
-
-                                        </MudGrid>
-                                        <MudGrid>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Rotors Serial Number" @bind-Value="inspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
-                                            </MudItem>
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Dia" @bind-Value="inspection.Dia" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Len" @bind-Value="inspection.Len" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Flts" @bind-Value="inspection.Fits" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
-                                            </MudItem>
-
-
-                                        </MudGrid>
-                                        <MudGrid Justify="Justify.FlexStart" Spacing="2">
-
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect T="string" Label="Make" Value="@selectedMake" ValueChanged="OnMakeChanged" ValueExpression="() => selectedMake" Variant="Variant.Outlined" FullWidth="true" Class="custom-select">
-
-                                                    @*  <MudSelect T="string" Label="Make" ValueChanged="OnMakeChanged" Variant="Variant.Outlined" @bind-SelectedValue="selectedMake" FullWidth="true" Class="custom-select">
-                                                *@     @foreach (var ber in Make)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedMaterials"
-                                                AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Material">
-                                                    @if (MaterialData != null)
-                                                    {
-                                                        @foreach (var location in MaterialData.OrderBy(l => l.MaterialName))
-                                                        {
-                                                            <MudSelectItem Value="@location.MaterialName">@location.MaterialName</MudSelectItem>
-                                                        }
-                                                    }
-                                                </MudSelect>
-
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedOthers"
-                                                AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Other">
-                                                    @if (OtherData != null)
-                                                    {
-                                                        @foreach (var location in OtherData.OrderBy(l => l.OtherName))
-                                                        {
-                                                            <MudSelectItem Value="@location.OtherName">@location.OtherName</MudSelectItem>
-                                                        }
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField Label="Rotor Dia."
-                                                @bind-Value="inspection.RotorsDia"
-                                                FullWidth="true"
-                                                Variant="Variant.Outlined"
-                                                InputClass="text-right" />
-                                            </MudItem>
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="2">
-
-
-                                            <MudItem md="3" xs="12">
-                                                <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRotorsStyle"
-                                                AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedRotorsStyle" Label="Rotor Style">
-                                                    @if (rotorsStyle != null)
-                                                    {
-                                                        @foreach (var location in rotorsStyle.OrderBy(l => l.RotorsStyleName))
-                                                        {
-                                                            <MudSelectItem Value="@location.RotorsStyleName">@location.RotorsStyleName</MudSelectItem>
-                                                        }
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect Variant="Variant.Outlined" ValueExpression="() => SelectedType" @bind-Value="SelectedType"
-                                                AnchorOrigin="Origin.BottomCenter" Label="Type">
-                                                    @if (typeData != null)
-                                                    {
-                                                        @foreach (var location in typeData.OrderBy(l => l.TypeName))
-                                                        {
-                                                            <MudSelectItem Value="@location.TypeName">@location.TypeName</MudSelectItem>
-                                                        }
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-
-
-                                                <MudSelect T="string" Label="Bearing Removed" Value="selectedberrem" ValueExpression="() => selectedberrem" Variant="Variant.Outlined" ValueChanged="OnbearremoveChanged" FullWidth="true">
-                                                    @foreach (var ber in berrem)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Bearings" Value="selectedBearings" ValueExpression="() => selectedBearings" Variant="Variant.Outlined" ValueChanged="OnbearChanged" FullWidth="true">
-                                                    @foreach (var bearing in Bearings)
-                                                    {
-                                                        <MudSelectItem Value="@bearing">@bearing</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-                                        </MudGrid>
-
-                                        <MudGrid Justify="Justify.FlexStart" Spacing="3">
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect @ref="mudSelectMetal" T="string" ValueChanged="OnbearingselasChanged" Label="Bearing Seals" @bind-Values="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
-                                                    @foreach (var bearseal in BearSeals)
-                                                    {
-                                                        <MudSelectItem Value="@bearseal"/>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect @ref="mudSelect"  T="string" ValueChanged="OnbearcerChanged"
-                                                Label="Ceramic Seals"
-                                                @bind-Values="selectedCerSeals"
-                                                MultiSelection="true"
-                                                Variant="Variant.Outlined"
-                                                FullWidth="true">
-                                                    @foreach (var cerseal in CerSeals)
-                                                    {
-                                                        <MudSelectItem Value="@cerseal" />
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Bearing Journal Dia (Left)" Value="selectedLR" ValueExpression="() => selectedLR" Variant="Variant.Outlined" ValueChanged="OnlrChanged" FullWidth="true">
-                                                    @foreach (var rl in LR)
-                                                    {
-                                                        <MudSelectItem Value="@rl">@rl</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-
-                                                @*    <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
-                                           *@  </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
-                                            </MudItem>
-                                        </MudGrid>
-
-                                        <MudGrid>
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Bearing Journal Dia (Right)" Value="selectedRL" ValueExpression="() => selectedRL" Variant="Variant.Outlined" ValueChanged="OnrlChanged" FullWidth="true">
-                                                    @foreach (var rl in RL)
-                                                    {
-                                                        <MudSelectItem Value="@rl">@rl</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudTextField @bind-Value="inspection.yRight" Variant="Variant.Outlined" FullWidth="true" />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Basic Sharpening" Value="selectedbs" ValueExpression="() => selectedbs" Variant="Variant.Outlined" ValueChanged="OnbasicsharpChanged" FullWidth="true">
-                                                    @foreach (var ber in bs)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" ValueExpression="() => selectedybasicsharp"
-                                                Value="selectedybasicsharp" Variant="Variant.Outlined"
-                                                ValueChanged="OnybasicsharpChanged"
-                                                FullWidth="true"
-                                                Class="custom-select">
-                                                    @foreach (var ber in ybasicsharp)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="2">
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Wedgelock Alignment Marks; Present" Variant="Variant.Outlined" Value="selectedpre" ValueExpression="() => selectedpre" ValueChanged="OnpresentChanged" FullWidth="true">
-                                                    @foreach (var ber in pre)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Aligned" Variant="Variant.Outlined" Value="selectedalign" ValueExpression="() => selectedalign" ValueChanged="OnalignChanged" FullWidth="true">
-                                                    @foreach (var ber in align)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Center Grinding" Variant="Variant.Outlined" Value="selectedctr" ValueExpression="() => selectedctr" ValueChanged="OncgChanged" FullWidth="true">
-                                                    @foreach (var ber in ctr)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-
-                                            </MudItem>
-
-
-                                            @if (selectedctr == "Yes")
-                                            {
                                                 <MudItem xs="12" md="3">
-                                                    <MudSelect T="string"
-                                                    Value="selectedycg" Label="Center Grinding Detail"
-                                                    ValueChanged="OnycgChanged" ValueExpression="() => selectedycg"
-                                                    FullWidth="true" Variant="Variant.Outlined"
-                                                    Class="custom-select">
-                                                        @foreach (var ber in ycg)
+                                                    <MudTextField Label="Customer" @bind-Value="inspection.Customer" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Location" @bind-Value="inspection.Location" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Inspected Date" @bind-Value="inspection.Received" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Inspected by" @bind-Value="inspection.Inspected" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+                                            <MudGrid>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Rotors Serial Number" @bind-Value="inspection.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" Class="custom-textfield" Required="true" />
+                                                </MudItem>
+
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Dia" @bind-Value="inspection.Dia" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Len" @bind-Value="inspection.Len" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Flts" @bind-Value="inspection.Fits" FullWidth="true" Class="custom-textfield" Variant="Variant.Outlined" />
+                                                </MudItem>
+
+
+                                            </MudGrid>
+                                            <MudGrid Justify="Justify.FlexStart" Spacing="2">
+
+                                                <MudItem xs="12" md="3">
+
+                                                    <MudSelect T="string" Label="Make" Value="@selectedMake" ValueChanged="OnMakeChanged" ValueExpression="() => selectedMake" Variant="Variant.Outlined" FullWidth="true" Class="custom-select">
+
+                                                        @*  <MudSelect T="string" Label="Make" ValueChanged="OnMakeChanged" Variant="Variant.Outlined" @bind-SelectedValue="selectedMake" FullWidth="true" Class="custom-select">
+                                                *@     @foreach (var ber in Make)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
                                                         }
                                                     </MudSelect>
                                                 </MudItem>
-                                            }
-
-                                        </MudGrid>
-                                        <MudGrid Spacing="2">
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Plastic Sleeves" Variant="Variant.Outlined" Value="selectedps" ValueExpression="() => selectedps" ValueChanged="OnpsChanged" FullWidth="true">
-                                                    @foreach (var ber in ps)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Welding" Variant="Variant.Outlined" Value="selectedwelding" ValueExpression="() => selectedwelding" ValueChanged="OnwelChanged" FullWidth="true">
-                                                    @foreach (var ber in welding)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-
-                                            </MudItem>
 
 
-                                            @if (selectedwelding == "Yes")
-                                            {
                                                 <MudItem xs="12" md="3">
-                                                    <MudNumericField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" />
+
+                                                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedMaterials"
+                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Material">
+                                                        @if (MaterialData != null)
+                                                        {
+                                                            @foreach (var location in MaterialData.OrderBy(l => l.MaterialName))
+                                                            {
+                                                                <MudSelectItem Value="@location.MaterialName">@location.MaterialName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect>
 
                                                 </MudItem>
-
                                                 <MudItem xs="12" md="3">
-                                                    <MudTextField Label="Welding Comments"
-                                                    @bind-Value="inspection.Initials"
+
+                                                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedOthers"
+                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Other">
+                                                        @if (OtherData != null)
+                                                        {
+                                                            @foreach (var location in OtherData.OrderBy(l => l.OtherName))
+                                                            {
+                                                                <MudSelectItem Value="@location.OtherName">@location.OtherName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField Label="Rotor Dia."
+                                                    @bind-Value="inspection.RotorsDia"
                                                     FullWidth="true"
                                                     Variant="Variant.Outlined"
                                                     InputClass="text-right" />
                                                 </MudItem>
-                                            }
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Bed Knife in Box" Value="selectebkid" ValueExpression="() => selectebkid" Variant="Variant.Outlined" ValueChanged="OnbkbChanged" FullWidth="true">
-                                                    @foreach (var ber in bkid)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="2">
 
 
-                                        </MudGrid>
-
-                                        <MudGrid Spacing="2">
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Re-Profile" ValueChanged="OnrpChanged" Variant="Variant.Outlined" Value="selectedrp" ValueExpression="() => selectedrp" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in rp)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect T="string" Label="Manual Labor" ValueChanged="OnManualLabourhanged" Variant="Variant.Outlined" Value="selectedManualLabour" ValueExpression="() => selectedManualLabour" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in ManualLabour)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <!-- Third Column -->
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect T="string" Label="Replace Blades" ValueChanged="OnRBChanged" Variant="Variant.Outlined" Value="selectedRB" ValueExpression="() => selectedRB" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in RB)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                            @if (selectedRB == "Yes")
-                                            {
-                                                <MudItem xs="12" md="3">
-                                                    <MudNumericField Label="QTY" @bind-Value="inspection.ADDQTYdata" Variant="Variant.Outlined" FullWidth="true" />
-                                                </MudItem>
-                                            }
-
-
-                                        </MudGrid>
-
-
-                                        <MudGrid>
-                                            <!-- First Row -->
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Box Received with Saddles (Down)" Variant="Variant.Outlined" ValueChanged="OnbtChanged" Value="selectedbt" ValueExpression="() => selectedbt" FullWidth="true">
-                                                    @foreach (var ber in bt)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Box Received with Saddles (Top)" Variant="Variant.Outlined" Value="selectedtb" ValueExpression="() => selectedtb" FullWidth="true" ValueChanged="OntbChanged">
-                                                    @foreach (var ber in tb)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <!-- Second Row -->
-                                            <MudItem xs="12" md="3">
-                                                <MudNumericField Label="Add QTY" @bind-Value="inspection.AddQty" Variant="Variant.Outlined" FullWidth="true" />
-                                            </MudItem>
-
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
-                                                AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
-                                                    @if (SaddleData != null)
-                                                    {
-                                                        @foreach (var location in SaddleData.OrderBy(l => l.SaddlePartNumberName))
+                                                <MudItem md="3" xs="12">
+                                                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRotorsStyle"
+                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedRotorsStyle" Label="Rotor Style">
+                                                        @if (rotorsStyle != null)
                                                         {
-                                                            <MudSelectItem Value="@location.SaddlePartNumberName">@location.SaddlePartNumberName</MudSelectItem>
+                                                            @foreach (var location in rotorsStyle.OrderBy(l => l.RotorsStyleName))
+                                                            {
+                                                                <MudSelectItem Value="@location.RotorsStyleName">@location.RotorsStyleName</MudSelectItem>
+                                                            }
                                                         }
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-
-
-                                        </MudGrid>
-
-
-                                        <MudGrid>
-
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label=" Rotor Categorize " ValueChanged="OnddrcChanged" Variant="Variant.Outlined" Value="selectedddrc" ValueExpression="() => selectedddrc" FullWidth="true" Class="custom-select" Required="true">
-                                                    @foreach (var ber in ddrc)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                            <MudItem xs="12" md="3">
-                                                <MudSelect T="string" Label="Sub Module" Value="selecteddd" ValueExpression="() => selecteddd" Variant="Variant.Outlined" FullWidth="true" ValueChanged="OnddChanged" Class="custom-select" Required="true">
-                                                    @foreach (var ber in dd)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-                                                </MudSelect>
-                                            </MudItem>
-
-                                            <!-- Third Column -->
-                                            <MudItem xs="12" md="3">
-
-                                                <MudSelect T="string" Label="New Box Required" ValueChanged="OnNewBoxChanged" Variant="Variant.Outlined" Value="selectedNewBoxRequiredBox" ValueExpression="() => selectedNewBoxRequiredBox" FullWidth="true" Class="custom-select">
-                                                    @foreach (var ber in NewBoxRequiredBox)
-                                                    {
-                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
-                                                    }
-
-                                                </MudSelect>
-                                            </MudItem>
-
-
-                                            @if (selectedNewBoxRequiredBox == "Yes")
-                                            {
-                                                <MudItem xs="12" md="3">
-                                                    <MudNumericField Label="New Box Required Number" @bind-Value="inspection.NewBoxRequiredBox" Variant="Variant.Outlined" FullWidth="true" />
+                                                    </MudSelect>
                                                 </MudItem>
-                                            }
 
-                                        </MudGrid>
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect Variant="Variant.Outlined" ValueExpression="() => SelectedType" @bind-Value="SelectedType"
+                                                    AnchorOrigin="Origin.BottomCenter" Label="Type">
+                                                        @if (typeData != null)
+                                                        {
+                                                            @foreach (var location in typeData.OrderBy(l => l.TypeName))
+                                                            {
+                                                                <MudSelectItem Value="@location.TypeName">@location.TypeName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
 
-                                        <!-- 📷 Image Attachment Section -->
-                                        <MudGrid Class="full-width-grid">
-                                            <MudItem xs="12" style="text-align: center; width: 100%;">
-                                                <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
-                                                    <div style="border: 2px dotted gray; padding: 10px; text-align: center; width: 250px; height: auto">
-                                                        <p>Add images</p>
+                                                <MudItem xs="12" md="3">
 
-                                                        <!-- Add Button -->
-                                                        <MudItem>
-                                                            <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@(async () => await AddProjectImagesAsync(new ProjectImgDTO {
+
+                                                    <MudSelect T="string" Label="Bearing Removed" Value="selectedberrem" ValueExpression="() => selectedberrem" Variant="Variant.Outlined" ValueChanged="OnbearremoveChanged" FullWidth="true">
+                                                        @foreach (var ber in berrem)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Bearings" Value="selectedBearings" ValueExpression="() => selectedBearings" Variant="Variant.Outlined" ValueChanged="OnbearChanged" FullWidth="true">
+                                                        @foreach (var bearing in Bearings)
+                                                        {
+                                                            <MudSelectItem Value="@bearing">@bearing</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                            </MudGrid>
+
+                                            <MudGrid Justify="Justify.FlexStart" Spacing="3">
+
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect @ref="mudSelectMetal" T="string" ValueChanged="OnbearingselasChanged" Label="Bearing Seals" @bind-Values="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
+                                                        @foreach (var bearseal in BearSeals)
+                                                        {
+                                                            <MudSelectItem Value="@bearseal"/>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect @ref="mudSelect"  T="string" ValueChanged="OnbearcerChanged"
+                                                    Label="Ceramic Seals"
+                                                    @bind-Values="selectedCerSeals"
+                                                    MultiSelection="true"
+                                                    Variant="Variant.Outlined"
+                                                    FullWidth="true">
+                                                        @foreach (var cerseal in CerSeals)
+                                                        {
+                                                            <MudSelectItem Value="@cerseal" />
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Basic Sharpening" Value="selectedbs" ValueExpression="() => selectedbs" Variant="Variant.Outlined" ValueChanged="OnbasicsharpChanged" FullWidth="true">
+                                                        @foreach (var ber in bs)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" ValueExpression="() => selectedybasicsharp"
+                                                    Value="selectedybasicsharp" Variant="Variant.Outlined"
+                                                    ValueChanged="OnybasicsharpChanged"
+                                                    FullWidth="true"
+                                                    Class="custom-select">
+                                                        @foreach (var ber in ybasicsharp)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Bearing Journal Dia (Left)" Value="selectedLR" ValueExpression="() => selectedLR" Variant="Variant.Outlined" ValueChanged="OnlrChanged" FullWidth="true">
+                                                        @foreach (var rl in LR)
+                                                        {
+                                                            <MudSelectItem Value="@rl">@rl</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+
+                                                    @*    <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
+                                           *@  </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Bearing Journal Dia (Right)" Value="selectedRL" ValueExpression="() => selectedRL" Variant="Variant.Outlined" ValueChanged="OnrlChanged" FullWidth="true">
+                                                        @foreach (var rl in RL)
+                                                        {
+                                                            <MudSelectItem Value="@rl">@rl</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudTextField @bind-Value="inspection.yRight" Variant="Variant.Outlined" FullWidth="true" />
+                                                </MudItem>
+
+
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="2">
+
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Wedgelock Alignment Marks; Present" Variant="Variant.Outlined" Value="selectedpre" ValueExpression="() => selectedpre" ValueChanged="OnpresentChanged" FullWidth="true">
+                                                        @foreach (var ber in pre)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Aligned" Variant="Variant.Outlined" Value="selectedalign" ValueExpression="() => selectedalign" ValueChanged="OnalignChanged" FullWidth="true">
+                                                        @foreach (var ber in align)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Center Grinding" Variant="Variant.Outlined" Value="selectedctr" ValueExpression="() => selectedctr" ValueChanged="OncgChanged" FullWidth="true">
+                                                        @foreach (var ber in ctr)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+
+                                                </MudItem>
+
+
+                                                @if (selectedctr == "Yes")
+                                                {
+                                                    <MudItem xs="12" md="3">
+                                                        <MudSelect T="string"
+                                                        Value="selectedycg" Label="Center Grinding Detail"
+                                                        ValueChanged="OnycgChanged" ValueExpression="() => selectedycg"
+                                                        FullWidth="true" Variant="Variant.Outlined"
+                                                        Class="custom-select">
+                                                            @foreach (var ber in ycg)
+                                                            {
+                                                                <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                            }
+                                                        </MudSelect>
+                                                    </MudItem>
+                                                }
+
+                                            </MudGrid>
+                                            <MudGrid Spacing="2">
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Plastic Sleeves" Variant="Variant.Outlined" Value="selectedps" ValueExpression="() => selectedps" ValueChanged="OnpsChanged" FullWidth="true">
+                                                        @foreach (var ber in ps)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Welding" Variant="Variant.Outlined" Value="selectedwelding" ValueExpression="() => selectedwelding" ValueChanged="OnwelChanged" FullWidth="true">
+                                                        @foreach (var ber in welding)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+                                                </MudItem>
+
+
+                                                @if (selectedwelding == "Yes")
+                                                {
+                                                    <MudItem xs="12" md="3">
+                                                        <MudNumericField Label="No. Of Welding" @bind-Value="inspection.WeldingNum" Variant="Variant.Outlined" FullWidth="true" />
+
+                                                    </MudItem>
+
+                                                    <MudItem xs="12" md="3">
+                                                        <MudTextField Label="Welding Comments"
+                                                        @bind-Value="inspection.Initials"
+                                                        FullWidth="true"
+                                                        Variant="Variant.Outlined"
+                                                        InputClass="text-right" />
+                                                    </MudItem>
+                                                }
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Bed Knife in Box" Value="selectebkid" ValueExpression="() => selectebkid" Variant="Variant.Outlined" ValueChanged="OnbkbChanged" FullWidth="true">
+                                                        @foreach (var ber in bkid)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="2">
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Re-Profile" ValueChanged="OnrpChanged" Variant="Variant.Outlined" Value="selectedrp" ValueExpression="() => selectedrp" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in rp)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+
+                                                    <MudSelect T="string" Label="Manual Labor" ValueChanged="OnManualLabourhanged" Variant="Variant.Outlined" Value="selectedManualLabour" ValueExpression="() => selectedManualLabour" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in ManualLabour)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <!-- Third Column -->
+                                                <MudItem xs="12" md="3">
+
+                                                    <MudSelect T="string" Label="Replace Blades" ValueChanged="OnRBChanged" Variant="Variant.Outlined" Value="selectedRB" ValueExpression="() => selectedRB" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in RB)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                                @if (selectedRB == "Yes")
+                                                {
+                                                    <MudItem xs="12" md="3">
+                                                        <MudNumericField Label="QTY" @bind-Value="inspection.ADDQTYdata" Variant="Variant.Outlined" FullWidth="true" />
+                                                    </MudItem>
+                                                }
+
+
+                                            </MudGrid>
+
+
+                                            <MudGrid>
+                                                <!-- First Row -->
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Box Received with Saddles (Bottom)" Variant="Variant.Outlined" ValueChanged="OnbtChanged" Value="selectedbt" ValueExpression="() => selectedbt" FullWidth="true">
+                                                        @foreach (var ber in bt)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Box Received with Saddles (Top)" Variant="Variant.Outlined" Value="selectedtb" ValueExpression="() => selectedtb" FullWidth="true" ValueChanged="OntbChanged">
+                                                        @foreach (var ber in tb)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <!-- Second Row -->
+                                                <MudItem xs="12" md="3">
+                                                    <MudNumericField Label="Add QTY" @bind-Value="inspection.AddQty" Variant="Variant.Outlined" FullWidth="true" />
+                                                </MudItem>
+
+                                                <MudItem xs="12" md="3">
+
+                                                    <MudSelect Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
+                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
+                                                        @if (SaddleData != null)
+                                                        {
+                                                            @foreach (var location in SaddleData.OrderBy(l => l.SaddlePartNumberName))
+                                                            {
+                                                                <MudSelectItem Value="@location.SaddlePartNumberName">@location.SaddlePartNumberName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+
+                                            </MudGrid>
+
+
+                                            <MudGrid>
+
+
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label=" Rotor Categorize " ValueChanged="OnddrcChanged" Variant="Variant.Outlined" Value="selectedddrc" ValueExpression="() => selectedddrc" FullWidth="true" Class="custom-select" Required="true">
+                                                        @foreach (var ber in ddrc)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                                <MudItem xs="12" md="3">
+                                                    <MudSelect T="string" Label="Sub Module" Value="selecteddd" ValueExpression="() => selecteddd" Variant="Variant.Outlined" FullWidth="true" ValueChanged="OnddChanged" Class="custom-select" Required="true">
+                                                        @foreach (var ber in dd)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+
+                                                <!-- Third Column -->
+                                                <MudItem xs="12" md="3">
+
+                                                    <MudSelect T="string" Label="New Box Required" ValueChanged="OnNewBoxChanged" Variant="Variant.Outlined" Value="selectedNewBoxRequiredBox" ValueExpression="() => selectedNewBoxRequiredBox" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in NewBoxRequiredBox)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
+                                                </MudItem>
+
+
+                                                @if (selectedNewBoxRequiredBox == "Yes")
+                                                {
+                                                    @*   <MudItem xs="12" md="3">
+                                                    <MudNumericField Label="New Box Required Number" @bind-Value="inspection.NewBoxRequiredBox" Variant="Variant.Outlined" FullWidth="true" />
+                                                </MudItem> *@
+
+                                                    <MudItem xs="12" md="3">
+
+                                                        <MudSelect Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
+                                                        AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
+                                                            @if (NewBoxRequiredNumberData != null)
+                                                            {
+                                                                @foreach (var location in NewBoxRequiredNumberData.OrderBy(l => l.NewBoxRequiredNumberName))
+                                                                {
+                                                                    <MudSelectItem Value="@location.NewBoxRequiredNumberName">@location.NewBoxRequiredNumberName</MudSelectItem>
+                                                                }
+                                                            }
+                                                        </MudSelect>
+                                                    </MudItem>
+
+                                                }
+
+                                            </MudGrid>
+
+                                            <!-- 📷 Image Attachment Section -->
+                                            <MudGrid Class="full-width-grid">
+                                                <MudItem xs="12" style="text-align: center; width: 100%;">
+                                                    <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center">
+                                                        <div style="border: 2px dotted gray; padding: 10px; text-align: center; width: 250px; height: auto">
+                                                            <p>Add images</p>
+
+                                                            <!-- Add Button -->
+                                                            <MudItem>
+                                                                <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" OnClick="@(async () => await AddProjectImagesAsync(new ProjectImgDTO {
                         SerialNumber = SelectedProject
                     }))">
-                                                                Add
-                                                            </MudButton>
-                                                        </MudItem>
+                                                                    Add
+                                                                </MudButton>
+                                                            </MudItem>
 
-                                                        <!-- Image Preview -->
-                                                        @if (selectedImagesFromSM.Any())
-                                                        {
-                                                            <div style="margin-top:10px;">
-                                                                <p><b>Total Images:</b> @selectedImagesFromSM.SelectMany(x => x.Images).Count()</p>
-                                                                <!-- You can show the images here too -->
-                                                            </div>
-                                                        }
+                                                            <!-- Image Preview -->
+                                                            @if (selectedImagesFromSM.Any())
+                                                            {
+                                                                <div style="margin-top:10px;">
+                                                                    <p><b>Total Images:</b> @selectedImagesFromSM.SelectMany(x => x.Images).Count()</p>
+                                                                    <!-- You can show the images here too -->
+                                                                </div>
+                                                            }
 
 
-                                                    </div>
+                                                        </div>
+                                                    </MudItem>
+
+
                                                 </MudItem>
+                                            </MudGrid>
 
-
+                                            <MudItem xs="12" Class="d-flex justify-center mt-4" style=" gap: 10px;">
+                                                <MudButton Class="mr-2" OnClick="OpenPreviewDialogBox" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled">Preview</MudButton>
+                                                <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+                                                <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="Save">SAVE</MudButton>
+                                                <MudButton Class="mr-2" OnClick="SubmitForm" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Submit</MudButton>
                                             </MudItem>
                                         </MudGrid>
 
-                                        <MudItem xs="12" Class="d-flex justify-center mt-4" style=" gap: 10px;">
-                                            <MudButton Class="mr-2" OnClick="OpenPreviewDialogBox" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled">Preview</MudButton>
-                                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
-                                            <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="Save">SAVE</MudButton>
-                                            <MudButton Class="mr-2" OnClick="SubmitForm" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Submit</MudButton>
-                                        </MudItem>
-                                    </MudGrid>
+                                    </MudForm>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                        else
+                        {
 
-                                </MudForm>
-                            </MudCardContent>
-                        </MudCard>
-                    }
-                    else
-                    {
+                            <MudText Typo="Typo.h6" Color="Color.Error">This serial number already exists. Please check in Sales.</MudText>
 
-                        <MudText Typo="Typo.h6" Color="Color.Error">This serial number already exists. Please check in Sales.</MudText>
+                        }
 
-                    }
-
-                </div>
-            }
-            else if (cameraError)
-            {
-                <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
-            }
-        </MudItem>
+                    </div>
+                }
+                else if (cameraError)
+                {
+                    <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+                }
+            </MudItem>
 
         }
     </MudGrid>
@@ -707,6 +724,7 @@
     private List<Receiving> Receivealldata = new();
     private List<RotorsStyle>? rotorsStyle { get; set; } = new List<RotorsStyle>();
     private List<Typesdetails>? typeData { get; set; } = new List<Typesdetails>();
+    private List<NewBoxRequiredNumber>? NewBoxRequiredNumberData { get; set; } = new List<NewBoxRequiredNumber>();
     private List<Materials>? MaterialData { get; set; } = new List<Materials>();
     private List<Other>? OtherData { get; set; } = new List<Other>();
     private List<SaddlepartNumber>? SaddleData { get; set; } = new List<SaddlepartNumber>();
@@ -717,6 +735,7 @@
     private string? SelectedMaterials { get; set; }
     private string? SelectedOthers { get; set; }
     private string? SelectedSaddlePartNumber { get; set; }
+    private string? SelectedNewBoxRequiredNumberData { get; set; }
     private string currentuser;
     private Receiving? hoveredReceive;
     private bool showContent = false;
@@ -765,6 +784,19 @@
             if (locationResult != null)
             {
                 typeData = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+
+        }
+
+        var NewBoxRequiredNumberResponse = await HttpClient.GetAsync(ApiConstants.GetNewBoxRequiredNumber);
+
+        if (NewBoxRequiredNumberResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await NewBoxRequiredNumberResponse.Content.ReadFromJsonAsync<List<NewBoxRequiredNumber>>();
+
+            if (locationResult != null)
+            {
+                NewBoxRequiredNumberData = locationResult.OrderByDescending(l => l.Id).ToList();
             }
 
         }
@@ -879,7 +911,7 @@
                 SelectedSaddlePartNumber = response.SaddlePartNumber;
                 selectedddrc = response.RotorCategorization;
                 selecteddd = response.ComponentType;
-                 showForm = true;
+                showForm = true;
 
                 ProjectimagesData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
 
@@ -991,7 +1023,8 @@
     private List<string> Make = new()
     {
         "MAAG",
-        "Other"
+        "Other",
+        ""
     };
 
     private string selectedMake { get; set; } = "";
@@ -999,7 +1032,8 @@
     private List<string> ManualLabour = new()
     {
         "1 hr",
-        "2 hr"
+        "2 hr",
+        ""
     };
 
     private string selectedManualLabour { get; set; } = "";
@@ -1016,7 +1050,8 @@
     private List<string> ybasicsharp = new()
     {
         "Extra",
-        "Match"
+        "Match",
+        ""
 
     };
 
@@ -1037,7 +1072,8 @@
     private List<string> berrem = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1047,7 +1083,8 @@
     private List<string> bs = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1056,7 +1093,8 @@
     private List<string> NewBoxRequiredBox = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1065,7 +1103,8 @@
     private List<string> pre = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1074,7 +1113,8 @@
     private List<string> ctr = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1084,7 +1124,8 @@
     {
         "Left",
         "Right",
-        "Both"
+        "Both",
+        ""
 
     };
 
@@ -1093,7 +1134,8 @@
     private List<string> rp = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1102,7 +1144,8 @@
     private List<string> sb = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1111,7 +1154,8 @@
     private List<string> align = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1120,7 +1164,8 @@
     private List<string> ps = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1129,7 +1174,8 @@
     private List<string> welding = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1138,7 +1184,8 @@
     private List<string> bkid = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1147,7 +1194,8 @@
     private List<string> RB = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1157,7 +1205,8 @@
     {
         "Yes",
         "No",
-        "N/A"
+        "N/A",
+        ""
 
     };
 
@@ -1167,7 +1216,8 @@
     {
         "Yes",
         "No",
-        "N/A"
+        "N/A",
+        ""
 
     };
 
@@ -1176,7 +1226,8 @@
     private List<string> Bearings = new()
     {
         "Replace",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -1185,7 +1236,8 @@
     private List<string> RL = new()
     {
         "Okay",
-        "Repair"
+        "Repair",
+        ""
 
     };
 
@@ -1194,7 +1246,8 @@
     private List<string> LR = new()
     {
         "Okay",
-        "Repair"
+        "Repair",
+        ""
 
     };
 
@@ -1208,6 +1261,7 @@
         "Replace Inner x2",
         "Replace Outer x1",
         "Replace Outer x2",
+
 
     };
 
@@ -1499,7 +1553,7 @@
                     CenterGrinding = selectedctr,
                     IfYCenterGrinding = selectedycg,
                     ADDQTYdata = inspection.ADDQTYdata,
-                    NewBoxRequiredBox = inspection.NewBoxRequiredBox,
+                    NewBoxRequiredBox = SelectedNewBoxRequiredNumberData,
                     NewBoxRequired = selectedNewBoxRequiredBox,
 
                     Aligned = selectedalign,
@@ -1664,7 +1718,7 @@
                 CenterGrinding = selectedctr,
                 IfYCenterGrinding = selectedycg,
                 ADDQTYdata = inspection.ADDQTYdata,
-                NewBoxRequiredBox = inspection.NewBoxRequiredBox,
+                NewBoxRequiredBox = SelectedNewBoxRequiredNumberData,
                 NewBoxRequired = selectedNewBoxRequiredBox,
                 Aligned = selectedalign,
                 PlasticSleaves = selectedps,
@@ -1866,6 +1920,7 @@
                         selectedRL = response.Right;
                         inspection.yRight = response.yLeft;
                         selectedbs = response.BasicSharpening;
+                        SelectedNewBoxRequiredNumberData = response.NewBoxRequiredBox;
                         selectedybasicsharp = response.IfYBasicSharpening;
                         selectedpre = response.WedgelockAlignmentMarks;
                         selectedctr = response.CenterGrinding;
@@ -2022,7 +2077,7 @@
                 ["selectedManualLabour"] = selectedManualLabour,
                 ["selectedMake"] = selectedMake,
                 ["SelectedBearSeals"] = string.Join(", ", selectedBearSeals ?? new List<string>()),
-            //  ["SelectedBearSeals"] = selectedBearSeals,
+              ["SelectedNewBoxRequiredNumberData"] = SelectedNewBoxRequiredNumberData,
                 ["SelectedCerSeals"] = string.Join(", ", selectedCerSeals ?? new List<string>()),
                 ["SelectedRL"] = selectedRL,
                 ["SelectedLR"] = selectedLR,

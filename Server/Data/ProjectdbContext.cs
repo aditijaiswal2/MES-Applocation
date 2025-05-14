@@ -41,6 +41,7 @@ namespace MES.Server.Data
         public DbSet<Other> Others { get; set; }
         public DbSet<Materials> Material { get; set; }
         public DbSet<SaddlepartNumber> saddlepartNumbers { get; set; }
+        public DbSet<NewBoxRequiredNumber> NewBoxRequiredNumbers { get; set; }
         public DbSet<RotorSalesSavedData> RotorSalesSavedData { get; set; }
         public DbSet<RotorsFinalInspection> RotorsFinalInspections { get; set; }
 

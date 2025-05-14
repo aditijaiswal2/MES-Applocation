@@ -19,51 +19,37 @@
     var styles = `
     <style>
         body, * {
-            font-family: Arial, sans-serif !important;
-            font-size: 16px !important;
+             font-family: Arial, sans-serif !important;
+            font-size: 18px !important;
             background-color: white;
             color: black;
-            margin: 0;
+            margin: 2px;
             padding: 0;
-            box-sizing: border-box;
+
         }
 
         .mud-grid {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 12px;
-            width: 100% !important;
-        }
-
-        #printForm-section {
-            width: 100%;
-        }
-
-        @media print {
-            @page {
-                margin: 10mm;
-            }
-
-            .mud-grid, .full-width-grid {
-                display: flex !important;
-                flex-wrap: wrap !important;
-                width: 100% !important;
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important; /* Change to 4 columns */
+                gap: 12px;
             }
 
             .mud-item {
-                flex: 1 1 25%;
+                padding: 4px;
+                box-sizing: border-box;
             }
+
 
             table {
                 margin: 0 auto !important; /* Center the table */
-                border-collapse: collapse;
-                width: auto !important; /* Optional: keep table to content width */
+                border-collapse: collapse;              
             }
 
             th, td {
                 padding: 8px 12px;
                 border: 1px solid #000;
                 text-align: center;
+                  white-space: nowrap;                
             }
         }
     </style>

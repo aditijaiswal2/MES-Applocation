@@ -1,0 +1,95 @@
+﻿@page "/asr"
+@using MES.Shared.Models
+@using MES.Client.Utitlity
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+
+<MudContainer Fixed="true">
+    <MudGrid Class="d-flex">
+      
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
+                <div class="table-container">
+                    <MudTable Items="@iTSLocations" Class="table table-bordered table-striped">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh Style="text-align:center">Report Number</MudTh>
+                            <MudTh Style="text-align:center">Customer</MudTh>
+                            <MudTh Style="text-align:center">Rotors/Feed rolls Number</MudTh>
+                            <MudTh Style="text-align:center">Type</MudTh>
+                            <MudTh Style="text-align:center">Current Location</MudTh>
+                            <MudTh Style="text-align:center">Received Date</MudTh>
+                            <MudTh Style="text-align:center">Days in Plant</MudTh>
+                        </HeaderContent>
+
+                        <RowTemplate>
+                            <MudTd Style="text-align:center">@context.SerialNumber</MudTd>
+                            <MudTd Style="text-align:center">@context.Customer</MudTd>
+                            <MudTd Style="text-align:center"></MudTd>
+                            <MudTd Style="text-align:center"></MudTd>
+                            <MudTd Style="text-align:center"></MudTd>
+                            <MudTd Style="text-align:center">@context.Date</MudTd>
+                            <MudTd Style="text-align:center">@((DateTime.Now - context.Date).Days)</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code{
+    private IEnumerable<Receiving> iTSLocations = new List<Receiving>();
+    private string searchString1 = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLocations();
+    }
+
+    private async Task LoadLocations()
+    {
+        Snackbar.Clear();
+
+        try
+        {
+            var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var data = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(json, new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                if (data != null)
+                    iTSLocations = data;
+            }
+            else
+            {
+                Snackbar.Add("Failed to load data. Status Code: " + response.StatusCode, Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error fetching data: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadLocations();
+        }
+    }
+
+}
+                       

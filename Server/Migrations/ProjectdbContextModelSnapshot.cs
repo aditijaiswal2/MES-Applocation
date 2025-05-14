@@ -366,6 +366,27 @@ namespace MES.Server.Migrations
                     b.ToTable("Material");
                 });
 
+            modelBuilder.Entity("MES.Shared.Models.NewBoxRequiredNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequiredNumberName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewBoxRequiredNumbers");
+                });
+
             modelBuilder.Entity("MES.Shared.Models.Other", b =>
                 {
                     b.Property<int>("Id")

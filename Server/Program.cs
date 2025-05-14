@@ -55,6 +55,9 @@ builder.Services.AddTransient<SaddlePartNumberRepository>();
 builder.Services.AddTransient<IMaterialRepository, MaterialRepository>();
 builder.Services.AddTransient<MaterialRepository>();
 
+builder.Services.AddTransient<INewBoxRequiredNumberRepository, NewBoxRequiredNumberRepository>();
+builder.Services.AddTransient<NewBoxRequiredNumberRepository>();
+
 builder.Services.AddTransient<IMESDelayReasonRepository,MESDelayReasonRepository>();
 builder.Services.AddTransient<MESDelayReasonRepository>();
 

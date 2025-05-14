@@ -171,14 +171,12 @@
                 </MudItem>
 
 
-                @if (Selectedbs == "Yes")
-                {
                     <MudItem xs="12" md="3" class="outlined-box pa-2">
 
                         <MudText Typo="Typo.h6" Color="Color.Primary">Basic Sharpening Detail</MudText>
                         <MudText Typo="Typo.body1">@Selectedybasicsharp</MudText>
                     </MudItem>
-                }
+                
 
                 <MudItem xs="12" md="3" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Wedgelock Alignment Marks Present</MudText>
@@ -212,16 +210,22 @@
                 </MudItem>
 
                 <MudItem xs="12" md="3" class="outlined-box pa-2">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">Welding</MudText>
-                    <MudText Typo="Typo.body1">@Selectedwelding</MudText>
-
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Bed Knife in Box</MudText>
+                    <MudText Typo="Typo.body1">@Selectebkid</MudText>
                 </MudItem>
+
+              
 
 
             </MudGrid>
 
             <MudGrid Spacing="2">
 
+                <MudItem xs="12" md="3" class="outlined-box pa-2">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Welding</MudText>
+                    <MudText Typo="Typo.body1">@Selectedwelding</MudText>
+
+                </MudItem>
 
                 @if (Selectedwelding == "Yes")
                 {
@@ -229,13 +233,14 @@
                         <MudText Typo="Typo.h6" Color="Color.Primary">Welding Number</MudText>
                         <MudText Typo="Typo.body1">@InspectionData.WeldingNum</MudText>
                     </MudItem>
+                    <MudItem xs="12" md="3" class="outlined-box pa-2">
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Welding Comments</MudText>
+                        <MudText Typo="Typo.body1">@InspectionData.Initials</MudText>
+                    </MudItem>
                 }
 
 
-                <MudItem xs="12" md="3" class="outlined-box pa-2">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">Bed Knife in Box</MudText>
-                    <MudText Typo="Typo.body1">@Selectebkid</MudText>
-                </MudItem>
+             
 
                 <MudItem xs="12" md="3" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Re-Profile</MudText>
@@ -243,16 +248,14 @@
 
                 </MudItem>
 
-                <MudItem xs="12" md="3" class="outlined-box pa-2">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">Manual Labor</MudText>
-                    <MudText Typo="Typo.body1">@selectedManualLabour</MudText>
-                </MudItem>
-
+               
 
 
 
 
             </MudGrid>
+          
+
 
             <MudGrid Spacing="2">
 
@@ -271,7 +274,7 @@
                 }
 
                 <MudItem xs="12" md="3" class="outlined-box pa-2">
-                    <MudText Typo="Typo.h6" Color="Color.Primary">Box Received with Saddles (Down)</MudText>
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Box Received with Saddles (Bottom)</MudText>
                     <MudText Typo="Typo.body1">@Selectedbt</MudText>
 
                 </MudItem>
@@ -309,16 +312,19 @@
 
             <MudGrid Spacing="2">
 
-
+                <MudItem xs="12" md="3" class="outlined-box pa-2">
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Manual Labor</MudText>
+                    <MudText Typo="Typo.body1">@selectedManualLabour</MudText>
+                </MudItem>
 
                 <MudItem xs="12" md="3" class="outlined-box pa-2">
                     <MudText Typo="Typo.h6" Color="Color.Primary">New Box Required</MudText>
-                    <MudText Typo="Typo.body1">@Selectedddrc</MudText>
+                    <MudText Typo="Typo.body1">@selectedNewBoxRequiredBox</MudText>
                 </MudItem>
 
                 <MudItem xs="12" md="3" class="outlined-box">
                     <MudText Typo="Typo.h6" Color="Color.Primary">New Box Part Number</MudText>
-                    <MudText Typo="Typo.body1">@InspectionData.NewBoxRequiredBox</MudText>
+                    <MudText Typo="Typo.body1">@SelectedNewBoxRequiredNumberData</MudText>
                 </MudItem>
 
             </MudGrid>
@@ -367,6 +373,9 @@
 
     [Parameter]
     public string SelectedMaterial { get; set; }
+    
+    [Parameter]
+    public string SelectedNewBoxRequiredNumberData { get; set; }
     [Parameter]
     public string selectedRB { get; set; }
 
