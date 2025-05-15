@@ -1,0 +1,106 @@
+﻿@using MES.Shared.Models.Rotors
+
+
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using System.Text
+@using static MES.Client.Pages.LoginVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IHttpClientFactory _httpClient
+@inject IDialogCompletionService CompletionService
+@inject IJSRuntime JS;
+
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                Grinding Report
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+
+            @if (rotorShipping != null)
+            {
+                <MudGrid>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Rotor Dia.Left" @bind-Value="rotorShipping.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField Label="Rotor Dia.Right" @bind-Value="rotorShipping.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField Label="Tooth Face Left" @bind-Value="rotorShipping.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField Label="Tooth Face Right" @bind-Value="rotorShipping.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="T.I.R - Centers Left" @bind-Value="rotorShipping.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="T.I.R - Centers Right" @bind-Value="rotorShipping.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Relief Land" @bind-Value="rotorShipping.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Visual Checks" @bind-Value="rotorShipping.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Grinding Start Date" @bind-Value="rotorShipping.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Inspected By" @bind-Value="rotorShipping.InspectedBy" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Notes" @bind-Value="rotorShipping.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Delay Reason Tracking" @bind-Value="rotorShipping.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>               
+
+                    
+
+                </MudGrid>
+
+
+            }
+
+        </DialogContent>
+    </MudDialog>
+</div>
+
+<style>
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
+    }
+
+</style>
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public RotorShipping rotorShipping { get; set; }
+
+
+}

@@ -1,0 +1,225 @@
+﻿@page "/myrvc"
+
+
+@using MES.Client.Dialog
+@using MES.Client.Dialog.Rotors
+@using MES.Client.Dialog.ShipmentImages
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using ReactorBlazorQRCodeScanner
+@using System.Text
+@using static MES.Client.Pages.Rotor_FeedRolls_Service.FinalInspectionVC
+@using static MES.Client.Pages.LoginVC
+
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
+
+
+<MudContainer Fixed="true">
+    <MudGrid Class="d-flex">
+        <MudItem md="12" sm="12" xs="12">
+            <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;margin-top:20px">
+                <div class="table-container">
+                    <MudTable Items="@shippingdata" Class="table table-bordered table-striped"
+                    Filter="new Func<RotorShipping, bool>(FilterFunc1)">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6"></MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
+                            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Report Number</MudTh>
+                            <MudTh Style="text-align:center">Customer Name</MudTh>
+                            <MudTh Style="text-align:center">Module</MudTh>
+                            <MudTh Style="text-align:center">Rotor Number</MudTh>
+                            <MudTh Style="text-align:center">Sales Order Number</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
+                            <MudTh Style="text-align:center;width:150px">Shipped Date</MudTh>
+                            <MudTh Style="text-align:center">Actions</MudTh>
+
+                        </HeaderContent>
+                        <RowTemplate Context="data">
+                            <MudTd>@data.SerialNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.Customer</MudTd>
+                            <MudTd Style="text-align:center">@data.Module</MudTd>
+                            <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.SalesOrderNumber</MudTd>
+                            <MudTd Style="text-align:center">
+                                @{
+                                    var received = combinedModuleData.FirstOrDefault(r => r.SerialNumber == data.SerialNumber);
+                                    if (received != null && received.Date.HasValue)
+                                    {
+                                        @received.Date
+                                    }
+                                }
+                            </MudTd>
+
+                            <MudTd Style="text-align:center">@data.ShipSubmitedByDate</MudTd>
+                              <MudTd Style="text-align:center">
+                                <MudButton StartIcon="@Icons.Material.Filled.Preview" Color="Color.Success" OnClick="@(() => previewdata(data))"> Preview </MudButton>
+                                </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
+                        </PagerContent>
+                    </MudTable>
+                </div>
+            </div>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    private string searchString1 = "";
+    private bool isLoading = false;
+    private string errorMessage = ""; 
+    private IEnumerable<Receiving> receiveModule = new List<Receiving>();
+    private List<RotorShipping> shippingdata = new();
+    private List<NewRotorData> NewRotorData = new();
+    private IEnumerable<CombinedData> combinedModuleData = new List<CombinedData>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchAllInspections();
+        CombineData();
+    }
+
+    private async Task FetchAllInspections()
+    {
+        try
+        {
+            // Fetch rotor sales alredy shipped data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorShipDatasresponse = await HttpClient.GetAsync(ApiConstants.GetAllShippedData);
+            if (rotorShipDatasresponse.IsSuccessStatusCode)
+            {
+                var shipdata = await rotorShipDatasresponse.Content.ReadAsStringAsync();
+                shippingdata = JsonSerializer.Deserialize<List<RotorShipping>>(shipdata,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorShipping>();
+
+
+                //get received page data
+                HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+                var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+                if (response.IsSuccessStatusCode)
+                {
+
+                    var locationResult = await response.Content.ReadFromJsonAsync<IEnumerable<Receiving>>();
+                    if (locationResult != null)
+                    {                       
+                        receiveModule = locationResult.ToList();
+
+                    }
+
+                }
+
+                var NEWDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllNewRotorData);
+
+                if (NEWDatasResponse.IsSuccessStatusCode)
+                {
+                    var NEWDataJson = await NEWDatasResponse.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(NEWDataJson))
+                    {
+                        var Data = System.Text.Json.JsonSerializer.Deserialize<List<NewRotorData>>(NEWDataJson,
+                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<NewRotorData>();
+
+                        var now = DateTime.Now;
+                        NewRotorData = Data.ToList();
+                            
+                            
+
+                    }
+                }
+            }
+
+
+
+
+           
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool FilterFunc1(RotorShipping element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(RotorShipping element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.RotorsNumber.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await FetchAllInspections();
+        }
+    }
+
+    private void CombineData()
+    {
+        combinedModuleData = receiveModule.Select(r => new CombinedData
+            {
+                SerialNumber = r.SerialNumber,
+                Date = r.Date,
+                Customer = r.Customer,
+                SelectedOption = r.SelectedOption,
+
+            })
+        .Union(NewRotorData.Select(nr => new CombinedData
+            {
+                SerialNumber = nr.SerialNumber,
+                Date = nr.NewRotorDataSubmitDate,
+                Customer = nr.CustomerName,
+                SelectedOption = "Rotor",
+
+            }))
+        .ToList();
+    }
+
+    private async Task previewdata(RotorShipping shipping)
+    {
+
+        var parameters = new DialogParameters
+            {
+                ["rotorShipping"] = shipping
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        DialogService.Show<PreviewMyReportAllData>("Rotor Details", parameters, dialogOptions);
+       
+    }
+    public class CombinedData
+    {
+        public string SerialNumber { get; set; }
+        public DateTime? Date { get; set; }
+        public string Customer { get; set; }
+        public string SelectedOption { get; set; }
+
+    }
+
+
+    
+}

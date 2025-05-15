@@ -41,6 +41,7 @@
                             <MudTh Style="text-align:center">Module</MudTh>
                             <MudTh Style="text-align:center">Rotor Number</MudTh>   
                             <MudTh Style="text-align:center">Sales Order Number</MudTh>
+                            <MudTh Style="text-align:center">Shipping Instructions</MudTh>
                             <MudTh Style="text-align:center">Actions</MudTh>
 
                         </HeaderContent>
@@ -50,6 +51,7 @@
                             <MudTd Style="text-align:center">@data.Module</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
                             <MudTd Style="text-align:center">@data.SalesOrderNumber</MudTd>
+                            <MudTd Style="text-align:center">@data.AdditionalWSalesComments</MudTd>
                             <MudTd Style="text-align:center">                        
                                                               
                                 @if (selectedImagesFromSM.Any(x => x.SerialNumber == data.SerialNumber))
@@ -174,54 +176,65 @@
 
     private async Task Shipping(RotorSalesClearance salesClearance)
     {
-        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
-        string useradd = userData?.UserName ?? "User";
-        if (userData != null)
+
+        bool? result = await DialogService.ShowMessageBox(
+             "Shipping Confirmation",
+             "Are you sure you want to ship this data?",
+             "Yes", "No"
+         );
+        if (result == true)
         {
-            useradd = userData.UserName;
-        }
-
-        var submissionData = new ShippingSubmission
+            var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+            string useradd = userData?.UserName ?? "User";
+            if (userData != null)
             {
-                SelectedInspection = salesClearance,
-                SubmitedBy = useradd,
-                SubmitDate = DateTime.Now
-            };
-
-        try
-        {
-            var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
-            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
-            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
-            var response = await HttpClient.PostAsync(ApiConstants.ShipData, content);
-            if (response.IsSuccessStatusCode)
-            {
-                // // save the images
-
-                // var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
-                // var projectjsonData =Newtonsoft.Json.JsonConvert.SerializeObject(ProjectImageData);
-                // var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");               
-                // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddShippingImages, projectimagecontent);
-                // if (projectimageresponse.IsSuccessStatusCode)
-                // {
-                //     await localStorage.RemoveItemAsync("IncomingImageData");                    
-
-                // }
-                Snackbar.Add("Data Shipped successfully!", Severity.Success);               
-                await FetchAllInspections();
-                isSubmitted = true;
-                StateHasChanged();
+                useradd = userData.UserName;
             }
-            else
-            {
-                Snackbar.Add($"Failed to ship the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
 
+            var submissionData = new ShippingSubmission
+                {
+                    SelectedInspection = salesClearance,
+                    SubmitedBy = useradd,
+                    SubmitDate = DateTime.Now
+                };
+
+            try
+            {
+                var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(submissionData);
+                var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+                HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+                var response = await HttpClient.PostAsync(ApiConstants.ShipData, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    // // save the images
+
+                    // var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+                    // var projectjsonData =Newtonsoft.Json.JsonConvert.SerializeObject(ProjectImageData);
+                    // var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+                    // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddShippingImages, projectimagecontent);
+                    // if (projectimageresponse.IsSuccessStatusCode)
+                    // {
+                    //     await localStorage.RemoveItemAsync("IncomingImageData");
+
+                    // }
+                    Snackbar.Add("Data Shipped successfully!", Severity.Success);
+                    await FetchAllInspections();
+                    isSubmitted = true;
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to ship the data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error shipping data: {ex.Message}", Severity.Error);
             }
         }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error shipping data: {ex.Message}", Severity.Error);
-        }
+
+       
     }
 
 

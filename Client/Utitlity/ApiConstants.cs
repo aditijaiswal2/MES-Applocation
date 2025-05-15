@@ -163,10 +163,13 @@
         // Rotor Secondary WorkCenters Submited Data
         public const string AddSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/AddSWData";
         public const string GetAllSWSubmitedData = $"{BaseUrl}/SecondaryWorkCenters/GetAllSWData";
+        public const string GetSWSubmitedDatabyserialno = $"{BaseUrl}/SecondaryWorkCenters/GSW";
 
         // RotorSales Cleareance 
         public const string AddRotorSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/AddRotorSalesClearance";
         public const string GetAllSalesClearanceData = $"{BaseUrl}/RotorSalesClearance/GetAllSalesClearanceData";
+        public const string GetSalesClearanceDataBySLno = $"{BaseUrl}/RotorSalesClearance/GetSCDatabySerialNo";
+
 
         //shipping page 
         public const string AddShippingImages = $"{BaseUrl}/ShipmentImage/addbi";

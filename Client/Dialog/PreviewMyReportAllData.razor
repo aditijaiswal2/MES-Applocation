@@ -1,0 +1,125 @@
+﻿@using MES.Client.Dialog.MyReport
+@using MES.Shared.Models.Rotors
+
+
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors
+@using System.Text
+@using static MES.Client.Pages.LoginVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IHttpClientFactory _httpClient
+@inject IDialogCompletionService CompletionService
+@inject IJSRuntime JS;
+
+
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
+                View All Data
+            </MudText>
+        </TitleContent>
+       
+        <DialogContent>
+            @if (rotorShipping != null)
+            {
+                <MudGrid GutterSize="3">
+                    <!-- Row 1 -->
+                    <MudItem xs="12" sm="6">
+                        <MudButton FullWidth="true" Size="Size.Small" OnClick="viewincomingandsalesdata"
+                                   Color="Color.Primary" Variant="Variant.Filled">
+                            Incoming Inspection Report
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudButton FullWidth="true" Size="Size.Small" OnClick="Viewgrindingdata"
+                                   Color="Color.Primary" Variant="Variant.Filled">
+                            Grinding Report
+                        </MudButton>
+                    </MudItem>
+
+                    <!-- Row 2 -->
+                    <MudItem xs="12" sm="6">
+                        <MudButton FullWidth="true" Size="Size.Small" OnClick="Viewfinalinspectiondata"
+                                   Color="Color.Primary" Variant="Variant.Filled">
+                            Final Inspection Report
+                        </MudButton>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudButton FullWidth="true" Size="Size.Small" OnClick="Viewscsdata"
+                                   Color="Color.Primary" Variant="Variant.Filled">
+                           Shipping Report
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+
+            }
+        </DialogContent>
+    </MudDialog>
+</div>
+
+
+
+
+
+@code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public RotorShipping rotorShipping { get; set; }
+
+    private async void viewincomingandsalesdata()
+    {
+        var parameters = new DialogParameters
+            {
+                ["rotorShipping"] = rotorShipping
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        DialogService.Show<Incomingandsalesdata>("Rotor Details", parameters, dialogOptions);
+
+    }
+
+    private async void Viewgrindingdata()
+    {
+        var parameters = new DialogParameters
+            {
+                ["rotorShipping"] = rotorShipping
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        DialogService.Show<Viewgrindingdatadialog>("Rotor Details", parameters, dialogOptions);
+    }
+
+    private async void Viewfinalinspectiondata()
+    {
+        var parameters = new DialogParameters
+            {
+                ["rotorShipping"] = rotorShipping
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        DialogService.Show<Finalinspectiondatadialog>("Final Inspection Rotor Details", parameters, dialogOptions);
+    }
+
+    private async void Viewscsdata()
+    {
+        var parameters = new DialogParameters
+            {
+                ["rotorShipping"] = rotorShipping
+            };
+
+        var dialogOptions = DialogSettings.DialogOptionsAddEditDelete;
+
+        DialogService.Show<Shippingdatadialog>("Rotor Details", parameters, dialogOptions);
+
+    }
+}

@@ -133,7 +133,29 @@ namespace MES.Server.Controllers
             return Ok(records);
         }
 
-       
+        [HttpGet("GSW/{serialNumber}")]
+        public async Task<IActionResult> GetRecentData(string serialNumber)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return BadRequest("Serial number is required.");
+
+            try
+            {
+                var records = await _context.RotorGrindingSecondaryWorkCentersData
+                    .Where(i => i.SerialNumber == serialNumber)
+                    .ToListAsync();
+
+                if (records.Count == 0)
+                    return NotFound("No matching data found.");
+
+                return Ok(records);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving data: {ex.Message}");
+            }
+        }
+
 
     }
 }

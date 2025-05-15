@@ -326,7 +326,7 @@ Final Inspection
         public async Task<IActionResult> CheckSerialExists(string serialNumber)
         {
             var exists = await _context.RotorsFinalInspections
-     .AnyAsync(r => r.SerialNumber.ToLower() == serialNumber.ToLower());
+             .AnyAsync(r => r.SerialNumber.ToLower() == serialNumber.ToLower());
 
             return Ok(exists);
         }

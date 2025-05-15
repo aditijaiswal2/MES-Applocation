@@ -178,12 +178,8 @@
                         <MudItem xs="4">
                             <MudTextField Label="Aligned" @bind-Value="selectedInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
-                        </MudItem>
-
-                        <MudItem xs="4">
-                            <MudTextField Label="Plastic Sleeves" @bind-Value="selectedInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
-                        </MudItem>
+                        </MudItem>                   
+                                              
 
                         <MudItem xs="4">
                             <MudTextField Label="Welding" @bind-Value="selectedInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
@@ -192,6 +188,11 @@
 
                         <MudItem xs="4">
                             <MudTextField Label="No. Of Welding" @bind-Value="selectedInspection.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Welding Comments" @bind-Value="selectedInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                         </MudItem>
 
@@ -223,12 +224,17 @@
 
                         </MudItem>
 
-                        <MudItem xs="6">
+                        <MudItem xs="4">
+                            <MudTextField Label="Plastic Sleeves" @bind-Value="selectedInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                        </MudItem>
+
+                        <MudItem xs="4">
                             <MudTextField Label="QTY" @bind-Value="selectedInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                         </MudItem>
 
 
-                        <MudItem xs="6">
+                        <MudItem xs="4">
                             <MudTextField Label="Saddle Part Number" @bind-Value="selectedInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                         </MudItem>
 
@@ -630,6 +636,24 @@
         if (plannedHours == "00:00")
         {
             Snackbar.Add("Planned hours is required.", Severity.Error);
+            return;
+        }
+
+        if (selectedInspection.SalesOrderNumber == null)
+        {
+            Snackbar.Add("Please enter Sales Order Number.", Severity.Error);
+            return;
+        }
+
+        if (selectedInspection.WorkOrder == null)
+        {
+            Snackbar.Add("Please enter Job Order Number.", Severity.Error);
+            return;
+        }
+
+        if (selectedInspection.MatNumber == null)
+        {
+            Snackbar.Add("Please enter Mat# Number.", Severity.Error);
             return;
         }
 
