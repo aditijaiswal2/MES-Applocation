@@ -81,6 +81,7 @@
         public const string AddprintQRCode = $"{BaseUrl}/QRCode/IncomlocQR";
 
         //RotorsIncoming    
+        public const string GetRotorIncoming = $"{BaseUrl}/IncomingInspection/getIncomingData";
         public const string AddRotorIncoming = $"{BaseUrl}/IncomingInspection/addincoming";
         public const string AddImagesIncoming = $"{BaseUrl}/IncomingImages/addbi";
         public const string CheckSerialNumber = $"{BaseUrl}/IncomingInspection/CheckSerialExists";

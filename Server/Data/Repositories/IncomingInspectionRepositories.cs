@@ -1,5 +1,6 @@
 ﻿using MES.Server.Contracts;
 using MES.Shared.DTOs.MES.Shared.DTOs.Rotors;
+using MES.Shared.Models;
 using MES.Shared.Models.Rotors;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -91,10 +92,13 @@ namespace MES.Server.Data.Repositories
             }
         }
 
-        //public async Task<IEnumerable<IncomingInspection>> GetAllAsync()
-        //{
-        //    return await _context.IncomingInspections.Include(i => i.Images).ToListAsync();
-        //}
+        public async Task<IEnumerable<IncomingInspection>> GetAllAsync()
+        {
+          
+            var result = await _context.IncomingInspections.OrderByDescending(Incomingins => Incomingins).ToListAsync();
+            return result;
+        }
+
 
         public async Task<IncomingInspection?> GetByIdAsync(int id)
         {

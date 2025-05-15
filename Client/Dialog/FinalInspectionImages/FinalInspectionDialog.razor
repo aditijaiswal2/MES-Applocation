@@ -105,22 +105,30 @@
                                     </HeaderContent>
                                     <RowTemplate>
 
-                                        <MudTd DataLabel="Description" class="text-center">
-                                            <MudTextField class="text-center" T="string" Label="Flute Diameter" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Land Width" ReadOnly />
-                                            <MudTextField class="text-center" T="string" Label="Relief Angle" ReadOnly />
+                                        <MudTd class="text-center">
+                                          
+                                                <MudTextField T="string" Label="Flute Diameter" ReadOnly />
+                                                <MudTextField T="string" Label="Land Width" ReadOnly />
+                                                <MudTextField T="string" Label="Relief Angle" ReadOnly />
+                                         
                                         </MudTd>
-                                        <MudTd DataLabel="Start" class="text-center">
-                                            <MudTextField class="text-center" @bind-Value="Grinding.RotorsDia" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthStart" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleStart" ReadOnly />
 
+                                        <MudTd class="text-center">
+                                        
+                                                <MudTextField T="string" @bind-Value="Grinding.RotorsDia" ReadOnly />
+                                                <MudTextField T="string" @bind-Value="InspectionData.LandWidthStart" ReadOnly />
+                                                <MudTextField T="string" @bind-Value="InspectionData.ReliefAngleStart" ReadOnly />
+                                          
                                         </MudTd>
-                                        <MudTd DataLabel="Finish" class="text-center">
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.FluteDiameterFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.LandWidthFinish" ReadOnly />
-                                            <MudTextField class="text-center" @bind-Value="InspectionData.ReliefAngleFinish" ReadOnly />
+
+                                        <MudTd class="text-center">
+                                          
+                                                <MudTextField T="string" @bind-Value="InspectionData.FluteDiameterFinish" ReadOnly />
+                                                <MudTextField T="string" @bind-Value="InspectionData.LandWidthFinish" ReadOnly />
+                                                <MudTextField T="string" @bind-Value="InspectionData.ReliefAngleFinish" ReadOnly />
+                                           
                                         </MudTd>
+
 
                                     </RowTemplate>
                                 </MudTable>
@@ -233,9 +241,13 @@
 </div>
 
 <style>
-    .table-center td, .table-center th {
-        text-align: center;
-        vertical-align: middle;
+  
+
+    .field-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem; /* Adjust spacing between fields */
+        align-items: center; /* Center align horizontally */
     }
 </style>
 

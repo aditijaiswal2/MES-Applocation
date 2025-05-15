@@ -48,12 +48,12 @@ namespace MES.Server.Controllers
         }
 
         // GET: api/IncomingInspection
-        // [HttpGet("getIncomingData")]
-        //public async Task<ActionResult<IEnumerable<IncomingInspection>>> GetAll()
-        //{
-        //    var inspections = await _repository.GetAllAsync();
-        //    return Ok(inspections);
-        //}
+        [HttpGet("getIncomingData")]
+        public async Task<ActionResult<IEnumerable<IncomingInspection>>> GetAll()
+        {
+            var inspections = await _repository.GetAllAsync();
+            return Ok(inspections);
+        }
 
 
         [HttpGet("CheckSerialExists/{serialNumber}")]
@@ -263,7 +263,7 @@ Incoming Inspection
 
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<Receiving>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Receiving>>> GetAlldata()
         {
             var records = await _context.Receivings.ToListAsync();
 

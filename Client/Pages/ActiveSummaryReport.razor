@@ -1,6 +1,7 @@
 ﻿@page "/asr"
 @using MES.Shared.Models
 @using MES.Client.Utitlity
+@using MES.Shared.Models.Rotors
 @inject ISnackbar Snackbar
 @inject HttpClient HttpClient
 
@@ -10,7 +11,7 @@
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
                 <div class="table-container">
-                    <MudTable Items="@iTSLocations" Class="table table-bordered table-striped">
+                    <MudTable Items="@combinedData" Class="table table-bordered table-striped">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
@@ -22,6 +23,7 @@
                             <MudTh Style="text-align:center">Customer</MudTh>
                             <MudTh Style="text-align:center">Rotors/Feed rolls Number</MudTh>
                             <MudTh Style="text-align:center">Type</MudTh>
+                            <MudTh Style="text-align:center">Rotors Categorize</MudTh>
                             <MudTh Style="text-align:center">Current Location</MudTh>
                             <MudTh Style="text-align:center">Received Date</MudTh>
                             <MudTh Style="text-align:center">Days in Plant</MudTh>
@@ -30,9 +32,10 @@
                         <RowTemplate>
                             <MudTd Style="text-align:center">@context.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@context.Customer</MudTd>
-                            <MudTd Style="text-align:center"></MudTd>
-                            <MudTd Style="text-align:center"></MudTd>
-                            <MudTd Style="text-align:center"></MudTd>
+                            <MudTd Style="text-align:center">@context.RotorNumber</MudTd>
+                            <MudTd Style="text-align:center">@context.Type</MudTd>
+                            <MudTd Style="text-align:center">@context.Categorize</MudTd>
+                            <MudTd Style="text-align:center">Incoming Inspection</MudTd>
                             <MudTd Style="text-align:center">@context.Date</MudTd>
                             <MudTd Style="text-align:center">@((DateTime.Now - context.Date).Days)</MudTd>
                         </RowTemplate>
@@ -44,7 +47,10 @@
 </MudContainer>
 
 @code{
+    private List<ReceivingInspectionViewModel> combinedData = new();
     private IEnumerable<Receiving> iTSLocations = new List<Receiving>();
+    private IEnumerable<IncomingInspection> inspection = new List<IncomingInspection>();
+
     private string searchString1 = "";
 
 
@@ -59,27 +65,46 @@
 
         try
         {
-            var response = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+            var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+            var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming); // add this
 
-            if (response.IsSuccessStatusCode)
+            if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var data = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(json, new System.Text.Json.JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
+                var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
 
-                if (data != null)
-                    iTSLocations = data;
+                var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (receivingList != null && inspectionList != null)
+                {
+                    combinedData = receivingList.Select(receiving =>
+                    {
+                        var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
+
+                        return new ReceivingInspectionViewModel
+                            {
+                                SerialNumber = receiving.SerialNumber,
+                                Customer = receiving.Customer,
+                                RotorNumber = matchingInspection?.RotorsNumber,
+                                Type = matchingInspection?.RotorCategorization,
+                                Categorize=matchingInspection?.ComponentType,
+                              //  CurrentLocation = receiving.CurrentLocation,
+                                Date = receiving.Date,
+                              //  InspectionStatus = matchingInspection?.Status,
+                               // InspectorName = matchingInspection?.InspectorName
+                            };
+                    }).ToList();
+                }
             }
             else
             {
-                Snackbar.Add("Failed to load data. Status Code: " + response.StatusCode, Severity.Error);
+                Snackbar.Add("Failed to load data.", Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error fetching data: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
     }
 
@@ -90,6 +115,23 @@
             await LoadLocations();
         }
     }
+
+    public class ReceivingInspectionViewModel
+    {
+        public string? SerialNumber { get; set; }
+        public string? Customer { get; set; }
+        public string? RotorNumber { get; set; }
+        public string? Type { get; set; }
+        public string? Categorize { get; set; }
+        public string? CurrentLocation { get; set; }
+        public DateTime Date { get; set; }
+        public int DaysInPlant => (DateTime.Now - Date).Days;
+
+        // Extra fields from IncomingInspection
+        public string? InspectionStatus { get; set; }
+        public string? InspectorName { get; set; }
+    }
+
 
 }
                        
