@@ -219,7 +219,7 @@
 
 
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                    <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined"  />
                                                 </MudItem>
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Dwg Number" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" Required />
@@ -397,7 +397,7 @@
 
                                             </MudGrid>
                                             <MudGrid Spacing="2">
-                                                <MudItem xs="12" md="12">
+                                                <MudItem xs="12" md="6">
                                                     <MudTextField Label="OK TO SHIP" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" />
                                                 </MudItem>
 
@@ -700,7 +700,7 @@
 
     private async Task Submitdata()
     {
-        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.CustomerPoNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
+        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
         {
             Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
             return;

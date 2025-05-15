@@ -190,5 +190,8 @@
         public const string EditDealyReason = $"{BaseUrl}/MESDelayReason/editdr";
         public const string DeleteDealyReason = $"{BaseUrl}/MESDelayReason";
 
+        // Get report in excel
+        public const string GetReportinexcel = $"{BaseUrl}/Report/downloadreport";
+
     }
 }

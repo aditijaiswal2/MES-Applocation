@@ -19,7 +19,7 @@
             <MudGrid>
 
                 <MudItem xs="12" Class="mb-2">
-                    <MudSelect T="string" Label="select" Variant="Variant.Outlined" @bind-Value="SelectedOption">
+                    <MudSelect T="string" Label="Select" Variant="Variant.Outlined" @bind-Value="SelectedOption">
                         @foreach (var selecttab in selectedTab)
                         {
                             <MudSelectItem Value="@selecttab">@selecttab</MudSelectItem>

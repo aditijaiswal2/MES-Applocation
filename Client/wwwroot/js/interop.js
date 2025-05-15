@@ -195,8 +195,14 @@ function printincomingImage(imageDataUrl, labelText) {
     //printWindow.document.close();
 
 }
-
-
+function downloadFile(fileName, base64, mimeType) {
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = `data:${mimeType};base64,${base64}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 function printImage(imageData, partOrLoc, customer, date, reportnumber) {
     const dpi = 96;
     const canvasWidth = 2.4 * dpi;

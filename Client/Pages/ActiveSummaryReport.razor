@@ -4,10 +4,15 @@
 @using MES.Shared.Models.Rotors
 @inject ISnackbar Snackbar
 @inject HttpClient HttpClient
+@inject IJSRuntime jsRuntime
 
 <MudContainer Fixed="true">
     <MudGrid Class="d-flex">
-      
+        <MudItem md="12" sm="12" xs="12">
+            <div style="margin-top:20px">
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DownloadForOffline" Size="Size.Small" Color="Color.Primary" OnClick="@Downloadreport">Download Report</MudButton>
+            </div>
+        </MudItem>
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
                 <div class="table-container">
@@ -16,7 +21,7 @@
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
                             <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh Style="text-align:center">Report Number</MudTh>
@@ -35,10 +40,13 @@
                             <MudTd Style="text-align:center">@context.RotorNumber</MudTd>
                             <MudTd Style="text-align:center">@context.Type</MudTd>
                             <MudTd Style="text-align:center">@context.Categorize</MudTd>
-                            <MudTd Style="text-align:center">Incoming Inspection</MudTd>
+                            <MudTd Style="text-align:center">@context.CurrentLocation</MudTd>
                             <MudTd Style="text-align:center">@context.Date</MudTd>
                             <MudTd Style="text-align:center">@((DateTime.Now - context.Date).Days)</MudTd>
                         </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { int.MaxValue, 100, 50, 10, 5}" />
+                        </PagerContent>
                     </MudTable>
                 </div>
             </div>
@@ -46,10 +54,21 @@
     </MudGrid>
 </MudContainer>
 
-@code{
+@code {
     private List<ReceivingInspectionViewModel> combinedData = new();
     private IEnumerable<Receiving> iTSLocations = new List<Receiving>();
     private IEnumerable<IncomingInspection> inspection = new List<IncomingInspection>();
+    private IEnumerable<NewRotorData> NewRotor = new List<NewRotorData>();
+    private IEnumerable<RotorDamageGrindingDataFromGrinding> GrindingDataFromGrinding = new List<RotorDamageGrindingDataFromGrinding>();
+    private IEnumerable<RotorDamageGrindingSaveData> GrindingSaveData = new List<RotorDamageGrindingSaveData>();
+    private IEnumerable<RotorDamageGrindingSubmitedData> GrindingSubmitedData = new List<RotorDamageGrindingSubmitedData>();
+    private IEnumerable<RotorGrindingData> RotorGrindingData = new List<RotorGrindingData>();
+    private IEnumerable<RotorGrindingSavedData> RotorGrindingSavedData = new List<RotorGrindingSavedData>();
+    private IEnumerable<RotorIncominInspectionSavedData> RotorIncominInspectionSavedData = new List<RotorIncominInspectionSavedData>();
+    private IEnumerable<RotorProductionSavedData> RotorProductionSavedData = new List<RotorProductionSavedData>();
+    private IEnumerable<RotorSalesData> RotorSalesData = new List<RotorSalesData>();
+    private IEnumerable<RotorsFinalInspection> RotorsFinalInspection = new List<RotorsFinalInspection>();
+    private IEnumerable<RotorShipping> RotorShipping = new List<RotorShipping>();
 
     private string searchString1 = "";
 
@@ -65,36 +84,49 @@
 
         try
         {
+
             var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
             var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming); // add this
 
             if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode)
             {
+
+
                 var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
                 var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
 
                 var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
+
+
                 if (receivingList != null && inspectionList != null)
                 {
-                    combinedData = receivingList.Select(receiving =>
-                    {
-                        var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
 
-                        return new ReceivingInspectionViewModel
-                            {
-                                SerialNumber = receiving.SerialNumber,
-                                Customer = receiving.Customer,
-                                RotorNumber = matchingInspection?.RotorsNumber,
-                                Type = matchingInspection?.RotorCategorization,
-                                Categorize=matchingInspection?.ComponentType,
-                              //  CurrentLocation = receiving.CurrentLocation,
-                                Date = receiving.Date,
-                              //  InspectionStatus = matchingInspection?.Status,
-                               // InspectorName = matchingInspection?.InspectorName
-                            };
-                    }).ToList();
+                    var combinedData = await Task.WhenAll(receivingList.Select(async receiving =>
+       {
+       var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
+       var serial = receiving.SerialNumber;
+       var currentLocation = await GetCurrentLocation(serial);
+
+       return new ReceivingInspectionViewModel
+           {
+               SerialNumber = receiving.SerialNumber,
+               Customer = matchingInspection?.Customer,
+               RotorNumber = matchingInspection?.RotorsNumber,
+               Type = matchingInspection?.RotorCategorization,
+               Categorize = matchingInspection?.ComponentType,
+               CurrentLocation = currentLocation,
+               Date = receiving.Date,
+           // InspectionStatus = matchingInspection?.Status,
+           // InspectorName = matchingInspection?.InspectorName
+           };
+       }));
+                    this.combinedData = combinedData.ToList();
+
+                    // If needed as List<ReceivingInspectionViewModel>
+                  //  var combinedList = combinedData.ToList();
+
                 }
             }
             else
@@ -107,6 +139,81 @@
             Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
     }
+
+    private async Task<string> GetCurrentLocation(string? serial)
+    {
+        var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
+        var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
+        var rotorShippingResponse = await HttpClient.GetAsync(ApiConstants.GetAllShippedData);
+        var rotorFinalInspectionResponse = await HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData);
+        var rotorSalesDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesData);
+        var rotorProductionSavedDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
+        var rotorGrindingSavedDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+
+        if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode && rotorShippingResponse.IsSuccessStatusCode && rotorFinalInspectionResponse.IsSuccessStatusCode &&
+        rotorSalesDataResponse.IsSuccessStatusCode && rotorProductionSavedDataResponse.IsSuccessStatusCode && rotorGrindingSavedDataResponse.IsSuccessStatusCode)
+        {
+            var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
+            var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
+            var rotorShippingJson = await rotorShippingResponse.Content.ReadAsStringAsync();
+            var rotorFinalInspectionJson = await rotorFinalInspectionResponse.Content.ReadAsStringAsync();
+            var rotorSalesDataJson = await rotorSalesDataResponse.Content.ReadAsStringAsync();
+            var rotorProductionSavedDataJson = await rotorProductionSavedDataResponse.Content.ReadAsStringAsync();
+            var rotorGrindingSavedDataJson = await rotorGrindingSavedDataResponse.Content.ReadAsStringAsync();
+
+
+            var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var rotorShippingList = System.Text.Json.JsonSerializer.Deserialize<List<RotorShipping>>(rotorShippingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var rotorFinalInspectionList = System.Text.Json.JsonSerializer.Deserialize<List<RotorsFinalInspection>>(rotorFinalInspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var rotorSalesDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorSalesData>>(rotorSalesDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var rotorProductionSavedDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorProductionSavedData>>(rotorProductionSavedDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var rotorGrindingSavedDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(rotorGrindingSavedDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+
+            if (rotorShippingList.Any(x => x.SerialNumber == serial)) return "Shipped";
+            if (rotorFinalInspectionList.Any(x => x.SerialNumber == serial)) return "Shipping";
+            if (rotorGrindingSavedDataList.Any(x => x.SerialNumber == serial)) return "Final Inspection";
+            if (rotorProductionSavedDataList.Any(x => x.SerialNumber == serial)) return "Grinding";
+            if (rotorSalesDataList.Any(x => x.SerialNumber == serial)) return "Production";
+            if (inspectionList.Any(x => x.SerialNumber == serial)) return "Sales";
+            if (receivingList.Any(x => x.SerialNumber == serial)) return "Incoming Inspection";
+           
+            return "Unknown";
+        }
+
+        return "Error fetching data";
+    }
+
+
+
+    async Task Downloadreport()
+    {
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync(ApiConstants.GetReportinexcel, combinedData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var fileBytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = "ASR_Report.xlsx";
+
+                var base64 = Convert.ToBase64String(fileBytes);
+                var mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                await jsRuntime.InvokeVoidAsync("downloadFile", fileName, base64, mime);
+            }
+            else
+            {
+                Snackbar.Add("Failed to download report.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -134,4 +241,3 @@
 
 
 }
-                       
