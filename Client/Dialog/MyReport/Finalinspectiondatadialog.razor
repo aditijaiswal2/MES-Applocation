@@ -1,4 +1,5 @@
-﻿@using MES.Shared.Models.Rotors
+﻿@using MES.Client.Dialog.RotorSalesImages
+@using MES.Shared.Models.Rotors
 
 
 @using MES.Client.Utitlity
@@ -27,11 +28,17 @@
                 <MudText Typo="Typo.h6">
                     <MudIcon Icon="@Icons.Material.Filled.Details" Class="mr-2 mb-n1" />
                     Final Inspection Report
-                </MudText>
+                </MudText>            
+              
             </TitleContent>
             <DialogContent>
 
                 <MudGrid>
+
+                    <MudItem md="12" sm="12" xs="12" class="center">
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
+                    </MudItem>
+
                     <MudItem xs="6">
                         <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
@@ -162,17 +169,26 @@
   
 </div>
 
+<style>
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 10px;
+    }
 
+</style>
 
 
 
 @code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public RotorShipping rotorShipping { get; set; }
     
     private RotorsFinalInspection? FinalInspectionData;
 
-
+    public IncomingImages? serialImages;
 
     protected override async Task OnInitializedAsync()
     {
@@ -203,6 +219,49 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching sales clearance data: {ex.Message}");
+        }
+    }
+
+
+    private async Task PreviewImg()
+    {
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+        try
+        {
+            var imageResponse = await HttpClient.GetAsync($"{ApiConstants.GetFinalImagesbySerialNumber}/{rotorShipping.SerialNumber}");
+
+            if (imageResponse.IsSuccessStatusCode)
+            {
+                var data = await imageResponse.Content.ReadAsStringAsync();
+
+                var recentData = JsonSerializer.Deserialize<IncomingImages>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                serialImages = recentData;
+
+                if (serialImages?.Images != null && serialImages.Images.Any())
+                {
+                    var parameters = new DialogParameters
+                {
+                    { "Images", serialImages }
+                };
+
+                    DialogService.Show<ViewSalesImgDialog>("View Images", parameters, DialogSettings.ViewImageDialogOptions);
+                }
+                else
+                {
+                    Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
+                }
+            }
+            else
+            {
+                Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading images: {ex.Message}", Severity.Error);
         }
     }
 

@@ -155,6 +155,8 @@
         public const string AddImagesFinal = $"{BaseUrl}/FinalInspectionImages/addbi";
         public const string GetAllFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/GetAllFIData";
 
+        public const string GetFinalImagesbySerialNumber = $"{BaseUrl}/FinalInspectionImages/getImages";
+
         // Sales AttachedFile 
         public const string AddSalesAttachedFile = $"{BaseUrl}/SalesAttachedFile/addpi";
         public const string GetSalesAttachedFileBySerialNumber = $"{BaseUrl}/SalesAttachedFile/GFile";
@@ -175,7 +177,7 @@
         public const string AddShippingImages = $"{BaseUrl}/ShipmentImage/addbi";
         public const string ShipData = $"{BaseUrl}/Shipping/Ship";
         public const string GetAllShippedData = $"{BaseUrl}/Shipping/GetAllShippedData";
-
+        public const string GetShippedImagesbySerialNumber = $"{BaseUrl}/ShipmentImage/getImages";
 
         // SaveEnterd Rotor Grinding Details
         public const string AddSaveEnterdRotorGrindingDetails = $"{BaseUrl}/SaveEnterdRotorGrindingDetails/AddGrindingSaveData";

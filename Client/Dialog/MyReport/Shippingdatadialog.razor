@@ -1,4 +1,5 @@
-﻿@using MES.Shared.Models.Rotors
+﻿@using MES.Client.Dialog.RotorSalesImages
+@using MES.Shared.Models.Rotors
 
 
 @using MES.Client.Utitlity
@@ -28,6 +29,10 @@
             @if (rotorShipping != null)
             {
                 <MudGrid>
+
+                    <MudItem md="12" sm="12" xs="12" class="center">
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
+                    </MudItem>
 
                     <MudItem xs="12">
                         <MudTextField Label="Shipping Instructions" @bind-Value="rotorShipping.AdditionalWSalesComments" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
@@ -62,8 +67,51 @@
 
 
 @code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public RotorShipping rotorShipping { get; set; }
+    public IncomingImages? serialImages;
 
+    private async Task PreviewImg()
+    {
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+        try
+        {
+            var imageResponse = await HttpClient.GetAsync($"{ApiConstants.GetShippedImagesbySerialNumber}/{rotorShipping.SerialNumber}");
+
+            if (imageResponse.IsSuccessStatusCode)
+            {
+                var data = await imageResponse.Content.ReadAsStringAsync();
+
+                var recentData = JsonSerializer.Deserialize<IncomingImages>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                serialImages = recentData;
+
+                if (serialImages?.Images != null && serialImages.Images.Any())
+                {
+                    var parameters = new DialogParameters
+                {
+                    { "Images", serialImages }
+                };
+
+                    DialogService.Show<ViewSalesImgDialog>("View Images", parameters, DialogSettings.ViewImageDialogOptions);
+                }
+                else
+                {
+                    Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
+                }
+            }
+            else
+            {
+                Snackbar.Add("No images available for this Rotor/Feed Role.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading images: {ex.Message}", Severity.Error);
+        }
+    }
 
 }

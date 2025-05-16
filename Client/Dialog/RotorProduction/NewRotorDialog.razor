@@ -151,6 +151,7 @@
     {
         CustomerPriorityStatus.Add("High");
         CustomerPriorityStatus.Add("Low");
+        CustomerPriorityStatus.Add("");
 
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
         var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetMESWorkcenters);

@@ -415,6 +415,7 @@
     {
         CustomerPriorityStatus.Add("High");
         CustomerPriorityStatus.Add("Low");
+        CustomerPriorityStatus.Add("");
 
         await FetchAllInspections();
     }
@@ -543,17 +544,17 @@
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(SelectedPriority))
-        {
-            Snackbar.Add("Please select customer priority.", Severity.Error);
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(SelectedPriority))
+        // {
+        //     Snackbar.Add("Please select customer priority.", Severity.Error);
+        //     return;
+        // }
 
-        if (string.IsNullOrWhiteSpace(CustomerInstructions))
-        {
-            Snackbar.Add("Please enter customer instructions.", Severity.Error);
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(CustomerInstructions))
+        // {
+        //     Snackbar.Add("Please enter customer instructions.", Severity.Error);
+        //     return;
+        // }
 
         plannedHours = $"{Hours:D2}:{Minutes:D2}";
 
@@ -574,11 +575,12 @@
                 SelectedInspection = selectedInspection,
                 TargetDate = fromDate,
                 PlannedHours = plannedHours,
-                CustomerPriority = SelectedPriority,
-                CustomerInstructions = CustomerInstructions,
+                CustomerPriority = string.IsNullOrWhiteSpace(SelectedPriority) ? "N/A" : SelectedPriority,
+                CustomerInstructions = string.IsNullOrWhiteSpace(CustomerInstructions) ? "N/A" : CustomerInstructions,
                 SubmitedBy = useradd,
                 SubmitDate = DateTime.Now
             };
+       
         try
         {
             var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(tempSubmission);
@@ -619,17 +621,17 @@
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(SelectedPriority))
-        {
-            Snackbar.Add("Please select customer priority.", Severity.Error);
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(SelectedPriority))
+        // {
+        //     Snackbar.Add("Please select customer priority.", Severity.Error);
+        //     return;
+        // }
 
-        if (string.IsNullOrWhiteSpace(CustomerInstructions))
-        {
-            Snackbar.Add("Please enter customer instructions.", Severity.Error);
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(CustomerInstructions))
+        // {
+        //     Snackbar.Add("Please enter customer instructions.", Severity.Error);
+        //     return;
+        // }
 
         plannedHours = $"{Hours:D2}:{Minutes:D2}";
 
@@ -669,8 +671,8 @@
                 SelectedInspection = selectedInspection,
                 TargetDate = fromDate,
                 PlannedHours = plannedHours,
-                CustomerPriority = SelectedPriority,
-                CustomerInstructions = CustomerInstructions,
+                CustomerPriority = string.IsNullOrWhiteSpace(SelectedPriority) ? "N/A" : SelectedPriority,
+                CustomerInstructions = string.IsNullOrWhiteSpace(CustomerInstructions) ? "N/A" : CustomerInstructions,
                 SubmitedBy = useradd,
                 SubmitDate = DateTime.Now
             };
