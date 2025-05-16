@@ -160,7 +160,16 @@ namespace MES.Server.Controllers
             return Ok("Rotor categorization updated to 'Deleted Scrap'.");
         }
 
+        [HttpGet("GetAllProductionData")]
+        public async Task<ActionResult<IEnumerable<RotorProductionSavedData>>> GetAllRotorProductionSaveData()
+        {
+            var records = await _context.RotorProductionSavedData.ToListAsync();
 
+            if (records == null || !records.Any())
+                return NotFound("No RotorProductionData records found.");
+
+            return Ok(records);
+        }
 
 
     }

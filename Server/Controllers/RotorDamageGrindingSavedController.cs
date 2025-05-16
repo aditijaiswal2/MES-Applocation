@@ -132,6 +132,15 @@ namespace MES.Server.Controllers
             }
         }
 
+        [HttpGet("GetAllGrindingData")]
+        public async Task<ActionResult<IEnumerable<RotorDamageGrindingSaveData>>> GetAllRotorGrindingData()
+        {
+            var records = await _context.RotorDamageGrindingSaveData.ToListAsync();
 
+            if (records == null || !records.Any())
+                return NotFound("No Rotor Grinding records found.");
+
+            return Ok(records);
+        }
     }
 }

@@ -2,8 +2,8 @@
 {
     public class ApiConstants
     {
-       private const string BaseUrl = "https://localhost:7172/api";
-       // private const string BaseUrl = "https://maag-mes.dover-global.net/api";
+     //  private const string BaseUrl = "https://localhost:7172/api";
+        private const string BaseUrl = "https://maag-mes.dover-global.net/api";
 
         public const string GetUserRoles = $"{BaseUrl}/Users/getuserroles";
         public const string GetRole = $"{BaseUrl}/Role/getrole";
@@ -114,6 +114,7 @@
         public const string SaveproductionsavedData = $"{BaseUrl}/RotorProductionSaveData/AddProductionSaveData";
         public const string GetSavedproductionData = $"{BaseUrl}/RotorProductionSaveData/GetRecentProductionSaveData";
         public const string UpdateRotorCategorizationType = $"{BaseUrl}/RotorProductionSaveData/updateRotorCategorizationType";
+        public const string GetAllProductionSavesData = $"{BaseUrl}/RotorProductionSaveData/GetAllProductionData";
 
         // new rotor data
         public const string AddNewRotorData = $"{BaseUrl}/NewRotorDetails/SaveNewRotor";
@@ -135,7 +136,7 @@
         // Moving to outside operation Rotor Grinding Data
         public const string AddMovedOOPRotorGrindingData = $"{BaseUrl}/RotorDamageGrindingDataFromGrinding/AddMovedOOPGD";
         public const string GetAllMovedOOPGrindingData = $"{BaseUrl}/RotorDamageGrindingDataFromGrinding/GetAllMovedOOPGrindingData";
-
+        public const string GetAllSaveGrindingData = $"{BaseUrl}/RotorDamageGrindingSaved/GetAllGrindingData";
 
         // Rotor Damage Grinding savedData
         public const string SaveDamageGrindingsavedData = $"{BaseUrl}/RotorDamageGrindingSaved/AddDamageGSDDSaveData";
