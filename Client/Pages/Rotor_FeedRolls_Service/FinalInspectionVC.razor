@@ -451,10 +451,7 @@
     </MudGrid>
 </MudContainer>
 
-
-
 @code {
-
 
     private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
     private Action<string>? _onQrCodeScanAction;
@@ -554,7 +551,8 @@
     private List<string> SpecialPartWash = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -587,7 +585,8 @@
     private List<string> Wedgelockassembly = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -601,7 +600,8 @@
     private List<string> JournalsOK = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -615,7 +615,8 @@
     private List<string> IstheRotorclean = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -629,7 +630,8 @@
     private List<string> LocknutThreads = new()
     {
         "Yes",
-        "No"
+        "No",
+        ""
 
     };
 
@@ -917,6 +919,13 @@
                 Snackbar.Add("Invalid QR Code format. Please scan again.", Severity.Warning);
                 return;
             }
+        }
+        else if (selectedReceive != null)
+        {
+            // Fetch from selected Receive item instead
+            serialNumberData.SerialNumber = selectedReceive.SerialNumber;
+            serialNumberData.Module = selectedReceive.Module;
+
         }
         else
         {

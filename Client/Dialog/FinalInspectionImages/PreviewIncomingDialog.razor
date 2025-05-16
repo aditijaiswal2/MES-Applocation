@@ -16,124 +16,104 @@
 <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
     <DialogContent>
 
-        <MudPaper Class="pa-6" Style=" border-radius: 12px;" id="print-section">
+        <MudGrid >
 
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Serial Number" @bind-Value="InspectionData.SerialNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Module" @bind-Value="InspectionData.Module" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                            
-
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-             
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Customer" @bind-Value="InspectionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>              
-             
-            </MudGrid>
+                </MudItem>
 
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Location" @bind-Value="InspectionData.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Received" @bind-Value="InspectionData.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Inspected" @bind-Value="InspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>               
-             
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Rotors#" @bind-Value="InspectionData.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Inspected Date" @bind-Value="InspectionData.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Initials" @bind-Value="InspectionData.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Inspected By" @bind-Value="InspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Rotors Serial Number" @bind-Value="InspectionData.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Make" @bind-Value="InspectionData.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
-             
+
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Dia" @bind-Value="InspectionData.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Len" @bind-Value="InspectionData.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Fits" @bind-Value="InspectionData.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>           
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Flts" @bind-Value="InspectionData.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Materials" @bind-Value="InspectionData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Materials" @bind-Value="InspectionData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Others" @bind-Value="InspectionData.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Rotors Dia" @bind-Value="InspectionData.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Rotor Style" @bind-Value="InspectionData.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Type" @bind-Value="InspectionData.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
                
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Rotor Style" @bind-Value="InspectionData.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Type" @bind-Value="InspectionData.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Bearing Removed" @bind-Value="InspectionData.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Bearings" @bind-Value="InspectionData.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Bearing Seals" @bind-Value="InspectionData.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Ceramic Seals" @bind-Value="InspectionData.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
@@ -141,70 +121,102 @@
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="InspectionData.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Bearing Journal Dia (Right Details)" @bind-Value="InspectionData.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="InspectionData.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="InspectionData.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="InspectionData.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Bearing Journal Dia (Right Details)" @bind-Value="InspectionData.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>                           
+               
+            </MudGrid>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Basic Sharpening" @bind-Value="InspectionData.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Basic Sharpening Detail" @bind-Value="InspectionData.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
-             
-            </MudGrid>
 
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Wedgelock Alignment Marks Present" @bind-Value="InspectionData.WedgelockAlignmentMarks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Center Grinding" @bind-Value="InspectionData.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Center Grinding Details" @bind-Value="InspectionData.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-               
-                </MudItem>
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Aligned" @bind-Value="InspectionData.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
                 </MudItem>
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
+                 <MudItem xs="12" md="3">
+                    <MudTextField Label="Center Grinding" @bind-Value="InspectionData.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Center Grinding Details" @bind-Value="InspectionData.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />               
+                </MudItem>
+
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Plastic Sleeves" @bind-Value="InspectionData.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                  <MudItem xs="12" md="3">
+                    <MudTextField Label="Bed Knife in Box" @bind-Value="InspectionData.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>               
+
+            </MudGrid>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Welding" @bind-Value="InspectionData.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="3">
                     <MudTextField Label="Welding Number" @bind-Value="InspectionData.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Bed Knife in Box" @bind-Value="InspectionData.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Welding Comments" @bind-Value="InspectionData.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+              
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Re-Profile" @bind-Value="InspectionData.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>   
+
+            </MudGrid>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Replace Blades" @bind-Value="InspectionData.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Sand Blasting" @bind-Value="InspectionData.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Manual Labor" @bind-Value="InspectionData.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Add QTY" @bind-Value="InspectionData.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
              
             </MudGrid>
@@ -212,68 +224,32 @@
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="4">
-                    <MudTextField Label="Replace Blades" @bind-Value="InspectionData.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Re-Profile" @bind-Value="InspectionData.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Sand Blasting" @bind-Value="InspectionData.SandBlasting" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Manual Labor" @bind-Value="InspectionData.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="TIR Left Journal" @bind-Value="InspectionData.TirLeftJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="TIR Right Journal" @bind-Value="InspectionData.TirRightJournal" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>              
-
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Box Received with Saddles (Down)" @bind-Value="InspectionData.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="InspectionData.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="4">
                     <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="InspectionData.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Add QTY" @bind-Value="InspectionData.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
+                  <MudItem xs="12" md="4">
+                    <MudTextField Label="Saddle Part Number" @bind-Value="InspectionData.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>              
               
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                <MudItem xs="12" md="4">
-                    <MudTextField Label="Saddle Part Number" @bind-Value="InspectionData.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="6">
                     <MudTextField Label="Rotor Categorize" @bind-Value="InspectionData.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                <MudItem xs="12" md="4">
+                <MudItem xs="12" md="6">
                     <MudTextField Label="Component Type" @bind-Value="InspectionData.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>              
 
             </MudGrid>
          
-        </MudPaper>
+        </MudGrid>
 
     </DialogContent>
 
@@ -322,144 +298,9 @@
     MudDialogInstance MudDialog { get; set; }
     public QrDTO LocQR { get; set; }
 
-
-
-    private List<(string label, string value)> GetInspectionFields()
-    {
-        return new List<(string, string)>
-    {
-        ("Customer", InspectionData.Customer),
-        ("Location", InspectionData.Location),
-        ("Received", InspectionData.Received),
-        ("Inspected", InspectionData.Inspected),
-        ("Rotors#", InspectionData.RotorsNumber),
-        ("Initial", InspectionData.Initials),
-        ("Make", InspectionData.Make),
-        ("Dia", InspectionData.Dia),
-        ("Len", InspectionData.Len),
-        ("Fits", InspectionData.Fits),
-        ("Materials", InspectionData.Materials),
-        ("Others", InspectionData.Others),
-        ("Rotors Dia", InspectionData.RotorsDia),
-        ("Rotors Style", InspectionData.RotorsDia),
-        ("Type", InspectionData.Type),
-        ("Bearing Removed", InspectionData.BearingRemoved),
-        ("Bearings", InspectionData.Bearing),
-        ("Bearing Seals",InspectionData.BearingSeals),
-        ("Ceramic Seals", InspectionData.CeramicSeals),
-        ("Bearing Journal Dia (Right)", InspectionData.Right),
-        ("Bearing Journal Dia Details (Right)", InspectionData.yRight),
-        ("Bearing Journal Dia (Left)", InspectionData.Left),
-        ("Bearing Journal Dia Details (Left)", InspectionData.yLeft),
-        ("Basic Sharpening", InspectionData.BasicSharpening),
-        ("Basic Sharpening Details", InspectionData.IfYBasicSharpening),
-        ("Wedgelock Alignment Marks; Present", InspectionData.WedgelockAlignmentMarks),
-         ("Center Grinding", InspectionData.CenterGrinding),
-        ("Center Grinding Details", InspectionData.IfYCenterGrinding),
-        ("Aligned", InspectionData.Aligned),
-        ("Plastic Sleaves", InspectionData.PlasticSleaves),
-        ("Welding", InspectionData.Welding),
-        ("No. of Welding", InspectionData.WeldingNum),
-        ("Bed Knife in box", InspectionData.BedKnife),
-        ("Replace Blades", InspectionData.BoxReceivedWithSaddles),
-        ("Re-Profile", InspectionData.ReProfile),
-        ("Sand Blasting", InspectionData.SandBlasting),
-        ("Manual Labor", InspectionData.ManualLabor),
-        ("Box Received with Saddles(Bottom)", InspectionData.Bottom),
-        ("Box Received with Saddles(Top)", InspectionData.Top),
-        ("Add QTY", InspectionData.AddQty?.ToString()),
-        ("Saddle Part Number", InspectionData.SaddlePartNumber),
-        ("Rotor Categorize", InspectionData.RotorCategorization),
-          ("Component Type", InspectionData.ComponentType),
-
-    };
-    }
-
-    private IEnumerable<List<(string label, string value)>> ChunkFields(List<(string label, string value)> fields, int size)
-    {
-        for (int i = 0; i < fields.Count; i += size)
-        {
-            yield return fields.Skip(i).Take(size).ToList();
-        }
-    }
-
-    // async void PrintDialog()
-    // {
-    //     var receive = new QRRequestDTO
-    //         {
-    //             SerialNumber = SelectedSerialNumber,
-    //             Module = SelectedModule,
-    //             Customer = InspectionData.Customer,
-    //             Date = DateTime.Now // or whatever date format you need
-    //         };
-
-    //     await GenerateQR(receive);
-    //     //  await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
-
-
-    // }
-
-
-    // public async Task GenerateQR(QRRequestDTO receive)
-    // {
-    //     Snackbar.Clear();
-    //     Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-
-    //     try
-    //     {
-
-    //         string receiveData = $"Serial Number: {receive.SerialNumber},Module: {receive.Module}, Customer: {receive.Customer}, Date: {receive.Date}";
-
-
-    //         var jsonPart = JsonConvert.SerializeObject(receive);
-    //         var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
-
-    //         // Serialize receiving data
-
-
-
-    //         //   var response = await HttpClient.PostAsync("https://localhost:7172/api/QRCode/IncomlocQR", content);
-    //         var response = await HttpClient.PostAsync(ApiConstants.AddprintQRCode, content);
-    //         byte[] qrCodeBytes = null;
-
-
-
-    //         if (response.IsSuccessStatusCode)
-    //         {
-    //             using (var stream = await response.Content.ReadAsStreamAsync())
-    //             using (var memoryStream = new MemoryStream())
-    //             {
-    //                 await stream.CopyToAsync(memoryStream);
-    //                 qrCodeBytes = memoryStream.ToArray();
-    //             }
-
-    //             // Convert image to Base64 string
-    //             string base64Image = Convert.ToBase64String(qrCodeBytes);
-    //             string imageDataUrl = $"data:image/png;base64,{base64Image}";
-
-    //             // Define the text to show under the QR code
-    //             string labelText = $"SN: {receive.SerialNumber}";
-
-    //             // Call JS function to print image
-    //             await JSRuntime.InvokeVoidAsync("printincomingImage", imageDataUrl, labelText);
-    //         }
-    //         else
-    //         {
-    //             Snackbar.Add($"QR code generation failed with status code: {response.StatusCode}", Severity.Error);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
-    //     }
-    // }
-
     void CloseDialog()
     {
         MudDialog.Cancel();
     }
-
-
-
 
 }

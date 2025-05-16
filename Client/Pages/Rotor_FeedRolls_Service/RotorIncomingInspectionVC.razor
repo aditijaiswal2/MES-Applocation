@@ -528,7 +528,7 @@
 
                                                 <MudItem xs="12" md="3">
 
-                                                    <MudSelect Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
+                                                    <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
                                                     AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
                                                         @if (SaddleData != null)
                                                         {
@@ -589,7 +589,7 @@
 
                                                     <MudItem xs="12" md="3">
 
-                                                        <MudSelect Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
+                                                        <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
                                                         AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
                                                             @if (NewBoxRequiredNumberData != null)
                                                             {
