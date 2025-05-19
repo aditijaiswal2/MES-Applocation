@@ -86,7 +86,7 @@
 
                     <MudItem md="4" xs="4" class="outlined-box pa-2">
                         <MudText Typo="Typo.h6" Color="Color.Primary">Dressed With New Bearings</MudText>
-                        <MudText Typo="Typo.body1">@InspectionData.Dressedwithnewbearing</MudText>
+                        <MudText Typo="Typo.body1">@selectedDressedwithNewBearing</MudText>
                     </MudItem>
 
                 </MudGrid>
@@ -226,18 +226,18 @@
 
 
 
-                <MudGrid style="text-align: center; width: 100%;" Class="d-flex justify-center">
-                    <div style=" padding: 10px; text-align: center; width: 500px; height: auto">
+               @*  <MudGrid style="text-align: center; width: 100%;" Class="d-flex justify-center">
+                   
                         <MudItem xs="12" md="6" Class="text-center">
                             <h5>For New Rotors and Spare Parts</h5>
                             <p Class="text-center">Please Call</p>
                             <h6>1.800.844.2927 or 330.677.2225</h6>
                             <p>8:00 am - 5:00 pm, M-F</p>
                         </MudItem>
-                    </div>
+                  
+                </MudGrid> *@
 
-
-                </MudGrid>
+              
 
             </MudForm>
         </DialogContent>
@@ -270,6 +270,9 @@
     [Parameter]
     public string selectedIstheRotorclean { get; set; }
     [Parameter]
+    public string selectedDressedwithNewBearing { get; set; }
+    
+    [Parameter]
     public string selectedJournalsOK { get; set; }
 
     [Parameter]
@@ -299,7 +302,7 @@
 
     private async Task Print()
     {
-        // await JSRuntime.InvokeVoidAsync("printElementById", "printForm-section");
+       // await JSRuntime.InvokeVoidAsync("printDiv", "printForm-section");
         await JSRuntime.InvokeVoidAsync("printForm");
     }
 

@@ -239,9 +239,21 @@
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
                                                 </MudItem>
+                                             
+
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Dressed With New Bearings" @bind-Value="FinalInspectionData.Dressedwithnewbearing" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudSelect T="string" ValueChanged="OnDressedwithNewBearing" Label="Dressed With New Bearings" Variant="Variant.Outlined" Value="selectedDressedwithNewBearing" ValueExpression="() => selectedDressedwithNewBearing" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in DressedwithNewBearing)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
                                                 </MudItem>
+
+
+
+                                           
 
                                             </MudGrid>
 
@@ -584,6 +596,10 @@
         selectedSpecialPartWash = value;
     }
 
+    private async Task OnDressedwithNewBearing(string value)
+    {
+        selectedDressedwithNewBearing = value;
+    }
 
     private List<string> Wedgelockassembly = new()
     {
@@ -594,6 +610,16 @@
     };
 
     private string selectedWedgelockassembly { get; set; } = "";
+
+    private List<string> DressedwithNewBearing = new()
+    {
+        "Yes",
+        "No",
+        "N/A"
+
+    };
+
+    private string selectedDressedwithNewBearing { get; set; } = "";
 
     private async Task OnselectedWedgelockassemblyChanged(string value)
     {
@@ -666,6 +692,7 @@
                 ["selectedSpecialPartWash"] = selectedSpecialPartWash,
                 ["InspectionData"] = FinalInspectionData,
                 ["Grinding"] = serialNumberData,
+                ["selectedDressedwithNewBearing"]= selectedDressedwithNewBearing,
 
             };
         // var options = new DialogOptions { FullWidth = true };

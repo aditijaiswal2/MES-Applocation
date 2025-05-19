@@ -2,8 +2,8 @@
 {
     public class ApiConstants
     {
-     //  private const string BaseUrl = "https://localhost:7172/api";
-        private const string BaseUrl = "https://maag-mes.dover-global.net/api";
+       private const string BaseUrl = "https://localhost:7172/api";
+     //   private const string BaseUrl = "https://maag-mes.dover-global.net/api";
 
         public const string GetUserRoles = $"{BaseUrl}/Users/getuserroles";
         public const string GetRole = $"{BaseUrl}/Role/getrole";

@@ -144,95 +144,94 @@
 
     private async Task<string> GetCurrentLocation(string? serial)
     {
-        var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
-        var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
-        var rotorShippingResponse = await HttpClient.GetAsync(ApiConstants.GetAllShippedData);
-        var rotorFinalInspectionResponse = await HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData);
-        var rotorSalesDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesData);
-        var rotorSalesClearResponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
-        var rotorProductionSavedDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionData);
-        var rotorGrindingSavedDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
-        var rotorProductionDataResponse = await HttpClient.GetAsync(ApiConstants.GetAllProductionSavesData);
-        var rotorDamageGrindingResponse = await HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
-        var rotorDamageGrindingSaveResponse = await HttpClient.GetAsync(ApiConstants.GetAllSaveGrindingData);
+        var receivingTask = HttpClient.GetAsync(ApiConstants.GetReceiving);
+        var inspectionTask = HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
+        var shippingTask = HttpClient.GetAsync(ApiConstants.GetAllShippedData);
+        var finalInspectionTask = HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData);
+        var salesDataTask = HttpClient.GetAsync(ApiConstants.GetAllSalesData);
+        var salesClearanceTask = HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
+        var productionSavedTask = HttpClient.GetAsync(ApiConstants.GetAllProductionData);
+        var grindingSavedTask = HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
+        var productionDataTask = HttpClient.GetAsync(ApiConstants.GetAllProductionSavesData);
+        var damageGrindingTask = HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
+        var damageGrindingSaveTask = HttpClient.GetAsync(ApiConstants.GetAllSaveGrindingData);
 
-        if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode && rotorShippingResponse.IsSuccessStatusCode &&
-            rotorFinalInspectionResponse.IsSuccessStatusCode && rotorSalesDataResponse.IsSuccessStatusCode && rotorProductionSavedDataResponse.IsSuccessStatusCode
-            && rotorGrindingSavedDataResponse.IsSuccessStatusCode && rotorSalesClearResponse.IsSuccessStatusCode && rotorProductionDataResponse.IsSuccessStatusCode
-            && rotorDamageGrindingResponse.IsSuccessStatusCode && rotorDamageGrindingSaveResponse.IsSuccessStatusCode)
+        await Task.WhenAll(
+            receivingTask, inspectionTask, shippingTask, finalInspectionTask, salesDataTask,
+            salesClearanceTask, productionSavedTask, grindingSavedTask, productionDataTask,
+            damageGrindingTask, damageGrindingSaveTask
+        );
+
+        // Helper function to safely read JSON and deserialize to list
+        async Task<List<T>> ReadListAsync<T>(Task<HttpResponseMessage> task)
         {
-            var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
-            var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
-            var rotorShippingJson = await rotorShippingResponse.Content.ReadAsStringAsync();
-            var rotorFinalInspectionJson = await rotorFinalInspectionResponse.Content.ReadAsStringAsync();
-            var rotorSalesDataJson = await rotorSalesDataResponse.Content.ReadAsStringAsync();
-            var rotorProductionSavedDataJson = await rotorProductionSavedDataResponse.Content.ReadAsStringAsync();
-            var rotorGrindingSavedDataJson = await rotorGrindingSavedDataResponse.Content.ReadAsStringAsync();
-            var rotorSalesClearanceDataJson = await rotorSalesClearResponse.Content.ReadAsStringAsync();
-            var rotorProductionDataJson = await rotorProductionDataResponse.Content.ReadAsStringAsync();
-            var rotorDamageGrindingJson = await rotorDamageGrindingResponse.Content.ReadAsStringAsync();
-            var rotorDamageGrindingSaveJson = await rotorDamageGrindingSaveResponse.Content.ReadAsStringAsync();
-
-            var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorShippingList = System.Text.Json.JsonSerializer.Deserialize<List<RotorShipping>>(rotorShippingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorFinalInspectionList = System.Text.Json.JsonSerializer.Deserialize<List<RotorsFinalInspection>>(rotorFinalInspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorSalesDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorSalesData>>(rotorSalesDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorProductionSavedDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorProductionData>>(rotorProductionSavedDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorGrindingSavedDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorGrindingSavedData>>(rotorGrindingSavedDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorSalesClearanceDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorSalesClearance>>(rotorSalesClearanceDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorProductionDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorProductionSavedData>>(rotorProductionDataJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorDamageGrindingDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorDamageGrindingDataFromGrinding>>(rotorDamageGrindingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            var rotorDamageGrindingSaveDataList = System.Text.Json.JsonSerializer.Deserialize<List<RotorDamageGrindingSaveData>>(rotorDamageGrindingSaveJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            if (rotorShippingList.Any(x => x.SerialNumber == serial)) return "Shipped";
-            if (rotorSalesClearanceDataList.Any(x => x.SerialNumber == serial)) return "Shipping";
-            if (rotorFinalInspectionList.Any(x => x.SerialNumber == serial)) return "Ready To Close";
-            var grindingSerial = serial?.Trim().ToUpper();
-
-            var latestgrindingEntry = rotorDamageGrindingSaveDataList
-                .Where(x => x.SerialNumber?.Trim().ToUpper() == grindingSerial)
-                .OrderByDescending(x => x.DamageGrindingSavedDate)
-                .FirstOrDefault();
-
-            if (latestgrindingEntry != null)
+            try
             {
-                var status = latestgrindingEntry.AdvancedSharpingStatus?.Trim();
-                if (string.Equals(status, "Welding", StringComparison.OrdinalIgnoreCase))
-                    return "Damage Grinding - Welding";
-                if (string.Equals(status, "Chroming", StringComparison.OrdinalIgnoreCase))
-                    return "Damage Grinding - Chroming";
-                if (string.Equals(status, "Other Operations", StringComparison.OrdinalIgnoreCase))
-                    return "Damage Grinding - Other Operations";
+                var response = await task;
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<T>();
+                }
             }
-            if (rotorGrindingSavedDataList.Any(x => x.SerialNumber == serial)) return "Final Inspection";
-            if (rotorDamageGrindingDataList.Any(x => x.SerialNumber == serial)) return "Damage Grinding";
-            if (rotorProductionSavedDataList.Any(x => x.SerialNumber == serial)) return "Grinding";
-            var normalizedSerial = serial?.Trim().ToUpper();
-
-            var latestEntry = rotorProductionDataList
-                .Where(x => x.SerialNumber?.Trim().ToUpper() == normalizedSerial)
-                .OrderByDescending(x => x.ProductionSavedDate)
-                .FirstOrDefault();
-
-            if (latestEntry != null)
-            {
-                var status = latestEntry.AdvancedSharpingStatus?.Trim();
-                if (string.Equals(status, "Welding", StringComparison.OrdinalIgnoreCase))
-                    return "Production - Welding";
-                if (string.Equals(status, "Chroming", StringComparison.OrdinalIgnoreCase))
-                    return "Production - Chroming";
-                if (string.Equals(status, "Other Operations", StringComparison.OrdinalIgnoreCase))
-                    return "Production - Other Operations";
-            }
-            if (rotorSalesDataList.Any(x => x.SerialNumber == serial)) return "Production";
-            if (inspectionList.Any(x => x.SerialNumber == serial)) return "Sales";
-            if (receivingList.Any(x => x.SerialNumber == serial)) return "Incoming Inspection";
-
-            return "Unknown";
+            catch { }
+            return new List<T>();
         }
 
-        return "Error fetching data";
+        // Deserialize all lists safely
+        var receivingList = await ReadListAsync<Receiving>(receivingTask);
+        var inspectionList = await ReadListAsync<IncomingInspection>(inspectionTask);
+        var rotorShippingList = await ReadListAsync<RotorShipping>(shippingTask);
+        var finalInspectionList = await ReadListAsync<RotorsFinalInspection>(finalInspectionTask);
+        var salesDataList = await ReadListAsync<RotorSalesData>(salesDataTask);
+        var salesClearanceList = await ReadListAsync<RotorSalesClearance>(salesClearanceTask);
+        var productionSavedList = await ReadListAsync<RotorProductionData>(productionSavedTask);
+        var grindingSavedList = await ReadListAsync<RotorGrindingSavedData>(grindingSavedTask);
+        var productionDataList = await ReadListAsync<RotorProductionSavedData>(productionDataTask);
+        var damageGrindingList = await ReadListAsync<RotorDamageGrindingDataFromGrinding>(damageGrindingTask);
+        var damageGrindingSaveList = await ReadListAsync<RotorDamageGrindingSaveData>(damageGrindingSaveTask);
+
+        serial = serial?.Trim().ToUpper();
+
+        if (rotorShippingList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipped";
+        if (salesClearanceList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipping";
+        if (finalInspectionList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Ready To Close";
+
+        var latestDamageEntry = damageGrindingSaveList
+            .Where(x => x.SerialNumber?.Trim().ToUpper() == serial)
+            .OrderByDescending(x => x.DamageGrindingSavedDate)
+            .FirstOrDefault();
+
+        if (latestDamageEntry != null)
+        {
+            var status = latestDamageEntry.AdvancedSharpingStatus?.Trim();
+            if (string.Equals(status, "Welding", StringComparison.OrdinalIgnoreCase)) return "Damage Grinding - Welding";
+            if (string.Equals(status, "Chroming", StringComparison.OrdinalIgnoreCase)) return "Damage Grinding - Chroming";
+            if (string.Equals(status, "Other Operations", StringComparison.OrdinalIgnoreCase)) return "Damage Grinding - Other Operations";
+        }
+
+        if (grindingSavedList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Final Inspection";
+        if (damageGrindingList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Damage Grinding";
+        if (productionSavedList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Grinding";
+
+        var latestProdEntry = productionDataList
+            .Where(x => x.SerialNumber?.Trim().ToUpper() == serial)
+            .OrderByDescending(x => x.ProductionSavedDate)
+            .FirstOrDefault();
+
+        if (latestProdEntry != null)
+        {
+            var status = latestProdEntry.AdvancedSharpingStatus?.Trim();
+            if (string.Equals(status, "Welding", StringComparison.OrdinalIgnoreCase)) return "Production - Welding";
+            if (string.Equals(status, "Chroming", StringComparison.OrdinalIgnoreCase)) return "Production - Chroming";
+            if (string.Equals(status, "Other Operations", StringComparison.OrdinalIgnoreCase)) return "Production - Other Operations";
+        }
+
+        if (salesDataList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Production";
+        if (inspectionList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Sales";
+        if (receivingList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Incoming Inspection";
+
+        return "Unknown";
     }
 
 

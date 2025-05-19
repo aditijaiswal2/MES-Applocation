@@ -28,21 +28,40 @@
 
         }
 
+
+    body {
+        border: 2px solid black;
+        padding: 20px;
+        box-sizing: border-box;
+        margin: 0;
+    }
+ 
+ .print-wrapper {
+    width: 100% !important;
+      overflow: hidden !important;
+}
+
         .mud-grid {
                 display: grid !important;
-                grid-template-columns: repeat(4, 1fr) !important; /* Change to 4 columns */
+                grid-template-columns: repeat(3, 1fr) !important; /* Change to 4 columns */
                 gap: 12px;
             }
 
             .mud-item {
                 padding: 4px;
-                box-sizing: border-box;
+               
             }
 
+                .print-footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 16px;
+    }
 
             table {
-                margin: 0 auto !important; /* Center the table */
-                border-collapse: collapse;              
+                width: 100% !important;
+            border-collapse: collapse;
+            margin: 0 auto;
             }
 
             th, td {
@@ -58,37 +77,61 @@
   // var logoHtml = '  <img src="" alt="Logo" class="px-4 mt-2 mb-2" Style = "width:200px;height:40px;" />';
     var headerHtml = `
   <div style="display: flex; align-items: center; margin-bottom: 20px;">
-      <img src="Image/MAAG-removebg-preview.png" alt="Logo" style="height: 80px; margin-right: 20px;" />
-      <h1 style="font-size: 24px; margin: 0;">SERVICE ROTOR FINAL INSPECTION REPORT</h1>
-  </div>
+      <img id="logo" src="Image/MAAG-removebg-preview.png" alt="Logo" style="height: 80px; margin-right: 20px;" />
+            <h1 style="font-size: 24px; margin: 0;">SERVICE ROTOR FINAL INSPECTION</h1>
+        </div>
 `;
 
-  //  var printWindow = window.open('', '_blank');
-    var printWindow = window.open('', 'PrintWindow', 'width=900,height=650,top=100,left=100,scrollbars=yes,resizable=no');
+    var footerHtml = `
+    <div class="print-footer">
+        <h5>For New Rotors and Spare Parts</h5>
+                            <p Class="text-center">Please Call</p>
+                            <h6>1.800.844.2927 or 330.677.2225</h6>
+                            <p>8:00 am - 5:00 pm, M-F</p>
+    </div>
+`;
+
+    //  var printWindow = window.open('', '_blank');
+    var printWindow = window.open('', 'PrintWindow', 'width=1200,height=650,top=100,left=100,scrollbars=yes,resizable=yes');
+
+   // var printWindow = window.open('', 'PrintWindow', 'width=100%,height=650,top=100,left=100,scrollbars=yes,resizable=no');
 
 
    // var printWindow = window.open('', '', 'height=650,width=900');
+    //printWindow.document.write('<html><head><title> </title>');
+    //printWindow.document.write(styles);
+    //printWindow.document.write('</head><body>');
+    //printWindow.document.write(headerHtml);
+    //printWindow.document.write(`<div class="print-wrapper">${content}</div>`);
+
     printWindow.document.write('<html><head><title> </title>');
     printWindow.document.write(styles);
     printWindow.document.write('</head><body>');
-    printWindow.document.write(headerHtml);
-    printWindow.document.write(content);
+    printWindow.document.write(`<div class="print-wrapper"><div class="print-container">${headerHtml}${content}${footerHtml}</div></div>`);
+    printWindow.document.write('</body></html>');
+
+
+  //  printWindow.document.write(content);
     printWindow.document.write('</body></html>');
 
     printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    // Wait until all content (including images) is loaded
+    printWindow.onload = function () {
+        const logoImg = printWindow.document.getElementById('logo');
+        if (logoImg.complete) {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        } else {
+            logoImg.onload = function () {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
+        }
+    };
 }
 
-window.printElementById = (elementId) => {
-    const originalContents = document.body.innerHTML;
-    const printContents = document.getElementById(elementId).innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-    location.reload(); // optional: reload to restore any dynamic state
-};
 function printincomingImage(imageDataUrl, labelText) {
     const previewContent = document.getElementById("print-section");
 
@@ -98,7 +141,7 @@ function printincomingImage(imageDataUrl, labelText) {
         <style>
             body, * {
                 font-family: Arial, sans-serif !important;
-                font-size: 16px !important;
+                font-size: 14px !important;
                 background-color: white;
                 color: black;
                 margin: 3px;
@@ -138,10 +181,21 @@ function printincomingImage(imageDataUrl, labelText) {
                 box-sizing: border-box;
             }
 
-            .qr-container {
-                text-align: center;
-                margin-top: 20px;
-            }
+         .content-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.qr-container {
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.content-area {
+    flex: 1;
+}
+
 
             .qr-container img {
                 width: 75px !important;
@@ -157,11 +211,18 @@ function printincomingImage(imageDataUrl, labelText) {
         </style>
     </head>
     <body>
-        <div class="mud-dialog">
-            <title class="dialog-title">INCOMING ROTOR INSPECTION</title>
+      <div class="mud-dialog">
+    <h2 class="dialog-title">INCOMING ROTOR INSPECTION</h2>
+    <div class="content-row">
+        <div class="qr-container">
             <img id="qr-img" src="${imageDataUrl}" alt="QR Code" />
+        </div>
+        <div class="content-area">
             ${previewContent ? previewContent.innerHTML : ""}
         </div>
+    </div>
+</div>
+
 
         <script>
             window.onload = function() {

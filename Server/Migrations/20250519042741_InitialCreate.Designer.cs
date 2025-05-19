@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250516103029_InitialCreate")]
+    [Migration("20250519042741_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

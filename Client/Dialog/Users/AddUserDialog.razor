@@ -47,7 +47,7 @@
             <div class="mb-4">
                 @if (user?.PageNames != null && user.PageNames.Contains("Rotors Grinding"))
                 {
-                    <MudSelect Variant="Variant.Outlined" Label="Work Center" @bind-Value="user.SelectedWorkCenter">
+                    <MudSelect T="string" Variant="Variant.Outlined" Label="Work Center" MultiSelection="true" @bind-Value="user.SelectedWorkCenter">
                         @if (MESWorkcenters != null)
                         {
                             @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
