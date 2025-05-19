@@ -134,11 +134,11 @@
 
             if (response.IsSuccessStatusCode)
             {
-                 if (loginModel.Password == "123456")
+               //  if (loginModel.Password == "123456")
                 // var ldapResponse = await HttpClient.PostAsJsonAsync("https://localhost:7146/api/Account/login-ldap", loginModel);
 
-                //var ldapResponse = await HttpClient.PostAsJsonAsync(ApiConstants.LDAPLogin, loginModel);
-                //if (ldapResponse.IsSuccessStatusCode)
+                var ldapResponse = await HttpClient.PostAsJsonAsync(ApiConstants.LDAPLogin, loginModel);
+                if (ldapResponse.IsSuccessStatusCode)
                 {
                     // var userResponse = await HttpClient.GetAsync("https://localhost:7146/api/Users/getuser");
                     var userResponse = await HttpClient.GetAsync(ApiConstants.GetUser);
