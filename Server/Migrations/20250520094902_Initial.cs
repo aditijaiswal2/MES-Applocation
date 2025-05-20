@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -97,7 +97,7 @@ namespace MES.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SalesOrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WorkOrder = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ADDQTYdata = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ADDQTYdata = table.Column<int>(type: "int", nullable: true),
                     NewBoxRequired = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NewBoxRequiredBox = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MatNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -132,7 +132,7 @@ namespace MES.Server.Migrations
                     Aligned = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PlasticSleaves = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Welding = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    WeldingNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WeldingNum = table.Column<int>(type: "int", nullable: true),
                     BedKnife = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BoxReceivedWithSaddles = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),

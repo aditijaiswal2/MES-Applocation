@@ -417,59 +417,6 @@
     public QrDTO LocQR { get; set; }
 
 
-
-    private List<(string label, string value)> GetInspectionFields()
-    {
-        return new List<(string, string)>
-    {
-
-        ("Customer", InspectionData.Customer),
-        ("Location", InspectionData.Location),
-        ("Received", InspectionData.Received),
-        ("Inspected", InspectionData.Inspected),
-        ("Rotors#", InspectionData.RotorsNumber),
-        ("Initial", InspectionData.Initials),
-        ("Make", InspectionData.Make),
-        ("Dia", InspectionData.Dia),
-        ("Len", InspectionData.Len),
-        ("Fits", InspectionData.Fits),
-        ("Materials", SelectedMaterial),
-        ("Others", InspectionData.Others),
-        ("Rotors Dia", InspectionData.RotorsDia),
-        ("Rotors Style", SelectedRotorStyle),
-        ("Type", SelectedType),
-
-        ("Bearing Removed", Selectedberrem),
-        ("Bearings", SelectedBearings),
-        ("Bearing Seals",SelectedBearSeals),
-        ("Ceramic Seals", SelectedCerSeals),
-        ("Bearing Journal Dia (Right)", SelectedRL),
-        ("Bearing Journal Dia Details (Right)", InspectionData.yRight),
-        ("Bearing Journal Dia (Left)", SelectedLR),
-        ("Bearing Journal Dia Details (Left)", InspectionData.yLeft),
-        ("Basic Sharpening", Selectedbs),
-        ("Basic Sharpening Details", Selectedybasicsharp),
-        ("Wedgelock Alignment Marks; Present", Selectedpre),
-         ("Center Grinding", Selectedctr),
-        ("Center Grinding Details", Selectedycg),
-        ("Aligned", Selectedalign),
-        ("Plastic Sleaves", Selectedyps),
-        ("Welding", Selectedwelding),
-        ("No. of Welding", InspectionData.WeldingNum),
-        ("Bed Knife in box", Selectebkid),
-        ("Replace Blades", InspectionData.BoxReceivedWithSaddles),
-        ("Re-Profile", Selectedrp),
-        ("Sand Blasting", Selectedsb),
-        ("Manual Labor", InspectionData.ManualLabor),
-        ("Box Received with Saddles(Bottom)", Selectedbt),
-        ("Box Received with Saddles(Top)", Selectedtb),
-        ("Add QTY", InspectionData.AddQty?.ToString()),
-        ("Saddle Part Number", InspectionData.SaddlePartNumber),
-        ("Rotor Categorize", Selectedddrc),
-        ("Sub Module", Selecteddd),
-    };
-    }
-
     private IEnumerable<List<(string label, string value)>> ChunkFields(List<(string label, string value)> fields, int size)
     {
         for (int i = 0; i < fields.Count; i += size)

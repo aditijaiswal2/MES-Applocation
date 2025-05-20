@@ -57,7 +57,7 @@ namespace MES.Server.Data.Repositories
                     Aligned = dto.Aligned,
                     PlasticSleaves = dto.PlasticSleaves,
                     Welding = dto.Welding,
-                    WeldingNum = dto.WeldingNum,
+                    WeldingNum = int.TryParse(dto.WeldingNum, out var parsed) ? parsed : (int?)null,
                     BedKnife = dto.BedKnife,
                     BoxReceivedWithSaddles = dto.BoxReceivedWithSaddles,
                     ReProfile = dto.ReProfile,
@@ -70,7 +70,7 @@ namespace MES.Server.Data.Repositories
                     TirRightJournal = dto.TirRightJournal,
                     SaddlePartNumber = dto.SaddlePartNumber,
                     SerialNumber = dto.SerialNumber,
-                    ADDQTYdata = dto.ADDQTYdata,
+                    ADDQTYdata = int.TryParse(dto.ADDQTYdata, out var test) ? test : (int?)null,
                     NewBoxRequired = dto.NewBoxRequired,
                     NewBoxRequiredBox = dto.NewBoxRequiredBox,
                     Module = dto.Module,
@@ -99,12 +99,13 @@ namespace MES.Server.Data.Repositories
             return result;
         }
 
+       
 
-        public async Task<IncomingInspection?> GetByIdAsync(int id)
+        public async Task<IncomingInspection?> GetByIdAsync(string serialNumber)
         {
             return await _context.IncomingInspections
 
-                                 .FirstOrDefaultAsync(i => i.Id == id);
+                                 .FirstOrDefaultAsync(i => i.SerialNumber == serialNumber);
         }
 
         public async Task<bool> SerialNumberExistsAsync(string serialNumber)

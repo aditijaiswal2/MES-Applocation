@@ -155,6 +155,8 @@
         public const string AddFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/AddFinalInspection";
         public const string AddImagesFinal = $"{BaseUrl}/FinalInspectionImages/addbi";
         public const string GetAllFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/GetAllFIData";
+        public const string GetIncomingInspectionBySerial = $"{BaseUrl}/IncomingInspection/serialnumber";
+
 
         public const string GetFinalImagesbySerialNumber = $"{BaseUrl}/FinalInspectionImages/getImages";
 

@@ -24,7 +24,7 @@
     {
         foreach (var route in UserData.Router)
         {
-            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr" && route != "/rs" && route != "/shippingvc" && route != "/myrvc")
+            if (route != "/rii" && route != "/adduser" && route != "/wc" && route != "/svc" && route != "/rps" && route != "/rg" && route != "/rfi" && route != "/ddgr" && route != "/rs" && route != "/shippingvc" && route != "/myrvc" && route != "/asr")
 
             @* if (route != "/uvc" && route != "/lvc" && route != "/pivc") *@
             {
@@ -37,10 +37,16 @@
         }
 
 
-        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/svc") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/shippingvc") || UserData.Router.Contains("/myrvc"))
+        if (UserData.Router.Contains("/rii") || UserData.Router.Contains("/svc") || UserData.Router.Contains("/rps") || UserData.Router.Contains("/rg") || UserData.Router.Contains("/ddgr") || UserData.Router.Contains("/rfi") || UserData.Router.Contains("/shippingvc") || UserData.Router.Contains("/myrvc") || UserData.Router.Contains("/asr"))
         @* if (UserData.Router.Contains("/uvc") || UserData.Router.Contains("/lvc") || UserData.Router.Contains("/pivc")) *@
         {
             <MudNavGroup Title="Rotor/Feed Rolls Service" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Expanded="false" Class="custom-navlink">
+                @if (UserData.Router.Contains("/asr"))
+                {
+                    @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
+                    <MudNavLink Href="/asr" Icon="@Icons.Material.Filled.Adjust" IconColor="Color.Primary" Class="custom-navlink">Active Summary Report </MudNavLink>
+                }
+
                 @if (UserData.Router.Contains("/rii"))
                 {
                     @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
@@ -66,20 +72,17 @@
                 {
                     <MudNavLink Href="/rfi" Icon="@Icons.Material.Filled.Dehaze" IconColor="Color.Primary" Class="custom-navlink">Final Inspection</MudNavLink>
                 }
-               @*  @if (UserData.Router.Contains("/rwsc"))
+                @if (UserData.Router.Contains("/myrvc"))
                 {
-                    <MudNavLink Href="/rwsc" Icon="@Icons.Material.Filled.ClearAll" IconColor="Color.Primary" Class="custom-navlink">Waiting For Sales Clearance</MudNavLink>
-                } *@
+                    <MudNavLink Href="/myrvc" Icon="@Icons.Material.Filled.Store" IconColor="Color.Primary" Class="custom-navlink">My Reports </MudNavLink>
+                }
             </MudNavGroup>
 
             @if (UserData.Router.Contains("/shippingvc"))
             {
                 <MudNavLink Href="/shippingvc" Icon="@Icons.Material.Filled.LocalShipping" IconColor="Color.Primary" Class="custom-navlink">Shipping</MudNavLink>
             }
-            @if (UserData.Router.Contains("/myrvc"))
-            {
-                <MudNavLink Href="/myrvc" Icon="@Icons.Material.Filled.Store" IconColor="Color.Primary" Class="custom-navlink">My Reports </MudNavLink>
-            }
+          
         }
 
 

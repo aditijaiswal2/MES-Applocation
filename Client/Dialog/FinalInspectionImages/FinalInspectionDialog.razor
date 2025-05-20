@@ -42,7 +42,7 @@
                     </MudItem>
 
                     <MudItem md="4" xs="4" class="outlined-box pa-2">
-                        <MudText Typo="Typo.h6" Color="Color.Primary">Customer PO#</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Customer PO Number</MudText>
                         <MudText Typo="Typo.body1">@InspectionData.CustomerPoNum</MudText>
                     </MudItem>
 
@@ -56,18 +56,18 @@
                 <MudGrid Spacing="3">
 
                     <MudItem md="4" xs="4" class="outlined-box pa-2">
-                        <MudText Typo="Typo.h6" Color="Color.Primary">Dwg#</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Dwg Number</MudText>
                         <MudText Typo="Typo.body1">@InspectionData.DWGNum</MudText>
                     </MudItem>
 
                     <MudItem md="4" xs="4" class="outlined-box pa-2">
-                        <MudText Typo="Typo.h6" Color="Color.Primary">AG#</MudText>
+                        <MudText Typo="Typo.h6" Color="Color.Primary">Rotor Serial Number</MudText>
                         <MudText Typo="Typo.body1">@InspectionData.AGNum</MudText>
                     </MudItem>
 
                     <MudItem md="4" xs="4" class="outlined-box pa-2">
                         <MudText Typo="Typo.h6" Color="Color.Primary">Description</MudText>
-                        <MudText Typo="Typo.body1">@InspectionData.Description</MudText>
+                        <MudText Typo="Typo.body1">@selectedDescription</MudText>
                     </MudItem>
 
                 </MudGrid>
@@ -269,6 +269,9 @@
     public List<RotorsFinalInspection> TableData { get; set; }
     [Parameter]
     public string selectedIstheRotorclean { get; set; }
+    
+    [Parameter]
+    public string selectedDescription { get; set; }
     [Parameter]
     public string selectedDressedwithNewBearing { get; set; }
     

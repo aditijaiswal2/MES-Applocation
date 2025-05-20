@@ -55,10 +55,10 @@
                                 foreach (var item in filteredList)
                                 {
                                     <MudListItem OnClick="() => SelectReceive(item)"
-                                                 Button="true"
-                                                 Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                                 @onmouseover="() => hoveredReceive = item"
-                                                 @onmouseout="() => hoveredReceive = null">
+                                    Button="true"
+                                    Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                    @onmouseover="() => hoveredReceive = item"
+                                    @onmouseout="() => hoveredReceive = null">
                                         <MudText>@item.SerialNumber - @item.Customer - @item.Module</MudText>
                                     </MudListItem>
                                 }
@@ -203,7 +203,7 @@
 
                                             <MudGrid Spacing="3">
 
-                                              
+
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Material" @bind-Value="serialNumberData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                                 </MudItem>
@@ -219,7 +219,7 @@
                                             <MudGrid Spacing="3">
 
 
-                                               
+
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Dwg Number" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" Required />
                                                 </MudItem>
@@ -233,13 +233,24 @@
                                                 </MudItem>
                                             </MudGrid>
                                             <MudGrid Spacing="3">
+
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudSelect T="string" ValueChanged="OnDescription" Label="Description" Variant="Variant.Outlined" Value="selectedDescription" ValueExpression="() => selectedDescription" FullWidth="true" Class="custom-select">
+                                                        @foreach (var ber in Description)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+
+                                                    </MudSelect>
                                                 </MudItem>
+
+                                                @*  <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
+                                                </MudItem> *@
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
                                                 </MudItem>
-                                             
+
 
                                                 <MudItem xs="12" md="4">
                                                     <MudSelect T="string" ValueChanged="OnDressedwithNewBearing" Label="Dressed With New Bearings" Variant="Variant.Outlined" Value="selectedDressedwithNewBearing" ValueExpression="() => selectedDressedwithNewBearing" FullWidth="true" Class="custom-select">
@@ -253,7 +264,7 @@
 
 
 
-                                           
+
 
                                             </MudGrid>
 
@@ -482,6 +493,7 @@
     private List<RotorsFinalInspection> tableData = new();
     private string? SelectedProject { get; set; }
     private RotorFinalInspectionDTO _finalResult;
+
     private bool showForm = true;
     private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
     private bool isSubmitted = false;
@@ -497,7 +509,9 @@
     public RotorProductionData selectedData { get; set; }
     private List<RotorGrindingData> Receivealldata = new();
     private string errorMessage = "";
+    private IncomingInspection IncomingIncData;
     private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
+    private IncomingInspection inspection { get; set; } = new IncomingInspection();
     private RotorsFinalInspection FinalInspection { get; set; } = new RotorsFinalInspection();
     private HashSet<string> scannedSerialNumbers = new HashSet<string>();
     private bool showScanDetails = false;
@@ -611,6 +625,23 @@
 
     private string selectedWedgelockassembly { get; set; } = "";
 
+
+    private async Task OnDescription(string value)
+    {
+        selectedDescription = value;
+    }
+
+    private List<string> Description = new()
+    {
+        "New Rotor",
+        "Service Rotor",
+        ""
+
+    };//Description
+
+    private string selectedDescription { get; set; } = "";
+
+
     private List<string> DressedwithNewBearing = new()
     {
         "Yes",
@@ -693,6 +724,7 @@
                 ["InspectionData"] = FinalInspectionData,
                 ["Grinding"] = serialNumberData,
                 ["selectedDressedwithNewBearing"]= selectedDressedwithNewBearing,
+                ["selectedDescription"]=selectedDescription,
 
             };
         // var options = new DialogOptions { FullWidth = true };
@@ -701,6 +733,7 @@
 
 
     }
+
     private string? lastScannedCode = null;
 
     private async Task StartScanning()
@@ -846,7 +879,7 @@
                     AGNum = FinalInspectionData.AGNum,
                     SpecialNoteComment = FinalInspectionData.SpecialNoteComment,
                     Dressedwithnewbearing = FinalInspectionData.Dressedwithnewbearing,
-                    Description = FinalInspectionData.Description,
+                    Description = selectedDescription,
                     Start = FinalInspectionData.Start,
                     Finish = FinalInspectionData.Finish,
                     Name = FinalInspectionData.Name,
@@ -962,6 +995,29 @@
             Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
             return;
         }
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            IncomingIncData = await HttpClient.GetFromJsonAsync<IncomingInspection>(
+    $"{ApiConstants.GetIncomingInspectionBySerial}/{serialNumberData.SerialNumber}");
+
+            // Example: Replace with your actual API call
+          //  IncomingIncData = await HttpClient.GetFromJsonAsync<IncomingInspection>($"{ApiConstants.GetIncomingInspectionBySerial}/{serialNumberData.SerialNumber}");
+
+            if (IncomingIncData == null)
+            {
+                Snackbar.Add("No Incoming Inspection data found for this serial number.", Severity.Warning);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to fetch inspection data: {ex.Message}", Severity.Error);
+            return;
+        }
+
         var options = new DialogOptions
             {
                 MaxWidth = MaxWidth.Medium,
@@ -972,7 +1028,8 @@
 
         var parameters = new DialogParameters
             {//selectedMaterial
-                ["InspectionData"] = serialNumberData
+                ["InspectionData"] = serialNumberData,
+                ["IncomingInspection"] = IncomingIncData,
 
             };
 
@@ -1039,9 +1096,6 @@
         }
         StateHasChanged();
     }
-
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -1141,6 +1195,7 @@
         selectedLocknutThreads = null;
         selectedIstheRotorclean = null;
         selectedJournalsOK = null;
+        selectedDescription = null;
 
         selectedWedgelockassembly = null;
         selectedSpecialPartWash = null;

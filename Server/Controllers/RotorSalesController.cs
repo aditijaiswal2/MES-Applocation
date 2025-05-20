@@ -92,7 +92,7 @@ namespace MES.Server.Controllers
                     Aligned = submission.SelectedInspection.Aligned,
                     PlasticSleaves = submission.SelectedInspection.PlasticSleaves,
                     Welding = submission.SelectedInspection.Welding,
-                    WeldingNum = submission.SelectedInspection.WeldingNum,
+                    WeldingNum = submission.SelectedInspection.WeldingNum?.ToString(), // fixed
                     BedKnife = submission.SelectedInspection.BedKnife,
                     BoxReceivedWithSaddles = submission.SelectedInspection.BoxReceivedWithSaddles,
                     ReProfile = submission.SelectedInspection.ReProfile,
@@ -108,7 +108,7 @@ namespace MES.Server.Controllers
                     ComponentType = submission.SelectedInspection.ComponentType,
                     Users = submission.SelectedInspection.Users,
                     DateTime = submission.SelectedInspection.DateTime,
-                    ADDQTYdata = submission.SelectedInspection.ADDQTYdata,
+                    ADDQTYdata = submission.SelectedInspection.ADDQTYdata?.ToString(), 
                     NewBoxRequired = submission.SelectedInspection.NewBoxRequired,
                     NewBoxRequiredBox = submission.SelectedInspection.NewBoxRequiredBox,
                     TargetDate = submission.TargetDate,

@@ -66,13 +66,22 @@ namespace MES.Server.Controllers
 
 
         // GET: api/IncomingInspection/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IncomingInspection>> Get(int id)
+        //[HttpGet("serialnumber/{id}")]
+        //public async Task<ActionResult<IncomingInspection>> Get(int id)
+        //{
+        //    var inspection = await _repository.GetByIdAsync(id);
+        //    if (inspection == null) return NotFound();
+        //    return Ok(inspection);
+        //}
+
+        [HttpGet("serialnumber/{serialNumber}")]
+        public async Task<ActionResult<IncomingInspection>> Get(string serialNumber)
         {
-            var inspection = await _repository.GetByIdAsync(id);
+            var inspection = await _repository.GetByIdAsync(serialNumber);
             if (inspection == null) return NotFound();
             return Ok(inspection);
         }
+
 
 
         /// <summary>

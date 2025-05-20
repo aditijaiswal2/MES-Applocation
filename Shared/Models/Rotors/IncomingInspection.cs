@@ -16,7 +16,7 @@ namespace MES.Shared.Models.Rotors
         public string? SalesOrderNumber { get; set; }
         public string? WorkOrder { get; set; }
 
-        public string? ADDQTYdata { get; set; }
+        public int? ADDQTYdata { get; set; }
         public string? NewBoxRequired { get; set; }
         public string? NewBoxRequiredBox { get; set; }
         public string? MatNumber { get; set; }
@@ -51,7 +51,7 @@ namespace MES.Shared.Models.Rotors
         public string? Aligned { get; set; }
         public string? PlasticSleaves { get; set; }
         public string? Welding { get; set; }
-        public string? WeldingNum { get; set; }
+        public int? WeldingNum { get; set; }
         public string? BedKnife { get; set; }
         public string? BoxReceivedWithSaddles { get; set; }
         public string? ReProfile { get; set; }

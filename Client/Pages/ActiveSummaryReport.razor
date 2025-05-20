@@ -21,11 +21,12 @@
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
                             <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh Style="text-align:center">Report Number</MudTh>
                             <MudTh Style="text-align:center">Customer</MudTh>
+                            <MudTh Style="text-align:center">Customer Priority</MudTh>
                             <MudTh Style="text-align:center">Rotors/Feed rolls Number</MudTh>
                             <MudTh Style="text-align:center">Type</MudTh>
                             <MudTh Style="text-align:center">Rotors Categorize</MudTh>
@@ -37,6 +38,7 @@
                         <RowTemplate>
                             <MudTd Style="text-align:center">@context.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@context.Customer</MudTd>
+                            <MudTd Style="text-align:center">@context.CustomerPriority</MudTd>
                             <MudTd Style="text-align:center">@context.RotorNumber</MudTd>
                             <MudTd Style="text-align:center">@context.Type</MudTd>
                             <MudTd Style="text-align:center">@context.Categorize</MudTd>
@@ -89,25 +91,30 @@
 
             var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
             var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming); // add this
+            var SalesResponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesData);
 
-            if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode)
+            if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode && SalesResponse.IsSuccessStatusCode)
             {
 
 
                 var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
                 var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
+                var SalesJson = await SalesResponse.Content.ReadAsStringAsync();
 
                 var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var SalesList = System.Text.Json.JsonSerializer.Deserialize<List<RotorSalesData>>(SalesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
 
 
-                if (receivingList != null && inspectionList != null)
+                if (receivingList != null && inspectionList != null && SalesList!=null)
                 {
 
                     var combinedData = await Task.WhenAll(receivingList.Select(async receiving =>
        {
            var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
+           var matchingSales = SalesList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
+
            var serial = receiving.SerialNumber;
            var currentLocation = await GetCurrentLocation(serial);
 
@@ -115,6 +122,7 @@
                {
                    SerialNumber = receiving.SerialNumber,
                    Customer = matchingInspection?.Customer,
+                   CustomerPriority= matchingSales?.CustomerImportance,
                    RotorNumber = matchingInspection?.RotorsNumber,
                    Type = matchingInspection?.RotorCategorization,
                    Categorize = matchingInspection?.ComponentType,
@@ -276,6 +284,7 @@
     {
         public string? SerialNumber { get; set; }
         public string? Customer { get; set; }
+        public string? CustomerPriority { get; set; }
         public string? RotorNumber { get; set; }
         public string? Type { get; set; }
         public string? Categorize { get; set; }

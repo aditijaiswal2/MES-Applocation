@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250520070942_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250520094902_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -560,8 +560,8 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ADDQTYdata")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ADDQTYdata")
+                        .HasColumnType("int");
 
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
@@ -723,8 +723,8 @@ namespace MES.Server.Migrations
                     b.Property<string>("Welding")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("WeldingNum")
+                        .HasColumnType("int");
 
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
