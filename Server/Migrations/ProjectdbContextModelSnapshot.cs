@@ -3237,6 +3237,9 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ADDQTYdata")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
@@ -3332,6 +3335,12 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("Module")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequired")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequiredBox")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Others")
@@ -3437,6 +3446,9 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ADDQTYdata")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
@@ -3532,6 +3544,12 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("Module")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequired")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NewBoxRequiredBox")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Others")

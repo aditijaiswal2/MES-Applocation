@@ -56,6 +56,9 @@ namespace MES.Shared.Models.Rotors
         public string? TirLeftJournal { get; set; }
         public string? TirRightJournal { get; set; }
         public string? SaddlePartNumber { get; set; }
+        public string? ADDQTYdata { get; set; }
+        public string? NewBoxRequired { get; set; }
+        public string? NewBoxRequiredBox { get; set; }
         public DateTime? DateTime { get; set; }
         public string RotorCategorization { get; set; }
         public string ComponentType { get; set; }
