@@ -29,6 +29,7 @@ namespace MES.Server.Data
         public DbSet<Receiving> Receivings { get; set; }
         public DbSet<ShipmentImage> ShipmentImage { get; set; }
         public DbSet<IncomingImages> IncomingImages { get; set; }
+        public DbSet<IncomingInspectionFeedRolls> IncomingInspectionFeedRollsdata { get;set; }
         public DbSet<MES.Shared.Models.Rotors.Imagedata> Imagedatas { get; set; }
         public DbSet<FinalInspection> FinalInspections { get; set; }
         public DbSet<MES.Shared.Models.Rotors.FinalImagedata> FinalImagedatas { get; set; }

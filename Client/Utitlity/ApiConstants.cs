@@ -88,6 +88,10 @@
         public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImages";
         public const string GetsalesEmails = $"{BaseUrl}/Users/getuserlist";
 
+        //Incoming Feed Rolls Data 
+        
+             public const string AddFeedrollsIncoming = $"{BaseUrl}/IncomingFeedrolls/adddata";
+
         // RotorInspection Save data  
         public const string AddRotorIISavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/AddIncomingSaveData";
         public const string GetAllIIsavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/GetRecentIncomingData";

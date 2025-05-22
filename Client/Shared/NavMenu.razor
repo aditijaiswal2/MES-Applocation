@@ -44,7 +44,7 @@
                 @if (UserData.Router.Contains("/asr"))
                 {
                     @* <MudNavLink Href="/roter" Icon="@Icons.Material.Filled.Feed" IconColor="Color.Primary" Class="custom-navlink">Rotor/Feed Rolls Service</MudNavLink> *@
-                    <MudNavLink Href="/asr" Icon="@Icons.Material.Filled.Adjust" IconColor="Color.Primary" Class="custom-navlink">Active Summary Report </MudNavLink>
+                    <MudNavLink Href="/asr" Icon="@Icons.Material.Filled.Adjust" IconColor="Color.Primary" Class="custom-navlink">Active Summary</MudNavLink>
                 }
 
                 @if (UserData.Router.Contains("/rii"))
@@ -192,7 +192,7 @@
             case "/rec":
                 return "Receiving";
             case "/asr":
-                return "Active Summary Report";
+                return "Active Summary";
 
             case "/wc":
                 return "Manage Workcenters";

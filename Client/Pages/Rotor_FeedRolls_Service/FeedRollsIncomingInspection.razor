@@ -1,0 +1,786 @@
+﻿@using MES.Client.Dialog.Rotors
+@using MES.Client.Pages.Account;
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using MES.Shared.Entities
+@using ReactorBlazorQRCodeScanner;
+@using Microsoft.JSInterop;
+@using MES.Shared.Models
+@using MES.Shared.Models.Rotors;
+@using MES.Shared.DTOs.MES.Shared.DTOs.Rotors
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@using System.Text.Json;
+@using System.Text
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JSRuntime
+@using static MES.Client.Pages.LoginVC
+@inject IDialogService DialogService
+@inject IDialogCompletionService CompletionService
+@inherits BaseAuthentication;
+@using Newtonsoft.Json;
+@using MudBlazor;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IDialogCompletionService CompletionService
+
+
+<MudContainer Style="overflow:hidden" Class="mt-5">
+    <MudGrid Class="d-flex justify-center">
+        @*    <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
+            <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
+        </MudItem> *@
+        <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
+            <div style="gap: 10px;">
+                <MudButton @onclick="StartScanning" Variant="Variant.Filled" Color="Color.Primary" Style="width: 100px;">
+                    Scan QR
+                </MudButton>
+
+                @if (isCancel)
+                {
+                    <MudButton @onclick="StopScanning" Variant="Variant.Filled" Color="Color.Error" Style="width: 100px; margin-left:8px;">
+                        Cancel
+                    </MudButton>
+                }
+
+                <MudButton @onclick="OpenReceiverecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px; margin-left:8px;">
+                   Incoming Feed Rolls Inspection
+                </MudButton>
+            </div>
+        </MudItem>
+
+        @if (showContent)
+        {
+            <MudItem xs="12">
+                <div class="d-flex justify-content-start mt-2">
+                    <MudPaper Elevation="3" Class="pa-3" Style="width: 300px;">
+                        @* You can adjust width *@
+                        <MudList Dense="true">
+                            @{
+                                var filteredList = Receivealldata
+                                .Where(i => i.SerialNumber?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true)
+                                .ToList();
+                            }
+
+                            @if (filteredList.Any())
+                            {
+                                foreach (var item in filteredList)
+                                {
+                                    <MudListItem OnClick="() => SelectReceive(item)" Button="true"
+                                    Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                    @onmouseover="() => hoveredReceive = item"
+                                    @onmouseout="() => hoveredReceive = null">
+                                        <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
+                                    </MudListItem>
+                                }
+                            }
+                            else
+                            {
+                                <MudText Class="pa-2 text-secondary">No records found.</MudText>
+                            }
+                        </MudList>
+                    </MudPaper>
+                </div>
+            </MudItem>
+
+        }
+
+
+        <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
+            @if (isScanning)
+            {
+                <div class="d-flex justify-center" style="width: 350px; height: 350px;">
+                    <QRCodeScanner LoadingMessage="" />
+                </div>
+            }
+
+        </MudItem>
+
+        @if (showForm)
+        {
+            <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center" Style="margin-top:-20px">
+                @if ((!string.IsNullOrEmpty(qrCodeData)) || (selectedReceive != null))
+                {
+                    <div>
+                        <div class="border border-primary p-10 mt-2 d-flex flex-wrap qr-container">
+
+                            @if (!string.IsNullOrEmpty(qrCodeData))
+                            {
+                                foreach (var item in qrCodeData.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    <p class="qr-item">@item.Trim()</p>
+                                }
+                            }
+
+                            else if (selectedReceive != null)
+                            {
+                                <p class="qr-item">Report Number: @selectedReceive.SerialNumber</p>
+                                <p class="qr-item">Module: @selectedReceive.SelectedOption</p>
+                                <p class="qr-item">Customer: @selectedReceive.Customer</p>
+                                <p class="qr-item">Received Date: @selectedReceive.Date.ToString("dd-MM-yyyy HH:mm")</p>
+
+                            }
+
+                        </div>
+
+                        @if (!isExistingSerial)
+                        {
+                            <!-- Display Form -->
+                            <MudCard Class="mt-4 p-4 w-100" id="printForm-section">
+                                <MudCardContent>
+                                    <MudText Typo="Typo.h5" Align="Align.Center" Class="mb-4">FEEDROLL INSPECTION</MudText>
+
+                                    <MudForm Class="w-100">
+                                        <!-- Section: Customer Info -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Customer" @bind-Value="inspection.Customer" Variant="Variant.Outlined" Required />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Received with Eccentrics" @bind-Value="inspection.ReceivedWithEccentrics" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Feedroll Description" @bind-Value="inspection.FeedRollDesc" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Feed Rolls Serial Number" @bind-Value="inspection.FeedRollSerialNum" Variant="Variant.Outlined" Required />
+                                                </MudItem>
+                                                <MudItem xs="12" md="4">
+
+                                                    <MudSelect Variant="Variant.Outlined" ValueExpression="() => SelectedType" @bind-Value="SelectedType"
+                                                    AnchorOrigin="Origin.BottomCenter" Label="Type">
+                                                        @if (typeData != null)
+                                                        {
+                                                            @foreach (var location in typeData.OrderBy(l => l.TypeName))
+                                                            {
+                                                                <MudSelectItem Value="@location.TypeName">@location.TypeName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect>
+
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Section: Surface Measurement -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">
+                                                O.D. Surface Measurement (Mark (R)ight & (L)eft on Feedroll)
+                                            </MudText>
+                                            <MudGrid Spacing="2">
+                                                <!-- Beginning Size -->
+                                                <MudItem xs="12" md="6">
+                                                    <MudText Typo="Typo.subtitle1" Class="mb-2">BEGINNING SIZE</MudText>
+                                                    <MudTextField Label="Right" @bind-Value="inspection.SMBR" FullWidth Variant="Variant.Outlined" Class="mb-2" />
+                                                    <MudTextField Label="Center" @bind-Value="inspection.SMBC" FullWidth Variant="Variant.Outlined" Class="mb-2" />
+                                                    <MudTextField Label="Left" @bind-Value="inspection.SMBL" FullWidth Variant="Variant.Outlined" />
+                                                </MudItem>
+
+                                                <!-- Finish Size -->
+                                                <MudItem xs="12" md="6">
+                                                    <MudText Typo="Typo.subtitle1" Class="mb-2">FINISH SIZE</MudText>
+                                                    <MudTextField Label="Right" @bind-Value="inspection.SMFR" FullWidth Variant="Variant.Outlined" Class="mb-2" />
+                                                    <MudTextField Label="Center" @bind-Value="inspection.SMFC" FullWidth Variant="Variant.Outlined" Class="mb-2" />
+                                                    <MudTextField Label="Left" @bind-Value="inspection.SMFL" FullWidth Variant="Variant.Outlined" />
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Section: Journal Dimensions -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">O.D. Journal Dimensions</MudText>
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Bearing Journal Left" @bind-Value="inspection.BJL" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Bearing Journal Right" @bind-Value="inspection.BJR" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Seal Journal Left" @bind-Value="inspection.SJL" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Seal Journal Right" @bind-Value="inspection.SJR" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Section: Length Dimensions -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">Length Dimensions</MudText>
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Overall Length" @bind-Value="inspection.OL" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Body Length" @bind-Value="inspection.BL" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Section: Left and Right Components -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">Component Details</MudText>
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="6">
+                                                    <MudText Typo="Typo.subtitle1" Class="mb-2">LEFT</MudText>
+                                                    <MudSelect T="string" Label="Locknut Threads" Value="selectedLocknutThreadsL" ValueExpression="() => selectedLocknutThreadsL" Variant="Variant.Outlined" ValueChanged="OnLocknutThreadsLChanged" FullWidth="true">
+                                                        @foreach (var ber in LocknutThreadsL)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                    <MudSelect T="string" Label="Back Plates" Value="selectedBackPlatesL" ValueExpression="() => selectedBackPlatesL" Variant="Variant.Outlined" ValueChanged="OnBackPlatesLChanged" FullWidth="true">
+                                                        @foreach (var ber in BackPlatesL)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                    <MudSelect T="string" Label="Centers" Value="selectedCentersL" ValueExpression="() => selectedCentersL" Variant="Variant.Outlined" ValueChanged="OnCentersLChanged" FullWidth="true">
+                                                        @foreach (var ber in CentersL)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+
+                                                    <MudText Typo="Typo.subtitle1" Class="mb-2">RIGHT</MudText>
+
+                                                    <MudSelect T="string" Label="Locknut Threads" Value="selectedLocknutThreadsR" ValueExpression="() => selectedLocknutThreadsR" Variant="Variant.Outlined" ValueChanged="OnLocknutThreadsRChanged" FullWidth="true">
+                                                        @foreach (var ber in LocknutThreadsR)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                    <MudSelect T="string" Label="Back Plates" Value="selectedBackPlatesR" ValueExpression="() => selectedBackPlatesR" Variant="Variant.Outlined" ValueChanged="OnBackPlatesRChanged" FullWidth="true">
+                                                        @foreach (var ber in BackPlatesR)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+
+                                                    <MudSelect T="string" Label="Centers" Value="selectedCentersR" ValueExpression="() => selectedCentersR" Variant="Variant.Outlined" ValueChanged="OnCentersRChanged" FullWidth="true">
+                                                        @foreach (var ber in CentersR)
+                                                        {
+                                                            <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Section: Footer -->
+                                        <MudPaper Class="p-4 mb-4" Elevation="1">
+                                            <MudGrid Spacing="2">
+                                                <MudItem xs="12" md="6">
+                                                    <MudNumericField Label="Bearing Part Number" @bind-Value="inspection.BearingPartNUmber" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Note" @bind-Value="inspection.Notes" Variant="Variant.Outlined" />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Inspected By" @bind-Value="inspection.InspectedBY" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+                                                <MudItem xs="12" md="6">
+                                                    <MudTextField Label="Inspected Date" @bind-Value="inspection.Date" Variant="Variant.Outlined" ReadOnly  />
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudPaper>
+
+                                        <!-- Submit Button -->
+                                        <MudGrid Justify="Justify.Center">
+                                            <MudItem>
+                                                <MudButton OnClick="SubmitForm" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Medium">
+                                                    Submit
+                                                </MudButton>
+
+                                                <MudButton Class="mr-2" OnClick="OpenPreviewDialogBox" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Filled">Preview</MudButton>
+                                                <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+                                                <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Tertiary" OnClick="Save">SAVE</MudButton>
+                                                <MudButton Class="mr-2" OnClick="SubmitForm" Color="Color.Primary" Size="Size.Small" Variant="Variant.Filled">Submit</MudButton>
+
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudForm>
+                                </MudCardContent>
+                            </MudCard>
+
+                        }
+                        else
+                        {
+
+                            <MudText Typo="Typo.h6" Color="Color.Error">This serial number already exists. Please check in Sales.</MudText>
+
+                        }
+
+                    </div>
+                }
+                else if (cameraError)
+                {
+                    <MudText Color="Color.Error">Camera access was blocked. Please allow camera access to scan QR codes.</MudText>
+                }
+            </MudItem>
+
+        }
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .section-container {
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;       
+    }
+
+    .section-title {
+    font-weight: 600;
+    margin-bottom: 16px;
+    }
+
+    .bordered-container {
+    width: 100%;
+    max-width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    }
+
+    .no-checkbox .mud-selected-item-checkbox {
+    display: none !important;
+    }
+
+    .qr-item {
+    margin: 1rem;
+    font-size: 16px;
+    white-space: nowrap;
+    }
+
+    .qr-container {
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    }
+
+
+    .full-width-grid {
+    width: 100%;
+    margin: 0;
+    }
+
+    .spaced-select .mud-input-label {
+    margin-bottom: 6px; /* Adjust as needed */
+    }
+
+</style>
+
+@code {
+    private QRCodeScannerJsInterop? _qrCodeScannerJsInterop;
+    private Action<string>? _onQrCodeScanAction;
+    private Action<string>? _onCameraPermissionFailedAction;
+    private QRCodeScanner qrCodeScanner;
+    private Receiving selectedReceive;
+    private bool isSubmitted = false;
+    private IncomingInspectionFeedRolls inspection { get; set; } = new IncomingInspectionFeedRolls();
+
+    private IEnumerable<Receiving> Receive { get; set; } = new List<Receiving>();
+    private List<Receiving> Receivealldata = new();
+    private string? SelectedRotorsStyle { get; set; }
+    private string? SelectedType { get; set; }
+    private List<Typesdetails>? typeData { get; set; } = new List<Typesdetails>();
+    private Receiving? hoveredReceive;
+    private bool showContent = false;
+    private string errorMessage = "";
+    private string searchTerm = "";
+    bool isFormOpen = false;
+    private bool showForm = true;
+    string SelectedSerialNumber;
+    string SelectedModuleName;
+    private DateTime currentDateTime = DateTime.Now;
+
+    private async Task OpenPreviewDialogBox()
+    { }
+
+    private async Task ClearAll()
+    {
+       
+    }
+    private async Task Save()
+    {
+        
+    }
+
+    private List<string> LocknutThreadsL = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedLocknutThreadsL { get; set; } = "";//
+
+    private async Task OnLocknutThreadsLChanged(string value)
+    {
+        selectedLocknutThreadsL = value;
+    }
+
+    private List<string> LocknutThreadsR = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedLocknutThreadsR { get; set; } = "";
+
+    private async Task OnLocknutThreadsRChanged(string value)
+    {
+        selectedLocknutThreadsR = value;
+    }
+
+    private List<string> BackPlatesR = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedBackPlatesR { get; set; } = "";
+
+    private async Task OnBackPlatesRChanged(string value)
+    {
+        selectedBackPlatesR = value;
+    }
+
+    private List<string> BackPlatesL = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedBackPlatesL { get; set; } = "";
+
+    private async Task OnBackPlatesLChanged(string value)
+    {
+        selectedBackPlatesL = value;
+    }
+
+    private List<string> CentersL = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedCentersL { get; set; } = "";
+
+    private async Task OnCentersLChanged(string value)
+    {
+        selectedCentersL = value;
+    }
+
+      private List<string> CentersR = new()
+    {
+        "Okay",
+        "Repair",
+        ""
+    };
+
+    private string selectedCentersR { get; set; } = "";
+
+    private async Task OnCentersRChanged(string value)
+    {
+        selectedCentersR = value;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+
+        // Assign user name or default to "User" if userData is null
+        string currentuser = userData?.UserName ?? "User";
+        inspection.InspectedBY = currentuser;
+        inspection.Date = DateTime.Now;
+
+        HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+        var TypeResponse = await HttpClient.GetAsync(ApiConstants.GetType);
+
+        if (TypeResponse.IsSuccessStatusCode)
+        {
+            var locationResult = await TypeResponse.Content.ReadFromJsonAsync<List<Typesdetails>>();
+
+            if (locationResult != null)
+            {
+                typeData = locationResult.OrderByDescending(l => l.Id).ToList();
+            }
+        }
+    }
+
+    public async Task SelectReceive(Receiving item)
+    {
+        selectedReceive = item;
+
+        SelectedSerialNumber = item.SerialNumber;
+        SelectedModuleName = item.SelectedOption;
+
+        qrCodeData = null;
+        showContent = false;
+
+        // Call API to check if data is already saved
+        try
+        {
+         
+        }
+        catch (HttpRequestException ex)
+        {
+            // Log or handle if no data found
+            //  Console.WriteLine("No matching data found: " + ex.Message);
+            showContent = false; // Still show content if you want to allow fresh input
+            showForm = true;
+           
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OpenReceiverecord()
+    {
+        await StopScanning();
+
+        showContent = true;
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            var response = await HttpClient.GetAsync(ApiConstants.GetAllInspectionData);
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var allInspections = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(data,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Receiving>();
+
+                // Now filter the list by checking each Serial Number
+                var filteredList = new List<Receiving>();
+
+                foreach (var item in allInspections)
+                {
+                    if (item.SelectedOption?.Equals("Feed rolls", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{item.SerialNumber}");
+
+                        if (!exists)
+                        {
+                            filteredList.Add(item);
+                        }
+                    }
+                }
+
+                Receivealldata = filteredList; // Only non-existing serial numbers will be shown now
+            }
+            else
+            {
+                errorMessage = $"Error: {response.ReasonPhrase}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            // isLoading = false;
+        }
+    }
+
+    private async void SubmitForm()
+    {
+        try
+        {
+            var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+            string useradd = userData?.UserName ?? "User";
+            if (userData != null)
+            {
+                useradd = userData.UserName;
+            }
+
+            var userEmail = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+            string useraddemail = userEmail?.UserEmail ?? "User";
+            if (userEmail != null)
+            {
+                useraddemail = userEmail.UserEmail;
+            }
+
+            if (string.IsNullOrWhiteSpace(inspection.FeedRollSerialNum) || string.IsNullOrWhiteSpace(inspection.Customer))
+            {
+                Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
+                return;
+            }
+            // Assign scanned QR Code data if available
+            if (!string.IsNullOrEmpty(qrCodeData))
+            {
+                var qrDetails = qrCodeData.Split(',');
+
+                if (qrDetails.Length >= 3) // Ensure QR Code has expected fields
+                {
+                    inspection.SerialNumber = ExtractValue(qrDetails[0]);
+                    inspection.Module = ExtractValue(qrDetails[1]);
+
+                }
+                else
+                {
+
+                    Snackbar.Add("No QR code scanned and no item selected. Please select an item.", Severity.Warning);
+                    return;
+
+                }
+            }
+            else if (selectedReceive != null)
+            {
+                // Fetch from selected Receive item instead
+                inspection.SerialNumber = selectedReceive.SerialNumber;
+                inspection.Module = selectedReceive.SelectedOption;
+            }
+
+            else
+            {
+                Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
+                return;
+            }
+
+            IncomingInspectionFeedRolls FeedRollsDataSave = new IncomingInspectionFeedRolls()
+                {
+                    Customer = inspection.Customer,
+                    ReceivedWithEccentrics = inspection.ReceivedWithEccentrics,
+                    FeedRollDesc = inspection.FeedRollDesc,
+                    FeedRollSerialNum = inspection.FeedRollSerialNum,
+                    Type = SelectedType,
+                    SMBR = inspection.SMBR,
+                    SMBC = inspection.SMBC,
+                    SMBL = inspection.SMBL,
+                    SMFR = inspection.SMFR,
+                    SMFC = inspection.SMFC,
+                    SMFL = inspection.SMFL,
+                    BJL = inspection.BJL,
+                    BJR = inspection.BJR,
+                    SJL = inspection.SJL,
+                    SJR = inspection.SJR,
+                    OL = inspection.OL,
+                    BL = inspection.BL,
+                    LocknutThreadsL = selectedLocknutThreadsL,
+                    LocknutThreadsR = selectedLocknutThreadsR,
+                    BackPlatesL = selectedBackPlatesL,
+                    BackPlatesR = selectedBackPlatesR,
+                    CentersL = selectedCentersL,
+                    CentersR = selectedCentersR,
+                    BearingPartNUmber = inspection.BearingPartNUmber,
+                    Notes = inspection.Notes,
+                      SerialNumber = inspection.SerialNumber,
+                    Module = inspection.Module,
+                    Date = DateTime.Today,                   
+                    InspectedBY = useradd,
+                };
+
+            var jsonPart = JsonConvert.SerializeObject(FeedRollsDataSave);
+                var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+                // var response = await HttpClient.PostAsync("https://localhost:7172/api/IncomingInspection/addincoming", content);
+                var response = await HttpClient.PostAsync(ApiConstants.AddFeedrollsIncoming, content);
+                // var emailQuery = $"?userEmail={useraddemail}";
+                //  var response = await HttpClient.PostAsync(ApiConstants.AddRotorIncoming + emailQuery, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Incoming Inspection form submitted successfully!", Severity.Success);
+                    Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
+                    showForm = false;
+                   
+                    showContent = false;
+                    await OnInitializedAsync();
+
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add("Error submitting form.", Severity.Error);
+                }
+            
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+
+    private void OnQrCodeScan(string code)
+    {
+        qrCodeData = code;
+        isScanning = false;
+        isCancel = false;
+        _qrCodeScannerJsInterop.StopRecording();
+
+
+        var qrDetails = qrCodeData.Split(',');
+
+        if (qrDetails.Length >= 3) // Ensure the QR code has at least 3 fields
+        {
+            inspection.Module = qrDetails[0].Trim();
+            inspection.InspectedBY = qrDetails[1].Trim();
+            inspection.SerialNumber = qrDetails[2].Trim();
+        }
+
+        showScanDetails = false; // Keep fields hidden initially
+        StateHasChanged();
+    }
+
+    private bool isExistingSerial = false;
+
+    private string ExtractValue(string data)
+    {
+        var parts = data.Split(':'); // Check if the data has a label like "SerialNumber: 12345"
+        return parts.Length > 1 ? parts[1].Trim() : parts[0].Trim(); // Return value without label
+    }
+    private string qrCodeData;
+    private bool isScanning;
+    private bool isCancel = false;
+    private bool cameraError = false;
+
+    private string? lastScannedCode = null;
+
+    private async Task StartScanning()
+    {
+      
+    }
+
+    private async Task StopScanning()
+    {
+        isScanning = false;
+        isCancel = false;
+
+        if (_qrCodeScannerJsInterop != null)
+        {
+            await _qrCodeScannerJsInterop.StopRecording();
+        }
+
+        StateHasChanged();
+    }
+
+    private bool showScanDetails = false;
+
+    private List<string> selectedImageList = new();
+
+    private void OnCameraPermissionFailed(string error)
+    {
+        cameraError = true;
+        isScanning = false;
+        isCancel = false;
+        StateHasChanged();
+    }
+
+}

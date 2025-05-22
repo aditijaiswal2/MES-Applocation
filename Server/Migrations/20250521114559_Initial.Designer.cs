@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250520094902_Initial")]
+    [Migration("20250521114559_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -738,6 +738,114 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IncomingInspections");
+                });
+
+            modelBuilder.Entity("MES.Shared.Models.Rotors.IncomingInspectionFeedRolls", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BJL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BJR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BackPlatesL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BackPlatesR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BearingPartNUmber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CentersL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CentersR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Customer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FeedRollDesc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FeedRollSerialNum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InspectedBY")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocknutThreadsL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocknutThreadsR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceivedWithEccentrics")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SJL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SJR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMBC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMBL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMBR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMFC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMFL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SMFR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IncomingInspectionFeedRollsdata");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.NewRotorData", b =>

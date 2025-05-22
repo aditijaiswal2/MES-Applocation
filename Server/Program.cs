@@ -61,6 +61,9 @@ builder.Services.AddTransient<NewBoxRequiredNumberRepository>();
 builder.Services.AddTransient<IMESDelayReasonRepository,MESDelayReasonRepository>();
 builder.Services.AddTransient<MESDelayReasonRepository>();
 
+builder.Services.AddTransient<IIncomingFeedrollsRepository, IncomingFeedrollsRepository>();
+builder.Services.AddTransient<IncomingFeedrollsRepository>();
+
 // Database context configuration
 builder.Services.AddDbContext<ProjectdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MESDataConnection")));

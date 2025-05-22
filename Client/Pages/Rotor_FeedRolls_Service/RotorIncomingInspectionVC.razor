@@ -1,6 +1,4 @@
-﻿@page "/rii"
-
-@using MES.Client.Dialog.Rotors
+﻿@using MES.Client.Dialog.Rotors
 @using MES.Client.Pages.Account;
 @using MES.Client.Utitlity
 @using MES.Shared.DTOs
@@ -45,7 +43,7 @@
                 }
 
                 <MudButton @onclick="OpenReceiverecord" Variant="Variant.Filled" Color="Color.Primary" Style="width: 300px; margin-left:8px;">
-                    Incoming Inspection
+                    Incoming Rotors Inspection
                 </MudButton>
             </div>
         </MudItem>
@@ -967,13 +965,14 @@
 
                 foreach (var item in allInspections)
                 {
-                    // Check if Serial Number exists (Call API for each Serial)
-                    var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{item.SerialNumber}");
-
-                    if (!exists)
+                    if (item.SelectedOption?.Equals("Rotors", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        // Only add if Serial does not exist
-                        filteredList.Add(item);
+                        var exists = await HttpClient.GetFromJsonAsync<bool>($"{ApiConstants.CheckSerialNumber}/{item.SerialNumber}");
+
+                        if (!exists)
+                        {
+                            filteredList.Add(item);
+                        }
                     }
                 }
 
@@ -1858,7 +1857,7 @@
                 }
                 //  var Module = ExtractValue(code.Split(',')[1]);
 
-                if (inspection.Module != "Rotor/Feed rolls")
+                if (inspection.Module != "Rotors")
                 {
                     // Display message indicating QR code is not valid
                     Snackbar.Add("QR code is not valid.", Severity.Warning);

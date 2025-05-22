@@ -90,6 +90,47 @@ namespace MES.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IncomingInspectionFeedRollsdata",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Customer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceivedWithEccentrics = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FeedRollDesc = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FeedRollSerialNum = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SMBR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SMBC = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SMBL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SMFR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SMFC = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SMFL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BJL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BJR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SJL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SJR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BackPlatesL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BackPlatesR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CentersL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CentersR = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BearingPartNUmber = table.Column<int>(type: "int", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InspectedBY = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Module = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomingInspectionFeedRollsdata", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IncomingInspections",
                 columns: table => new
                 {
@@ -1971,6 +2012,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "IncomingInspectionFeedRollsdata");
 
             migrationBuilder.DropTable(
                 name: "IncomingInspections");
