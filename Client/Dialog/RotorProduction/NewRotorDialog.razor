@@ -220,7 +220,7 @@
                 MaterialNumber = MatNumber,
                 RotorsNumber = "NEW",
                 ComponentType = "Rotor",
-                CustomerImportance = SelectedPriority,
+                CustomerImportance = string.IsNullOrWhiteSpace(SelectedPriority) ? "N/A" : SelectedPriority,
                 TargetDate = fromDate,
                 PlannedHours = plannedHours,
                 CustomerName = CustomerName,

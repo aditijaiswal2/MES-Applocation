@@ -555,6 +555,14 @@
         {
             Snackbar.Add("Please Select Start Date", Severity.Warning);
             return;
+        }    
+
+      
+
+        if (IsSecondaryWorkCenters)
+        {
+            await submitSecondaryWorkCenters();
+            return;
         }
 
         // CHECK FOR THIS SERIAL NUMBER IS STARTED OR NOT
@@ -601,12 +609,6 @@
         if (IsMoveoutsideoperation)
         {
             await submitIsMoveoutsideoperation();
-            return;
-        }
-
-        if (IsSecondaryWorkCenters)
-        {
-            await submitSecondaryWorkCenters();
             return;
         }
 
@@ -812,42 +814,111 @@
 
 
 
-                        foreach (var savedItem in savedWithDifferentSerials)
-                        {
-                            if (string.IsNullOrWhiteSpace(savedItem.SerialNumber))
-                                continue;
+                        // foreach (var savedItem in savedWithDifferentSerials)
+                        // {
+                        //     if (string.IsNullOrWhiteSpace(savedItem.SerialNumber))
+                        //         continue;
 
-                            var matchingSWC = AllSecondaryWorkCentersData
-                                .FirstOrDefault(x => x.SerialNumber == savedItem.SerialNumber);
+                        //     var matchingSWC = AllSecondaryWorkCentersData
+                        //         .FirstOrDefault(x => x.SerialNumber == savedItem.SerialNumber);
 
-                            if (matchingSWC != null)
-                            {
-                                // Check and assign if different
-                                if (!string.Equals(savedItem.Workcenters, matchingSWC.SecondaryWorkCenters, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    savedItem.Workcenters = matchingSWC.SecondaryWorkCenters;
-                                }
-                            }
-                        }
+                        //     if (matchingSWC != null)
+                        //     {
+                        //         // Check and assign if different
+                        //         if (!string.Equals(savedItem.Workcenters, matchingSWC.SecondaryWorkCenters, StringComparison.OrdinalIgnoreCase))
+                        //         {
+                        //             savedItem.Workcenters = matchingSWC.SecondaryWorkCenters;
+                        //         }
+                        //     }
+                        // }
 
 
                     }
                 }
 
+
+                // Step 1: Get all serial numbers that have already been started (existing grinding data)
+                var startedSerialNumbers = new HashSet<string>(
+                    RotorgrindingDatas
+                        .Where(x => !string.IsNullOrWhiteSpace(x.SerialNumber))
+                        .Select(x => x.SerialNumber.Trim())
+                );
+
+                // Step 2: Filter AllSecondaryWorkCentersData to exclude those already in RotorgrindingDatas
+                var filteredSWCData = AllSecondaryWorkCentersData
+                    .Where(swc => !string.IsNullOrWhiteSpace(swc.SerialNumber) &&
+                                  !startedSerialNumbers.Contains(swc.SerialNumber.Trim()))
+                    .ToList();
+
+
+
+                // Normalize the current serial and workcenter you are trying to start
+                var currentSerial = selectedData?.SerialNumber?.Trim();
+               // var currentWorkCenter = selectedData?.SecondaryWorkCenters?.Trim().ToLowerInvariant();
+
+                bool isWorkCenterInUse = false;
+                var selectedWorkCenter = currentWorkCenter?.Trim().ToLowerInvariant();
+                var currentSerialTrimmed = currentSerial?.Trim();
+
+                // Step 1: Get all serials in filteredSWCData
+                var filteredSerials = filteredSWCData
+                    .Select(x => x.SerialNumber?.Trim())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                // Step 2: Check SecondaryWorkCenters conflict
+                isWorkCenterInUse = filteredSWCData.Any(swcEntry =>
+                {
+                    var swc = swcEntry.SecondaryWorkCenters?.Trim().ToLowerInvariant();
+                    var serial = swcEntry.SerialNumber?.Trim();
+
+                    return !string.Equals(serial, currentSerialTrimmed, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(swc, selectedWorkCenter, StringComparison.OrdinalIgnoreCase)
+                        && savedWithDifferentSerials.Any(saved =>
+                            string.Equals(saved.Workcenters?.Trim().ToLowerInvariant(), selectedWorkCenter, StringComparison.OrdinalIgnoreCase));
+                });
+
+                // Step 3: Check savedWithDifferentSerials excluding filteredSWCData serials
+                if (!isWorkCenterInUse)
+                {
+                    isWorkCenterInUse = savedWithDifferentSerials.Any(saved =>
+                        !filteredSerials.Contains(saved.SerialNumber?.Trim()) &&
+                        !string.Equals(saved.SerialNumber?.Trim(), currentSerialTrimmed, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(saved.Workcenters?.Trim().ToLowerInvariant(), selectedWorkCenter, StringComparison.OrdinalIgnoreCase));
+                }
+
+                // Final check
+                if (isWorkCenterInUse)
+                {
+                    Snackbar.Add("Another rotor is already started for this workcenter. Please complete it before starting a new one.", Severity.Error);
+                    return;
+                }
+
+               
+
+                if (isWorkCenterInUse)
+                {
+                    Snackbar.Add("Another rotor is already started for this workcenter. Please complete it before starting a new one.", Severity.Error);
+                    return;
+                }
+
+
+
+
                 // // Step 3: Compare work centers
                 // var selectedWorkCenter = selectedData?.Workcenters?.Trim().ToLowerInvariant();
 
-                var selectedWorkCenter = currentWorkCenter?.Trim().ToLowerInvariant();
+                // var selectedWorkCenter = currentWorkCenter?.Trim().ToLowerInvariant();
 
-                bool isWorkCenterConflict = savedWithDifferentSerials
-                    .Any(x => x.Workcenters?.Trim().ToLowerInvariant() == selectedWorkCenter);
+                // bool isWorkCenterConflict = savedWithDifferentSerials
+                //     .Any(x => x.Workcenters?.Trim().ToLowerInvariant() == selectedWorkCenter);
 
-                // Step 4: Show message if conflict
-                if (isWorkCenterConflict)
-                {
-                    Snackbar.Add("One of the rotors is already started for this workcenter. Please complete it before starting a new rotor.", Severity.Error);
-                    return;
-                }
+                // // Step 4: Show message if conflict
+                // if (isWorkCenterConflict)
+                // {
+                //     Snackbar.Add("One of the rotors is already started for this workcenter. Please complete it before starting a new rotor.", Severity.Error);
+                //     return;
+                // }
 
 
                 // // Step 1: Get all existing serial numbers

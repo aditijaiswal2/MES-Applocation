@@ -24,7 +24,7 @@
             <!-- Rotor Section -->
             <MudPaper Class="pa-4 mb-2">
                 <MudText Typo="Typo.h6" Class="cursor-pointer" @onclick="ToggleRotor">
-                    ▶ Rotors
+                    ▶ Rotors (@(rotorList?.Count(r => !string.Equals(r.RotorCategorization, "Deleted Scrap", StringComparison.OrdinalIgnoreCase)) ?? 0))
                 </MudText>
 
                 @if (ShowRotorFilters)
@@ -675,7 +675,7 @@
             <!-- Feed Roll Section -->
             <MudPaper Class="pa-4 mb-2">
                 <MudText Typo="Typo.h6" Class="cursor-pointer" @onclick="Togglefeedroles">
-                    ▶ Feed Rolls
+                    ▶ Feed Rolls (@(feedRollList?.Count ?? 0))
                 </MudText>
                 @if (ShowfeedrolesFilters)
                 {
@@ -977,7 +977,7 @@
             <!-- Scrap Roll Section -->
             <MudPaper Class="pa-4 mb-2">
                 <MudText Typo="Typo.h6" Class="cursor-pointer" @onclick="Togglescrap">
-                    ▶ Scrap
+                    ▶ Scrap (@(scrapList?.Count ?? 0))
                 </MudText>
 
                 @if (ShowscrapFilters)
