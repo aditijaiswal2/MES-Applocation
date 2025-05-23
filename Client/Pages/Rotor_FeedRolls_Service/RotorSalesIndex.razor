@@ -1,8 +1,13 @@
 ﻿@page "/svc"
+@using MES.Client.Pages.FeedRoles_Service
 
 <MudTabs>
     <MudTabPanel Text="Incoming Report">
         <RotorSalesVC> </RotorSalesVC>
+    </MudTabPanel>
+
+    <MudTabPanel Text="Feed Role Incoming Report">
+        <FeedRoleSalesVC> </FeedRoleSalesVC>
     </MudTabPanel>
 
     <MudTabPanel Text="Ready to Close">

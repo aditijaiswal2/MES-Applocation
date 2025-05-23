@@ -1,0 +1,396 @@
+﻿@using MES.Client.Dialog.RotorSalesImages
+@using MES.Client.Pages.Account;
+@using MES.Client.Utitlity
+@using MES.Shared.DTOs
+@using ReactorBlazorQRCodeScanner;
+@using Microsoft.JSInterop;
+@using MES.Shared.Models.Rotors;
+@inject HttpClient HttpClient
+@inject ISnackbar Snackbar
+@inject IHttpClientFactory _httpClient
+@inject IJSRuntime JS;
+@using MudBlazor;
+@using System.Text
+@using static MES.Client.Pages.LoginVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IDialogCompletionService CompletionService
+
+
+
+<MudGrid Spacing="3">
+    <!-- Left Panel: Search & List -->
+    <MudItem xs="12" md="4">
+        <MudPaper Elevation="3" Class="pa-3">
+            <MudTextField @bind-Value="searchTerm" Placeholder="Search..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" />
+            <MudList Dense="true">
+                @foreach (var item in feedroleinspections.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                {
+                    <MudListItem Button="true" OnClick="() => SelectFeedRoleInspection(item)" Class="@(hoveredFeedRoleInspection == item ? "hover-highlight" : null)"
+                                 @onmouseover="() => hoveredFeedRoleInspection = item"
+                                 @onmouseout="() => hoveredFeedRoleInspection = null">
+                        <MudText>@item.SerialNumber - @item.Customer - @item.FeedRollSerialNum</MudText>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
+
+
+    @if (selectedFeedRoleInspection != null)
+    {
+        <MudItem xs="12" md="8">
+            <MudPaper Elevation="3" Class="pa-3" Style="overflow: visible;">
+                @if (selectedFeedRoleInspection != null)
+                {
+                    <MudGrid>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Customer" @bind-Value="selectedFeedRoleInspection.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Received with Eccentrics" @bind-Value="selectedFeedRoleInspection.ReceivedWithEccentrics" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Feedroll Description" @bind-Value="selectedFeedRoleInspection.FeedRollDesc" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                        <MudItem xs="4">
+                            <MudTextField Label="Feed Rolls Serial Number" @bind-Value="selectedFeedRoleInspection.FeedRollSerialNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+
+                        <MudItem xs="4">
+                            <MudTextField Label="Type" @bind-Value="selectedFeedRoleInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        </MudItem>
+                                               
+                    </MudGrid>
+
+                    <!-- Section: Surface Measurement -->
+                    <MudPaper Class="p-4 mb-4" Elevation="1">
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">
+                            O.D. Surface Measurement (Mark (R)ight & (L)eft on Feedroll)
+                        </MudText>
+                        <MudGrid Spacing="2">
+                            <!-- Beginning Size -->
+                            <MudItem xs="12" md="6">
+                                <MudText Typo="Typo.subtitle1" Class="mb-2">BEGINNING SIZE</MudText>
+                                <MudTextField Label="Right" @bind-Value="selectedFeedRoleInspection.SMBR" FullWidth Variant="Variant.Outlined" Class="mb-2" ReadOnly />
+                                <MudTextField Label="Center" @bind-Value="selectedFeedRoleInspection.SMBC" FullWidth Variant="Variant.Outlined" Class="mb-2" ReadOnly />
+                                <MudTextField Label="Left" @bind-Value="selectedFeedRoleInspection.SMBL" FullWidth Variant="Variant.Outlined" />
+                            </MudItem>
+
+                            <!-- Finish Size -->
+                            <MudItem xs="12" md="6">
+                                <MudText Typo="Typo.subtitle1" Class="mb-2">FINISH SIZE</MudText>
+                                <MudTextField Label="Right" @bind-Value="selectedFeedRoleInspection.SMFR" FullWidth Variant="Variant.Outlined" Class="mb-2" ReadOnly />
+                                <MudTextField Label="Center" @bind-Value="selectedFeedRoleInspection.SMFC" FullWidth Variant="Variant.Outlined" Class="mb-2" ReadOnly />
+                                <MudTextField Label="Left" @bind-Value="selectedFeedRoleInspection.SMFL" FullWidth Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+
+                    <!-- Section: Journal Dimensions -->
+                    <MudPaper Class="p-4 mb-4" Elevation="1">
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">O.D. Journal Dimensions</MudText>
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Bearing Journal Left" @bind-Value="selectedFeedRoleInspection.BJL" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Bearing Journal Right" @bind-Value="selectedFeedRoleInspection.BJR" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Seal Journal Left" @bind-Value="selectedFeedRoleInspection.SJL" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Seal Journal Right" @bind-Value="selectedFeedRoleInspection.SJR" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+
+                    <!-- Section: Length Dimensions -->
+                    <MudPaper Class="p-4 mb-4" Elevation="1">
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-3">Length Dimensions</MudText>
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Overall Length" @bind-Value="selectedFeedRoleInspection.OL" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Body Length" @bind-Value="selectedFeedRoleInspection.BL" Variant="Variant.Outlined" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+
+                            <!-- Section: Left and Right Components -->
+
+                     <MudGrid>
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Locknut Threads Left" @bind-Value="selectedFeedRoleInspection.LocknutThreadsL" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Locknut Threads Right" @bind-Value="selectedFeedRoleInspection.LocknutThreadsR" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Back Plates Left" @bind-Value="selectedFeedRoleInspection.BackPlatesL" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Back Plates Right" @bind-Value="selectedFeedRoleInspection.BackPlatesR" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Centers Left" @bind-Value="selectedFeedRoleInspection.CentersL" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+                                <MudItem xs="6">
+                                    <MudTextField Label="Centers Left" @bind-Value="selectedFeedRoleInspection.CentersR" Variant="Variant.Outlined" />
+                                </MudItem>
+
+
+
+                    </MudGrid>
+
+                   
+
+
+
+                     
+
+
+                    <!-- Section: Footer -->
+                    <MudPaper Class="p-4 mb-4" Elevation="1">
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" md="6">
+                                <MudNumericField Label="Bearing Part Number" @bind-Value="selectedFeedRoleInspection.BearingPartNUmber" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Note" @bind-Value="selectedFeedRoleInspection.Notes" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Inspected By" @bind-Value="selectedFeedRoleInspection.InspectedBY" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Label="Inspected Date" @bind-Value="selectedFeedRoleInspection.Date" Variant="Variant.Outlined" ReadOnly />
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
+
+
+
+                    <MudGrid>
+                        <MudItem md="6" sm="12" xs="12">
+                            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="fromDate"
+                                           Variant="Variant.Outlined"
+                                           Label="Target Date Entry"
+                                           MinDate="DateTime.Today" />
+                        </MudItem>
+
+                        @*  <MudItem md="6" sm="12" xs="12">
+                            <MudTimePicker @bind-Time="PlannedHours"
+                            Label="Planned Hours"
+                            TimeFormat="HH:mm"
+                            AmPm="false"
+                            OpenTo="OpenTo.Hours"
+                            Variant="Variant.Outlined"
+                            PickerVariant="PickerVariant.Dialog" />
+                        </MudItem> *@
+
+
+                        <MudItem md="3" sm="12" xs="12">
+                            <MudNumericField @bind-Value="Hours"
+                                             Label="Hours"
+                                             Min="0"
+                                             Max="150"
+                                             Required="true"
+                                             Immediate="true"
+                                             Variant="Variant.Outlined"
+                                             ErrorText="Enter a value between 0 and 150" />
+                        </MudItem>
+
+                        <MudItem md="3" sm="12" xs="12">
+                            <MudNumericField @bind-Value="Minutes"
+                                             Label="Minutes"
+                                             Min="1"
+                                             Max="59"
+                                             Required="true"
+                                             Immediate="true"
+                                             Variant="Variant.Outlined"
+                                             ErrorText="Enter a value between 1 and 59" />
+                        </MudItem>
+
+
+                        <MudItem md="6" sm="12" xs="12">
+                            <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedPriority" AnchorOrigin="Origin.BottomCenter" Label="Customer Priority" OpenIcon="@Icons.Material.Filled.PriorityHigh" AdornmentColor="Color.Primary">
+                                @foreach (var cup in CustomerPriorityStatus)
+                                {
+                                    <MudSelectItem Value="@cup">@cup</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+
+
+                        <MudItem md="6" sm="12" xs="12">
+                            <MudTextField Label="Customer Instructions"
+                                          @bind-Value="CustomerInstructions"
+                                          Variant="Variant.Outlined"
+                                          FullWidth="true" />
+                        </MudItem>
+                    </MudGrid>
+                    <br />
+
+                    <MudItem Class="d-flex justify-end " md="12" sm="12" xs="12">
+
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">SAVE</MudButton>
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Submit">SUBMIT</MudButton>
+                        <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
+                        @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
+                        <MudButton Class="mr-2"
+                                   Variant="Variant.Filled"
+                                   Size="Size.Small"
+                                   Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                                   Disabled="@(isFileAttached)"
+                                   OnClick="AttacheFile">
+                            @(isFileAttached ? "Done" : "Attach File")
+                        </MudButton>
+
+
+                        <MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Error" OnClick="ClearAll">Clear</MudButton>
+
+                    </MudItem>
+
+                    <div id="pdfInputContainer">
+                        <InputFile OnChange="HandlePdfFileSelected" accept=".pdf" style="display:none" />
+                    </div>
+
+
+
+                }
+
+            </MudPaper>
+        </MudItem>
+    }
+   
+
+</MudGrid>
+
+
+<style>
+
+    .hover-highlight {
+        background-color: #c4c4c4;
+        cursor: pointer;
+    }
+
+    .overflow-visible {
+        overflow: visible !important;
+    }
+
+</style>
+
+
+@code {
+
+    private List<IncomingInspectionFeedRolls> feedroleinspections = new();
+    private string searchTerm = "";
+    private IncomingInspectionFeedRolls selectedFeedRoleInspection;
+    private IncomingInspectionFeedRolls? hoveredFeedRoleInspection;
+    private DateTime? fromDate = DateTime.Today;
+    private string? CustomerInstructions { get; set; }
+    private string? SelectedPriority { get; set; }
+    private List<string> CustomerPriorityStatus = new List<string>();
+
+
+    private int Hours { get; set; }
+    private int Minutes { get; set; }
+    private string? plannedHours { get; set; }
+
+    private ElementReference pdfFileInput;
+    private bool isFileAttached = false;
+
+    private SalesAttachedFileDto uploadedFileDto;
+    private byte[] uploadedFileBytes;
+    private IBrowserFile selectedPdfFile;
+    private string fileName;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        await FetchAllInspections();
+    }
+
+    private async Task FetchAllInspections()
+    {    
+
+            // Fetch feed roles incoming inspection data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+           var response = await HttpClient.GetAsync(ApiConstants.GetAllFeedRolesIncominginspectionData);
+            if (response.IsSuccessStatusCode)
+            {
+                var feedroledata = await response.Content.ReadAsStringAsync();
+               var allFeedRoleInspections = JsonSerializer.Deserialize<List<IncomingInspectionFeedRolls>>(feedroledata,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<IncomingInspectionFeedRolls>();
+
+                // Exclude inspections that already exist in rotorSalesDatas (based on SerialNumber, Module, RotorsNumber)
+                feedroleinspections = allFeedRoleInspections.ToList();
+
+
+            }
+       
+    }
+
+
+
+    private async Task SelectFeedRoleInspection(IncomingInspectionFeedRolls feedroleinspection)
+    {
+        selectedFeedRoleInspection = feedroleinspection;
+
+       
+    }
+
+
+    private async Task AttacheFile()
+    {
+        await JS.InvokeVoidAsync("triggerFileInputClick");
+    }
+    private async Task HandlePdfFileSelected(InputFileChangeEventArgs e)
+    {
+
+    }
+   
+
+
+    private async Task Save()
+    {
+
+    }
+
+    private async Task PreviewImg()
+    {
+
+    }
+   
+
+    private async Task Submit()
+    {
+
+    }
+
+
+    private async Task ClearAll()
+    {
+
+    }
+}

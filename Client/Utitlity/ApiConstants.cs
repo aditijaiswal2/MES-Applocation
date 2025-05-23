@@ -202,5 +202,9 @@
         // Get report in excel
         public const string GetReportinexcel = $"{BaseUrl}/Report/downloadreport";
 
+
+        // Feed Roles Sales Page
+        public const string GetAllFeedRolesIncominginspectionData = $"{BaseUrl}/FeedRoleSalesSumited/GetAll";
+
     }
 }
