@@ -3,7 +3,7 @@
     public class ApiConstants
     {
           private const string BaseUrl = "https://localhost:7172/api";
-        //private const string BaseUrl = "https://maag-mes.dover-global.net/api";
+       // private const string BaseUrl = "https://maag-mes.dover-global.net/api";
 
         public const string GetUserRoles = $"{BaseUrl}/Users/getuserroles";
         public const string GetRole = $"{BaseUrl}/Role/getrole";
@@ -88,9 +88,19 @@
         public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImages";
         public const string GetsalesEmails = $"{BaseUrl}/Users/getuserlist";
 
+
+        // FinalInspection Save data  
+        public const string AddFinalIISavedData = $"{BaseUrl}/RotorsFinalInspectionsave/AddFinalSaveData";
+        public const string GetAllFIsavedData = $"{BaseUrl}/RotorsFinalInspectionsave/GetRecentIncomingData";
+        public const string UpdateRotorFISavedData = $"{BaseUrl}/RotorsFinalInspectionsave/UpdateRotorIISavedData";
+        public const string CheckIfFinalExists = $"{BaseUrl}/RotorsFinalInspectionsave/CheckIfRotorExists";
+        public const string GetIncomingImageById= $"{BaseUrl}/RotorsFinalInspectionsave/IncomingImages";
+        public const string UpdateIncomingImage = $"{BaseUrl}/IncomingImages/UpdateRotorIISavedData";
+
+
         //Incoming Feed Rolls Data 
-        
-             public const string AddFeedrollsIncoming = $"{BaseUrl}/IncomingFeedrolls/adddata";
+
+        public const string AddFeedrollsIncoming = $"{BaseUrl}/IncomingFeedrolls/adddata";
 
         // RotorInspection Save data  
         public const string AddRotorIISavedData = $"{BaseUrl}/RotorIncomingInspectionSaveData/AddIncomingSaveData";
@@ -158,6 +168,9 @@
         public const string GetAllInspectionData = $"{BaseUrl}/IncomingInspection/GetAll";
         public const string AddFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/AddFinalInspection";
         public const string AddImagesFinal = $"{BaseUrl}/FinalInspectionImages/addbi";
+        public const string UpdateImagesFinal = $"{BaseUrl}/FinalInspectionImages/Update";
+
+        public const string GetImagesFinal = $"{BaseUrl}/FinalInspectionImages/getImages";
         public const string GetAllFinalInspectionData = $"{BaseUrl}/RotorsFinalInspection/GetAllFIData";
         public const string GetIncomingInspectionBySerial = $"{BaseUrl}/IncomingInspection/serialnumber";
 

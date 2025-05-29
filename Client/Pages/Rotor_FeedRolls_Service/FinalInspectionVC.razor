@@ -23,7 +23,7 @@
 <MudContainer Style="overflow:hidden" Class="mt-5">
     <MudGrid Class="d-flex justify-center">
         @*    <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
-            <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
+        <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
         </MudItem> *@
         <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
             <div>
@@ -55,10 +55,10 @@
                                 foreach (var item in filteredList)
                                 {
                                     <MudListItem OnClick="() => SelectReceive(item)"
-                                    Button="true"
-                                    Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                    @onmouseover="() => hoveredReceive = item"
-                                    @onmouseout="() => hoveredReceive = null">
+                                                 Button="true"
+                                                 Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                                 @onmouseover="() => hoveredReceive = item"
+                                                 @onmouseout="() => hoveredReceive = null">
                                         <MudText>@item.SerialNumber - @item.Customer - @item.Module</MudText>
                                     </MudListItem>
                                 }
@@ -86,7 +86,7 @@
         </MudItem>
 
 
-        @if (showForm )
+        @if (showForm)
         {
 
             <MudItem md="12" sm="12" xs="12" Class="d-flex justify-center align-center">
@@ -104,7 +104,7 @@
                                 }
                             }
 
-                            else if (selectedReceive != null )
+                            else if (selectedReceive != null)
                             {
                                 <p class="qr-item">Report Number: @selectedReceive.SerialNumber</p>
                                 <p class="qr-item">Module: @selectedReceive.Module</p>
@@ -116,19 +116,19 @@
                         </div>
 
 
-                        @if (!isExistingSerial  && serialNumberData != null)
+                        @if (!isExistingSerial && serialNumberData != null)
                         {
                             <div style="margin-top:10px">
                                 <MudButton OnClick="OpenPreviewDialogBox"
-                                Class="mr-2"
-                                Color="Color.Primary"
-                                Variant="Variant.Filled">
+                                           Class="mr-2"
+                                           Color="Color.Primary"
+                                           Variant="Variant.Filled">
                                     Incoming Inspection Report
                                 </MudButton>
 
                                 <MudButton Class="mr-2"
-                                Color="Color.Secondary"
-                                Variant="Variant.Filled" OnClick="ViewAttachedFile">
+                                           Color="Color.Secondary"
+                                           Variant="Variant.Filled" OnClick="ViewAttachedFile">
                                     Production Order Report
                                 </MudButton>
                             </div>
@@ -212,16 +212,20 @@
                                                     <MudTextField Label="Customer" @bind-Value="serialNumberData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                                 </MudItem>
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Customer PO Number" @bind-Value="FinalInspectionData.CustomerPoNum" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Customer PO Number"
+                                                                  @bind-Value="FinalInspectionData.CustomerPoNum"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
                                             </MudGrid>
 
                                             <MudGrid Spacing="3">
 
-
-
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Dwg Number" @bind-Value="FinalInspectionData.DWGNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                    <MudTextField Label="Dwg Number"
+                                                                  @bind-Value="FinalInspectionData.DWGNum"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" Required />
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="4">
@@ -229,7 +233,10 @@
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="New Rotors Serial Number" @bind-Value="FinalInspectionData.AGNum" FullWidth="true" Variant="Variant.Outlined" Required />
+                                                    <MudTextField Label="New Rotors Serial Number"
+                                                                  @bind-Value="FinalInspectionData.AGNum"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" Required />
                                                 </MudItem>
                                             </MudGrid>
                                             <MudGrid Spacing="3">
@@ -245,12 +252,14 @@
                                                 </MudItem>
 
                                                 @*  <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
-                                                </MudItem> *@
+                                    <MudTextField Label="Description" @bind-Value="FinalInspectionData.Description" FullWidth="true" Variant="Variant.Outlined" />
+                                    </MudItem> *@
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Special notes / comments" @bind-Value="FinalInspectionData.SpecialNoteComment" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Special notes / Comments"
+                                                                  @bind-Value="FinalInspectionData.SpecialNoteComment"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
-
 
                                                 <MudItem xs="12" md="4">
                                                     <MudSelect T="string" ValueChanged="OnDressedwithNewBearing" Label="Dressed With New Bearings" Variant="Variant.Outlined" Value="selectedDressedwithNewBearing" ValueExpression="() => selectedDressedwithNewBearing" FullWidth="true" Class="custom-select">
@@ -261,10 +270,6 @@
 
                                                     </MudSelect>
                                                 </MudItem>
-
-
-
-
 
                                             </MudGrid>
 
@@ -347,14 +352,20 @@
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Taper Left" @bind-Value="FinalInspectionData.TaperStart" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Taper Left"
+                                                                  @bind-Value="FinalInspectionData.TaperStart"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
                                             </MudGrid>
 
                                             <MudGrid Spacing="3">
 
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Taper Right" @bind-Value="FinalInspectionData.Taperfinish" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Taper Right"
+                                                                  @bind-Value="FinalInspectionData.Taperfinish"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
                                                 <MudItem xs="12" md="4">
                                                     <MudSelect T="string" ValueChanged="OnRBChanged" Label="Locknut Threads" Value="selectedLocknutThreads" Variant="Variant.Outlined" ValueExpression="() => selectedRB" FullWidth="true" Class="custom-select">
@@ -414,17 +425,26 @@
                                             <MudGrid Spacing="3">
 
                                                 <MudItem xs="12" md="6">
-                                                    <MudTextField Label="Inspector Signature" @bind-Value="FinalInspectionData.InspectorSing" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Inspector Signature"
+                                                                  @bind-Value="FinalInspectionData.InspectorSing"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="6">
-                                                    <MudTextField Label="Comments" @bind-Value="FinalInspectionData.InspectorComments" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="Comments"
+                                                                  @bind-Value="FinalInspectionData.InspectorComments"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
 
                                             </MudGrid>
                                             <MudGrid Spacing="2">
                                                 <MudItem xs="12" md="6">
-                                                    <MudTextField Label="OK TO SHIP" @bind-Value="FinalInspectionData.Oktoship" FullWidth="true" Variant="Variant.Outlined" />
+                                                    <MudTextField Label="OK TO SHIP"
+                                                                  @bind-Value="FinalInspectionData.Oktoship"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined" />
                                                 </MudItem>
 
                                             </MudGrid>
@@ -434,23 +454,31 @@
                                                 <MudItem xs="12" md="12" Justify="Justify.FlexEnd">
                                                     <div style="display: flex; justify-content: flex-end;">
                                                         <MudButton OnClick="OpenFinalDialogBox"
-                                                        Class="mr-2"
-                                                        Color="Color.Primary"
-                                                        Variant="Variant.Filled">
+                                                                   Class="mr-2"
+                                                                   Color="Color.Primary"
+                                                                   Variant="Variant.Filled">
                                                             Preview
                                                         </MudButton>
                                                         <MudButton OnClick="ClearAll"
-                                                        Class="mr-2"
-                                                        Color="Color.Error"
-                                                        Variant="Variant.Filled">
+                                                                   Class="mr-2"
+                                                                   Color="Color.Error"
+                                                                   Variant="Variant.Filled">
                                                             Cancel
                                                         </MudButton>
+                                                        <MudButton OnClick="Save"
+                                                                   Class="mr-2"
+                                                                   Color="Color.Tertiary"
+                                                                   Variant="Variant.Filled">
+                                                            Save
+                                                        </MudButton>
                                                         <MudButton OnClick="Submitdata"
-                                                        Class="mr-2"
-                                                        Color="Color.Primary"
-                                                        Variant="Variant.Filled">
+                                                                   Class="mr-2"
+                                                                   Color="Color.Primary"
+                                                                   Variant="Variant.Filled">
                                                             Submit
                                                         </MudButton>
+
+
                                                     </div>
                                                 </MudItem>
                                             </MudGrid>
@@ -493,9 +521,10 @@
     private List<RotorsFinalInspection> tableData = new();
     private string? SelectedProject { get; set; }
     private RotorFinalInspectionDTO _finalResult;
-
+    private FinalInspectionSubmit tempSubmission = new();
     private bool showForm = true;
     private RotorsFinalInspection FinalInspectionData = new RotorsFinalInspection();
+    private RotorsFinalInspection FinalInspection = new RotorsFinalInspection();
     private bool isSubmitted = false;
     private bool isCancel = false;
     private bool cameraError = false;
@@ -512,7 +541,7 @@
     private IncomingInspection IncomingIncData;
     private RotorGrindingData grinding { get; set; } = new RotorGrindingData();
     private IncomingInspection inspection { get; set; } = new IncomingInspection();
-    private RotorsFinalInspection FinalInspection { get; set; } = new RotorsFinalInspection();
+
     private HashSet<string> scannedSerialNumbers = new HashSet<string>();
     private bool showScanDetails = false;
     public FinalInspectionImageDTO? ProjectimagesData { get; set; }
@@ -558,7 +587,7 @@
 
                 }
 
-                Receivealldata = filteredList; 
+                Receivealldata = filteredList;
 
             }
             else
@@ -590,15 +619,84 @@
     {
         selectedReceive = item;
         serialNumberData = item;
-
         SelectedSerialNumber = item.SerialNumber;
         SelectedModuleName = item.Module;
 
         qrCodeData = null;
-        showContent = false;
-        showForm = true;
+        try
+        {
+            showContent = false;
+            var response = await HttpClient.GetFromJsonAsync<FinalInspectionSaveData>(
+                $"{ApiConstants.GetAllFIsavedData}?serialNumber={SelectedSerialNumber}&module={SelectedModuleName}");
+            //   var rotorSalesDatasresponse = await HttpClient.GetAsync(
+            // $"{ApiConstants.GetAllSalessavedData}?serialNumber={inspection.SerialNumber}&module={inspection.Module}&rotorsNumber={inspection.RotorsNumber}");
+
+            if (response != null)
+            {
+                FinalInspectionData.FluteDiameterFinish = response.FluteDiameterFinish;
+                FinalInspectionData.LandWidthFinish = response.LandWidthFinish;
+                FinalInspectionData.LandWidthStart = response.LandWidthStart;
+                FinalInspectionData.ReliefAngleStart = response.ReliefAngleStart;
+                FinalInspectionData.ReliefAngleFinish = response.ReliefAngleFinish;
+
+                FinalInspectionData.TaperStart = response.TaperStart;
+                FinalInspectionData.Taperfinish = response.Taperfinish;
+                selectedLocknutThreads = response.LocknutThreadsStart;
+                selectedIstheRotorclean = response.IstheRotorcleanStart;
+                selectedJournalsOK = response.JournalsOKStart;
+                selectedWedgelockassembly = response.WedgelockassemblyStart;
+                selectedSpecialPartWash = response.SpecialPartWashStart;
+                selectedDressedwithNewBearing = response.Dressedwithnewbearing;
+                FinalInspectionData.InspectorSing = response.InspectorSing;
+                FinalInspectionData.InspectorComments = response.InspectorComments;
+                FinalInspectionData.Oktoship = response.Oktoship;
+
+                FinalInspectionData.CustomerPoNum = response.CustomerPoNum;
+                FinalInspectionData.DWGNum = response.DWGNum;
+                FinalInspectionData.AGNum = response.AGNum;
+                FinalInspectionData.SpecialNoteComment = response.SpecialNoteComment;
+                FinalInspectionData.Dressedwithnewbearing = response.Dressedwithnewbearing;
+                selectedDescription = response.Description;
+
+                var imageResponse = await HttpClient.GetAsync($"{ApiConstants.GetImagesFinal}/{response.SerialNumber}");
+
+                if (imageResponse.IsSuccessStatusCode)
+                {
+                    var data = await imageResponse.Content.ReadAsStringAsync();
+
+                    try
+                    {
+                        var singleInspection = System.Text.Json.JsonSerializer.Deserialize<FinalInspection>(data,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        selectedImagesFromSM = new List<FinalInspection>();
+
+                        if (singleInspection != null)
+                        {
+                            selectedImagesFromSM.Add(singleInspection);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Deserialization failed: " + ex.Message);
+                    }
+
+                }
+                showForm = true;
+
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // Log or handle if no data found
+            //  Console.WriteLine("No matching data found: " + ex.Message);
+            showContent = false; // Still show content if you want to allow fresh input
+            showForm = true;
+            ClearAll();
+        }
 
         StateHasChanged();
+
     }
 
 
@@ -723,8 +821,8 @@
                 ["selectedSpecialPartWash"] = selectedSpecialPartWash,
                 ["InspectionData"] = FinalInspectionData,
                 ["Grinding"] = serialNumberData,
-                ["selectedDressedwithNewBearing"]= selectedDressedwithNewBearing,
-                ["selectedDescription"]=selectedDescription,
+                ["selectedDressedwithNewBearing"] = selectedDressedwithNewBearing,
+                ["selectedDescription"] = selectedDescription,
 
             };
         // var options = new DialogOptions { FullWidth = true };
@@ -762,6 +860,255 @@
 
         StateHasChanged(); // Update the UI to show the camera or error message
     }
+
+    private async Task Save()
+    {
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        string useraddemail = userData?.UserEmail ?? "User";
+
+        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
+        {
+            Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
+            return;
+        }
+
+        // Assign scanned QR Code data if available
+        if (!string.IsNullOrEmpty(qrCodeData))
+        {
+            var qrDetails = qrCodeData.Split(',');
+
+            if (qrDetails.Length >= 3)
+            {
+                inspection.SerialNumber = ExtractValue(qrDetails[0]);
+                inspection.Module = ExtractValue(qrDetails[1]);
+            }
+            else
+            {
+                Snackbar.Add("No QR code scanned and no item selected. Please select an item.", Severity.Warning);
+                return;
+            }
+        }
+        else if (selectedReceive != null)
+        {
+            inspection.SerialNumber = selectedReceive.SerialNumber;
+            inspection.Module = selectedReceive.Module;
+        }
+        else
+        {
+            Snackbar.Add("No QR code scanned. Please scan a QR code before submitting.", Severity.Warning);
+            return;
+        }
+
+        tempSubmission = new FinalInspectionSubmit
+            {
+                SerialNumber = serialNumberData.SerialNumber,
+                Module = serialNumberData.Module,
+                SalesOrderNumber = serialNumberData.SalesOrderNumber,
+                WorkOrder = serialNumberData.WorkOrder,
+                MatNumber = serialNumberData.MatNumber,
+                Customer = serialNumberData.Customer,
+                Location = serialNumberData.Location,
+                Received = serialNumberData.Received,
+                Inspected = serialNumberData.Inspected,
+                Len = serialNumberData.Len,
+                RotorsNumber = serialNumberData.RotorsNumber,
+                FluteDiameterStart = serialNumberData.RotorsDia,
+                FluteDiameterFinish = FinalInspectionData.FluteDiameterFinish,
+                LandWidthFinish = FinalInspectionData.LandWidthFinish,
+                LandWidthStart = FinalInspectionData.LandWidthStart,
+                ReliefAngleStart = FinalInspectionData.ReliefAngleStart,
+                ReliefAngleFinish = FinalInspectionData.ReliefAngleFinish,
+                TIRStart = serialNumberData.CentersLeft,
+                TIRfinish = serialNumberData.CentersRight,
+                TaperStart = FinalInspectionData.TaperStart,
+                Taperfinish = FinalInspectionData.Taperfinish,
+                LocknutThreadsStart = selectedLocknutThreads,
+
+                IstheRotorcleanStart = selectedIstheRotorclean,
+                JournalsOKStart = selectedJournalsOK,
+                WedgelockassemblyStart = selectedWedgelockassembly,
+                SpecialPartWashStart = selectedSpecialPartWash,
+                InspectorSing = FinalInspectionData.InspectorSing,
+                InspectorComments = FinalInspectionData.InspectorComments,
+                Oktoship = FinalInspectionData.Oktoship,
+                Initials = serialNumberData.Initials,
+                Make = serialNumberData.Make,
+                Dia = serialNumberData.Dia,
+                RotorStyle = serialNumberData.RotorStyle,
+                Fits = serialNumberData.Fits,
+                Materials = serialNumberData.Materials,
+                Others = serialNumberData.Others,
+                RotorsDia = serialNumberData.RotorsDia,
+                Type = serialNumberData.Type,
+                BearingRemoved = serialNumberData.BearingRemoved,
+                Bearing = serialNumberData.Bearing,
+                BearingSeals = serialNumberData.BearingSeals,
+                CeramicSeals = serialNumberData.CeramicSeals,
+                Right = serialNumberData.Right,
+                yRight = serialNumberData.yRight,
+                yLeft = serialNumberData.yLeft,
+                Left = serialNumberData.Left,
+                BasicSharpening = serialNumberData.BasicSharpening,
+                IfYBasicSharpening = serialNumberData.IfYBasicSharpening,
+                WedgelockAlignmentMarks = serialNumberData.WedgelockAlignmentMarks,
+                CenterGrinding = serialNumberData.CenterGrinding,
+                IfYCenterGrinding = serialNumberData.IfYCenterGrinding,
+                Aligned = serialNumberData.Aligned,
+                PlasticSleaves = serialNumberData.PlasticSleaves,
+                Welding = serialNumberData.Welding,
+                WeldingNum = serialNumberData.WeldingNum,
+                BedKnife = serialNumberData.BedKnife,
+                BoxReceivedWithSaddles = serialNumberData.BoxReceivedWithSaddles,
+                ReProfile = serialNumberData.ReProfile,
+                SandBlasting = serialNumberData.SandBlasting,
+                ManualLabor = serialNumberData.ManualLabor,
+                Bottom = serialNumberData.Bottom,
+                Top = serialNumberData.Top,
+                AddQty = serialNumberData.AddQty,
+                TirLeftJournal = serialNumberData.TirLeftJournal,
+                TirRightJournal = serialNumberData.TirRightJournal,
+                SaddlePartNumber = serialNumberData.SaddlePartNumber,
+                RotorCategorization = serialNumberData.RotorCategorization,
+                ComponentType = serialNumberData.ComponentType,
+                Users = serialNumberData.Users,
+                TargetDate = serialNumberData.TargetDate,
+                CustomerInstructions = serialNumberData.CustomerInstructions,
+                CustomerImportance = serialNumberData.CustomerImportance,
+                SubmitDate = serialNumberData.SubmitDate,
+                SubmitedBy = serialNumberData.SubmitedBy,
+                AdvancedSharpingStatus = serialNumberData.AdvancedSharpingStatus,
+                Workcenters = serialNumberData.Workcenters,
+                ProductionSubmitDate = serialNumberData.ProductionSubmitDate,
+                ProductionSubmitBy = serialNumberData.ProductionSubmitBy,
+                RotorsDiaLeft = serialNumberData.RotorsDiaLeft,
+                RotorsDiaRight = serialNumberData.RotorsDiaRight,
+                ReliefLand = serialNumberData.ReliefLand,
+                ToothFaceLeft = serialNumberData.ToothFaceLeft,
+                ToothFaceRight = serialNumberData.ToothFaceRight,
+                CentersLeft = serialNumberData.CentersLeft,
+                CentersRight = serialNumberData.CentersRight,
+                VisualChecks = serialNumberData.VisualChecks,
+                InspectedBy = FinalInspectionData.Inspected,
+                GrindingStartDate = serialNumberData.GrindingStartDate,
+                GrindingEndDate = serialNumberData.GrindingdataSubmitedByDate,
+                Notes = serialNumberData.Notes,
+                DelayReasonTracking = serialNumberData.DelayReasonTracking,
+                GrindingSubmiteddBy = serialNumberData.GrindingdataSubmiteddBy,
+                CustomerPoNum = FinalInspectionData.CustomerPoNum,
+                DWGNum = FinalInspectionData.DWGNum,
+                AGNum = FinalInspectionData.AGNum,
+                SpecialNoteComment = FinalInspectionData.SpecialNoteComment,
+                Dressedwithnewbearing = selectedDressedwithNewBearing,
+                Description = selectedDescription,
+                Start = FinalInspectionData.Start,
+                Finish = FinalInspectionData.Finish,
+                Name = FinalInspectionData.Name,
+                FinalInspectionSubmiteddBy = useradd,
+                FinalInspectionSubmitedByDate = DateTime.Now,
+            };
+
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            // Check if data already exists
+            var checkUrl = $"{ApiConstants.CheckIfFinalExists}?serialNumber={inspection.SerialNumber}&module={inspection.Module}";
+            var checkResponse = await HttpClient.GetAsync(checkUrl);
+
+            if (checkResponse.IsSuccessStatusCode)
+            {
+                var exists = bool.Parse(await checkResponse.Content.ReadAsStringAsync());
+
+                var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(tempSubmission);
+                var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response;
+
+                if (exists)
+                {
+                    // Update existing
+                    response = await HttpClient.PutAsync(ApiConstants.UpdateRotorFISavedData, content);
+
+                    var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                    // // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
+
+                    // if (projectimageresponse.IsSuccessStatusCode)
+                    // {
+                    //     await localStorage.RemoveItemAsync("IncomingImageData");
+                    //     // Console.WriteLine("Images added successfully.");
+
+                    // }
+                    // Step 1: Check if serial number already exists
+                    var checkResponsedata = await HttpClient.GetAsync($"{ApiConstants.GetImagesFinal}/{ProjectImageData.SerialNumber}");
+
+                   // var checkResponsedata = await HttpClient.GetAsync($"https://localhost:7172/api/FinalInspectionImages/getImages/{ProjectImageData.SerialNumber}");
+                    bool serialExists = checkResponse.IsSuccessStatusCode;
+
+                    // Step 2: Update if exists, otherwise Add
+                    HttpResponseMessage projectimageresponse;
+                    if (serialExists)
+                    {
+                        // Deserialize the existing data (optional, if you want to retain existing metadata)
+                        var existingDataJson = await checkResponsedata.Content.ReadAsStringAsync();
+                        var existingData = JsonConvert.DeserializeObject<FinalInspection>(existingDataJson);
+
+                        // You may need to attach existing image IDs or FinalInspection.Id to ProjectImageData here if necessary
+
+                        projectimageresponse = await HttpClient.PutAsync($"{ApiConstants.UpdateImagesFinal}/{existingData.Id}", projectimagecontent);
+                    }
+                    else
+                    {
+                        projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
+                    }
+
+                }
+                else
+                {
+                    // Create new
+                    response = await HttpClient.PostAsync(ApiConstants.AddFinalIISavedData, content);
+                    var ProjectImageData = await localStorage.GetItemAsync<FinalInspectionImageDTO>("ProjectImageData");
+                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
+
+                    if (projectimageresponse.IsSuccessStatusCode)
+                    {
+                        await localStorage.RemoveItemAsync("IncomingImageData");
+                        // Console.WriteLine("Images added successfully.");
+
+                    }
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Final Inspection Data saved successfully!", Severity.Success);
+                    showForm = false;
+                    ClearAll();
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to save/update data! Status code: {response.StatusCode}", Severity.Error);
+                }
+            }
+            else
+            {
+                Snackbar.Add("Error checking for existing record.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error while saving data: {ex.Message}", Severity.Error);
+        }
+    }
+
 
     private async Task Submitdata()
     {
@@ -878,7 +1225,7 @@
                     DWGNum = FinalInspectionData.DWGNum,
                     AGNum = FinalInspectionData.AGNum,
                     SpecialNoteComment = FinalInspectionData.SpecialNoteComment,
-                    Dressedwithnewbearing = FinalInspectionData.Dressedwithnewbearing,
+                    Dressedwithnewbearing = selectedDressedwithNewBearing,
                     Description = selectedDescription,
                     Start = FinalInspectionData.Start,
                     Finish = FinalInspectionData.Finish,
@@ -908,7 +1255,7 @@
 
                 }
                 Snackbar.Add("Final Inspection data saved successfully!", Severity.Success);
-                showForm=false;
+                showForm = false;
                 ClearAll();
                 isSubmitted = true;
 
@@ -1004,7 +1351,7 @@
     $"{ApiConstants.GetIncomingInspectionBySerial}/{serialNumberData.SerialNumber}");
 
             // Example: Replace with your actual API call
-          //  IncomingIncData = await HttpClient.GetFromJsonAsync<IncomingInspection>($"{ApiConstants.GetIncomingInspectionBySerial}/{serialNumberData.SerialNumber}");
+            //  IncomingIncData = await HttpClient.GetFromJsonAsync<IncomingInspection>($"{ApiConstants.GetIncomingInspectionBySerial}/{serialNumberData.SerialNumber}");
 
             if (IncomingIncData == null)
             {
@@ -1167,14 +1514,129 @@
                     SerialNumber = ProjectimagesData.SerialNumber?.Trim(),
                     Images = ProjectimagesData.Images.Select(img => new FinalImagedata
                     {
-                    // Data = img.Data,
-                    // ID = img.ITSImageID
+                        // Data = img.Data,
+                        // ID = img.ITSImageID
                     }).ToList()
                 });
         }
 
         StateHasChanged(); // ✅ This triggers UI refresh
     }
+
+    public class FinalInspectionSubmit
+    {
+        public string? SerialNumber { get; set; }
+        public string? Module { get; set; }
+        public string? SalesOrderNumber { get; set; }
+        public string? WorkOrder { get; set; }
+        public string? MatNumber { get; set; }
+        public string? Customer { get; set; }
+        public string? Location { get; set; }
+        public string? Received { get; set; }
+        public string? Inspected { get; set; }
+        public string? RotorsNumber { get; set; }
+        public string? Initials { get; set; }
+        public string? Make { get; set; }
+        public string? Dia { get; set; }
+        public string? Len { get; set; }
+        public string? Fits { get; set; }
+        public string? Materials { get; set; }
+        public string? Others { get; set; }
+        public string? RotorsDia { get; set; }
+        public string? RotorStyle { get; set; }
+        public string? Type { get; set; }
+        public string? BearingRemoved { get; set; }
+        public string? Bearing { get; set; }
+        public string? BearingSeals { get; set; }
+        public string? CeramicSeals { get; set; }
+        public string? Right { get; set; }
+        public string? yRight { get; set; }
+        public string? Left { get; set; }
+        public string? yLeft { get; set; }
+        public string? BasicSharpening { get; set; }
+        public string? IfYBasicSharpening { get; set; }
+        public string? WedgelockAlignmentMarks { get; set; }
+        public string? CenterGrinding { get; set; }
+        public string? IfYCenterGrinding { get; set; }
+        public string? Aligned { get; set; }
+        public string? PlasticSleaves { get; set; }
+        public string? Welding { get; set; }
+        public string? WeldingNum { get; set; }
+        public string? BedKnife { get; set; }
+        public string? BoxReceivedWithSaddles { get; set; }
+        public string? ReProfile { get; set; }
+        public string? SandBlasting { get; set; }
+        public string? ManualLabor { get; set; }
+        public string? Bottom { get; set; }
+        public string? Top { get; set; }
+        public int? AddQty { get; set; }
+        public string? TirLeftJournal { get; set; }
+        public string? TirRightJournal { get; set; }
+        public string? SaddlePartNumber { get; set; }
+        public DateTime? DateTime { get; set; }
+        public string? RotorCategorization { get; set; }
+        public string? ComponentType { get; set; }
+        public string? Users { get; set; }
+        public DateTime? TargetDate { get; set; }
+        public string? CustomerInstructions { get; set; }
+        public string? CustomerImportance { get; set; }
+        public DateTime? SubmitDate { get; set; }
+        public string? SubmitedBy { get; set; }
+        public string? AdvancedSharpingStatus { get; set; }
+        public string? Workcenters { get; set; }
+        public DateTime? ProductionSubmitDate { get; set; }
+        public string? ProductionSubmitBy { get; set; }
+        public string? RotorsDiaLeft { get; set; }
+        public string? RotorsDiaRight { get; set; }
+        public string? ReliefLand { get; set; }
+        public string? ToothFaceLeft { get; set; }
+        public string? ToothFaceRight { get; set; }
+        public string? CentersLeft { get; set; }
+        public string? CentersRight { get; set; }
+        public string? VisualChecks { get; set; }
+        public string? InspectedBy { get; set; }
+        public DateTime? GrindingStartDate { get; set; }
+        public string? GrindingEndDate { get; set; }
+        public string? Notes { get; set; }
+        public string? DelayReasonTracking { get; set; }
+        public string? CustomerPoNum { get; set; }
+        public string? DWGNum { get; set; }
+        public string? AGNum { get; set; }
+        public string? SpecialNoteComment { get; set; }
+        public string? Dressedwithnewbearing { get; set; }
+        public string? InspectorSing { get; set; }
+        public string? Description { get; set; }
+        public string? Oktoship { get; set; }
+        public string? InspectorComments { get; set; }
+        public string? Start { get; set; }
+        public string? FluteDiameterStart { get; set; }
+        public string? FluteDiameterFinish { get; set; }
+        public string? LandWidthStart { get; set; }
+        public string? LandWidthFinish { get; set; }
+        public string? TIRStart { get; set; }
+        public string? TIRfinish { get; set; }
+        public string? TaperStart { get; set; }
+        public string? Taperfinish { get; set; }
+        public string? ReliefAngleStart { get; set; }
+        public string? ReliefAngleFinish { get; set; }
+        public string? LocknutThreadsStart { get; set; }
+        public string? LocknutThreadsFinish { get; set; }
+        public string? IstheRotorcleanStart { get; set; }
+        public string? IstheRotorcleanfinish { get; set; }
+        public string? JournalsOKStart { get; set; }
+        public string? JournalsOKfinish { get; set; }
+        public string? WedgelockassemblyStart { get; set; }
+        public string? WedgelockassemblyFinish { get; set; }
+        public string? SpecialPartWashStart { get; set; }
+        public string? SpecialPartWashFinish { get; set; }
+        public string? Finish { get; set; }
+        public string? Name { get; set; }
+        public DateTime? Date { get; set; }
+        public string? GrindingSubmiteddBy { get; set; }
+        public string? FinalInspectionSubmiteddBy { get; set; }
+        public DateTime? FinalInspectionSubmitedByDate { get; set; }
+    }
+
 
     private async Task ClearAll()
     {
@@ -1188,7 +1650,7 @@
         FinalInspectionData.FluteDiameterFinish = null;
         FinalInspectionData.LandWidthFinish = null;
         FinalInspectionData.LandWidthStart = null;
-        FinalInspectionData.ReliefAngleFinish = null;    
+        FinalInspectionData.ReliefAngleFinish = null;
         FinalInspectionData.ReliefAngleStart = null;
         FinalInspectionData.TaperStart = null;
         FinalInspectionData.Taperfinish = null;
@@ -1222,7 +1684,7 @@
         try
         {
             var client = _httpClient.CreateClient("MES.ServerAPI"); // Ensure "MyAPI" is configured in Program.cs
-            // var response = await client.GetAsync($"https://localhost:7172/api/RotorGrinding/{serial}");
+                                                                    // var response = await client.GetAsync($"https://localhost:7172/api/RotorGrinding/{serial}");
             var response = await client.GetAsync($"{ApiConstants.GetDataFromGrinding}/{serial}");
 
             if (response.IsSuccessStatusCode)
@@ -1322,7 +1784,6 @@
     .spaced-select .mud-input-label {
         margin-bottom: 6px; /* Adjust as needed */
     }
-
 
 </style>
 

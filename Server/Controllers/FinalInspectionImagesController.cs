@@ -65,8 +65,18 @@ namespace MES.Server.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, FinalInspection image)
+        //[HttpPut("{id}")]
+        //public async Task<ActionResult> Update(int id, FinalInspection image)
+        //{
+        //    if (id != image.Id)
+        //        return BadRequest();
+
+        //    await _imageRepository.UpdateIncomingImageAsync(image);
+        //    return NoContent();
+        //}
+
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] FinalInspection image)
         {
             if (id != image.Id)
                 return BadRequest();

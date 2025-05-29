@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,6 +74,128 @@ namespace MES.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FinalInspections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "finalInspectionSaveDatas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Module = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SalesOrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WorkOrder = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MatNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Customer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Received = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Inspected = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorsNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Initials = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Dia = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Len = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fits = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Materials = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Others = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorsDia = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorStyle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BearingRemoved = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bearing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BearingSeals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CeramicSeals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Right = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    yRight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Left = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    yLeft = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BasicSharpening = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IfYBasicSharpening = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockAlignmentMarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CenterGrinding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IfYCenterGrinding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Aligned = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PlasticSleaves = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Welding = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WeldingNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BedKnife = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BoxReceivedWithSaddles = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SandBlasting = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ManualLabor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Bottom = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Top = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddQty = table.Column<int>(type: "int", nullable: true),
+                    TirLeftJournal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TirRightJournal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SaddlePartNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RotorCategorization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ComponentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Users = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TargetDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CustomerInstructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerImportance = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubmitDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SubmitedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdvancedSharpingStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Workcenters = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductionSubmitDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProductionSubmitBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorsDiaLeft = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RotorsDiaRight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReliefLand = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ToothFaceLeft = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ToothFaceRight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CentersLeft = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CentersRight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VisualChecks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InspectedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GrindingEndDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerPoNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DWGNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AGNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialNoteComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Dressedwithnewbearing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InspectorSing = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Oktoship = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InspectorComments = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Start = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FluteDiameterStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FluteDiameterFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LandWidthStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LandWidthFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TIRStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TIRfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TaperStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Taperfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReliefAngleStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReliefAngleFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocknutThreadsFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IstheRotorcleanStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IstheRotorcleanfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JournalsOKStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JournalsOKfinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockassemblyStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WedgelockassemblyFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialPartWashStart = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialPartWashFinish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Finish = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GrindingSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FinalInspectionSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FinalInspectionSubmitedByDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_finalInspectionSaveDatas", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -867,7 +989,7 @@ namespace MES.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SalesOrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WorkOrder = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ADDQTYdata = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ADDQTYdata = table.Column<int>(type: "int", nullable: true),
                     NewBoxRequired = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NewBoxRequiredBox = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MatNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -902,7 +1024,7 @@ namespace MES.Server.Migrations
                     Aligned = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PlasticSleaves = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Welding = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    WeldingNum = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WeldingNum = table.Column<int>(type: "int", nullable: true),
                     BedKnife = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BoxReceivedWithSaddles = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -2006,6 +2128,9 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "FinalImagedatas");
+
+            migrationBuilder.DropTable(
+                name: "finalInspectionSaveDatas");
 
             migrationBuilder.DropTable(
                 name: "Imagedatas");

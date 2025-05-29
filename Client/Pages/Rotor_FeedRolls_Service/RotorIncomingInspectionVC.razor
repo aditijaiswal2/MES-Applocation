@@ -27,7 +27,7 @@
 <MudContainer Style="overflow:hidden" Class="mt-5">
     <MudGrid Class="d-flex justify-center">
         @*    <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
-            <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
+        <MudText Typo="Typo.h6" Style="font-size: 16px;">Incoming Inspection</MudText>
         </MudItem> *@
         <MudItem md="12" sm="12" xs="12" class="d-flex flex-column align-items-center justify-content-center mb-2" style="text-align: center;">
             <div style="gap: 10px;">
@@ -66,9 +66,9 @@
                                 foreach (var item in filteredList)
                                 {
                                     <MudListItem OnClick="() => SelectReceive(item)" Button="true"
-                                    Class="@(hoveredReceive == item ? "hover-highlight" : null)"
-                                    @onmouseover="() => hoveredReceive = item"
-                                    @onmouseout="() => hoveredReceive = null">
+                                                 Class="@(hoveredReceive == item ? "hover-highlight" : null)"
+                                                 @onmouseover="() => hoveredReceive = item"
+                                                 @onmouseout="() => hoveredReceive = null">
                                         <MudText>@item.SerialNumber - @item.Customer - @item.SelectedOption</MudText>
                                     </MudListItem>
                                 }
@@ -176,7 +176,7 @@
                                                     <MudSelect T="string" Label="Make" Value="@selectedMake" ValueChanged="OnMakeChanged" ValueExpression="() => selectedMake" Variant="Variant.Outlined" FullWidth="true" Class="custom-select">
 
                                                         @*  <MudSelect T="string" Label="Make" ValueChanged="OnMakeChanged" Variant="Variant.Outlined" @bind-SelectedValue="selectedMake" FullWidth="true" Class="custom-select">
-                                                *@     @foreach (var ber in Make)
+                                            *@     @foreach (var ber in Make)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
                                                         }
@@ -187,7 +187,7 @@
                                                 <MudItem xs="12" md="3">
 
                                                     <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedMaterials"
-                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Material">
+                                                               AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Material">
                                                         @if (MaterialData != null)
                                                         {
                                                             @foreach (var location in MaterialData.OrderBy(l => l.MaterialName))
@@ -201,7 +201,7 @@
                                                 <MudItem xs="12" md="3">
 
                                                     <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedOthers"
-                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Other">
+                                                               AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedMaterials" Label="Other">
                                                         @if (OtherData != null)
                                                         {
                                                             @foreach (var location in OtherData.OrderBy(l => l.OtherName))
@@ -213,10 +213,10 @@
                                                 </MudItem>
                                                 <MudItem xs="12" md="3">
                                                     <MudTextField Label="Incoming Rotor Dia."
-                                                    @bind-Value="inspection.RotorsDia"
-                                                    FullWidth="true"
-                                                    Variant="Variant.Outlined"
-                                                    InputClass="text-right" />
+                                                                  @bind-Value="inspection.RotorsDia"
+                                                                  FullWidth="true"
+                                                                  Variant="Variant.Outlined"
+                                                                  InputClass="text-right" />
                                                 </MudItem>
 
                                             </MudGrid>
@@ -226,7 +226,7 @@
 
                                                 <MudItem md="3" xs="12">
                                                     <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedRotorsStyle"
-                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedRotorsStyle" Label="Rotor Style">
+                                                               AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedRotorsStyle" Label="Rotor Style">
                                                         @if (rotorsStyle != null)
                                                         {
                                                             @foreach (var location in rotorsStyle.OrderBy(l => l.RotorsStyleName))
@@ -239,7 +239,7 @@
 
                                                 <MudItem xs="12" md="3">
                                                     <MudSelect Variant="Variant.Outlined" ValueExpression="() => SelectedType" @bind-Value="SelectedType"
-                                                    AnchorOrigin="Origin.BottomCenter" Label="Type">
+                                                               AnchorOrigin="Origin.BottomCenter" Label="Type">
                                                         @if (typeData != null)
                                                         {
                                                             @foreach (var location in typeData.OrderBy(l => l.TypeName))
@@ -278,18 +278,18 @@
                                                     <MudSelect @ref="mudSelectMetal" T="string" ValueChanged="OnbearingselasChanged" Label="Bearing Seals" @bind-Values="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
                                                         @foreach (var bearseal in BearSeals)
                                                         {
-                                                            <MudSelectItem Value="@bearseal"/>
+                                                            <MudSelectItem Value="@bearseal" />
                                                         }
                                                     </MudSelect>
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="3">
-                                                    <MudSelect @ref="mudSelect"  T="string" ValueChanged="OnbearcerChanged"
-                                                    Label="Ceramic Seals"
-                                                    @bind-Values="selectedCerSeals"
-                                                    MultiSelection="true"
-                                                    Variant="Variant.Outlined"
-                                                    FullWidth="true">
+                                                    <MudSelect @ref="mudSelect" T="string" ValueChanged="OnbearcerChanged"
+                                                               Label="Ceramic Seals"
+                                                               @bind-Values="selectedCerSeals"
+                                                               MultiSelection="true"
+                                                               Variant="Variant.Outlined"
+                                                               FullWidth="true">
                                                         @foreach (var cerseal in CerSeals)
                                                         {
                                                             <MudSelectItem Value="@cerseal" />
@@ -308,10 +308,10 @@
                                                 </MudItem>
                                                 <MudItem xs="12" md="3">
                                                     <MudSelect T="string" ValueExpression="() => selectedybasicsharp"
-                                                    Value="selectedybasicsharp" Variant="Variant.Outlined"
-                                                    ValueChanged="OnybasicsharpChanged"
-                                                    FullWidth="true"
-                                                    Class="custom-select">
+                                                               Value="selectedybasicsharp" Variant="Variant.Outlined"
+                                                               ValueChanged="OnybasicsharpChanged"
+                                                               FullWidth="true"
+                                                               Class="custom-select">
                                                         @foreach (var ber in ybasicsharp)
                                                         {
                                                             <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -333,7 +333,8 @@
 
 
                                                     @*    <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
-                                           *@  </MudItem>
+                                        *@
+                                                </MudItem>
                                                 <MudItem xs="12" md="3">
                                                     <MudTextField @bind-Value="inspection.yLeft" Variant="Variant.Outlined" FullWidth="true" />
                                                 </MudItem>
@@ -392,10 +393,10 @@
                                                 {
                                                     <MudItem xs="12" md="3">
                                                         <MudSelect T="string"
-                                                        Value="selectedycg" Label="Center Grinding Detail"
-                                                        ValueChanged="OnycgChanged" ValueExpression="() => selectedycg"
-                                                        FullWidth="true" Variant="Variant.Outlined"
-                                                        Class="custom-select">
+                                                                   Value="selectedycg" Label="Center Grinding Detail"
+                                                                   ValueChanged="OnycgChanged" ValueExpression="() => selectedycg"
+                                                                   FullWidth="true" Variant="Variant.Outlined"
+                                                                   Class="custom-select">
                                                             @foreach (var ber in ycg)
                                                             {
                                                                 <MudSelectItem Value="@ber">@ber</MudSelectItem>
@@ -436,10 +437,10 @@
 
                                                     <MudItem xs="12" md="3">
                                                         <MudTextField Label="Welding Comments"
-                                                        @bind-Value="inspection.Initials"
-                                                        FullWidth="true"
-                                                        Variant="Variant.Outlined"
-                                                        InputClass="text-right" />
+                                                                      @bind-Value="inspection.Initials"
+                                                                      FullWidth="true"
+                                                                      Variant="Variant.Outlined"
+                                                                      InputClass="text-right" />
                                                     </MudItem>
                                                 }
                                                 <MudItem xs="12" md="3">
@@ -527,7 +528,7 @@
                                                 <MudItem xs="12" md="3">
 
                                                     <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
-                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
+                                                               AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
                                                         @if (SaddleData != null)
                                                         {
                                                             @foreach (var location in SaddleData.OrderBy(l => l.SaddlePartNumberName))
@@ -582,13 +583,13 @@
                                                 @if (selectedNewBoxRequiredBox == "Yes")
                                                 {
                                                     @*   <MudItem xs="12" md="3">
-                                                    <MudNumericField Label="New Box Required Number" @bind-Value="inspection.NewBoxRequiredBox" Variant="Variant.Outlined" FullWidth="true" />
-                                                </MudItem> *@
+                                    <MudNumericField Label="New Box Required Number" @bind-Value="inspection.NewBoxRequiredBox" Variant="Variant.Outlined" FullWidth="true" />
+                                    </MudItem> *@
 
                                                     <MudItem xs="12" md="3">
 
                                                         <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
-                                                        AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
+                                                                   AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
                                                             @if (NewBoxRequiredNumberData != null)
                                                             {
                                                                 @foreach (var location in NewBoxRequiredNumberData.OrderBy(l => l.NewBoxRequiredNumberName))
@@ -669,39 +670,39 @@
 
 <style>
     .bordered-container {
-    width: 100%;
-    max-width: 100%;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 30px;
-    margin-bottom: 16px;
-    box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
     }
 
     .no-checkbox .mud-selected-item-checkbox {
-    display: none !important;
+        display: none !important;
     }
 
     .qr-item {
-    margin: 1rem;
-    font-size: 16px;
-    white-space: nowrap;
+        margin: 1rem;
+        font-size: 16px;
+        white-space: nowrap;
     }
 
     .qr-container {
-    justify-content: center;
-    text-align: center;
-    padding: 1rem;
+        justify-content: center;
+        text-align: center;
+        padding: 1rem;
     }
 
 
     .full-width-grid {
-    width: 100%;
-    margin: 0;
+        width: 100%;
+        margin: 0;
     }
 
     .spaced-select .mud-input-label {
-    margin-bottom: 6px; /* Adjust as needed */
+        margin-bottom: 6px; /* Adjust as needed */
     }
 
 </style>
@@ -847,11 +848,11 @@
         SelectedModuleName = item.SelectedOption;
 
         qrCodeData = null;
-        showContent = false;
 
         // Call API to check if data is already saved
         try
         {
+            showContent = false;
             var response = await HttpClient.GetFromJsonAsync<RotorIncominInspectionSavedData>(
                 $"{ApiConstants.GetAllIIsavedData}?serialNumber={SelectedSerialNumber}&module={SelectedModuleName}");
             //   var rotorSalesDatasresponse = await HttpClient.GetAsync(
@@ -886,7 +887,7 @@
                 selectedLR = response.Left;
                 inspection.yLeft = response.yLeft;
                 selectedRL = response.Right;
-                inspection.yRight = response.yLeft;
+                inspection.yRight = response.yRight;
                 selectedbs = response.BasicSharpening;
                 selectedybasicsharp = response.IfYBasicSharpening;
                 selectedpre = response.WedgelockAlignmentMarks;
@@ -895,10 +896,10 @@
                 selectedalign = response.Aligned;
                 selectedps = response.PlasticSleaves;
                 selectedwelding = response.Welding;
-                inspection.WeldingNum = int.Parse(response.WeldingNum);
+                inspection.WeldingNum = response.WeldingNum;
                 selectebkid = response.BedKnife;
                 selectedRB = response.BoxReceivedWithSaddles;
-                inspection.ADDQTYdata = int.Parse(response.ADDQTYdata);
+                inspection.ADDQTYdata = response.ADDQTYdata;
                 selectedrp = response.ReProfile;
                 selectedManualLabour = response.ManualLabor;
                 selectedNewBoxRequiredBox = response.NewBoxRequired;
@@ -909,26 +910,27 @@
                 SelectedSaddlePartNumber = response.SaddlePartNumber;
                 selectedddrc = response.RotorCategorization;
                 selecteddd = response.ComponentType;
-                showForm = true;
+                var imageResponse = await HttpClient.GetAsync($"{ApiConstants.GetImagesbySerialNumber}/{response.SerialNumber}");
 
-                ProjectimagesData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
-
-                selectedImagesFromSM.Clear(); // Clear old data
-
-                if (ProjectimagesData?.Images != null &&
-                    ProjectimagesData.SerialNumber?.Trim() == SelectedSerialNumber &&
-                    ProjectimagesData.Images.Any())
+                if (imageResponse.IsSuccessStatusCode)
                 {
-                    selectedImagesFromSM.Add(new IncomingImages
-                        {
-                            SerialNumber = ProjectimagesData.SerialNumber?.Trim(),
-                            Images = ProjectimagesData.Images.Select(img => new Imagedata
-                            {
-                                Data = img.Data,
-                                ID = img.IncomingImageId
-                            }).ToList()
-                        });
+                    var data = await imageResponse.Content.ReadAsStringAsync();
+                   
+                    //Console.WriteLine(data);
+
+                    try
+                    {
+                        selectedImagesFromSM = System.Text.Json.JsonSerializer.Deserialize<List<IncomingImages>>(data,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Deserialization failed: " + ex.Message);
+                    }
+
+
                 }
+                showForm = true;
             }
         }
         catch (HttpRequestException ex)
@@ -1347,7 +1349,7 @@
     //  private void OnCerSealsChanged(List<string> values)
     private async Task OnbearcerChanged(string values)
     {
-        selectedCerSeals = values.Split(',').ToList();      
+        selectedCerSeals = values.Split(',').ToList();
     }
 
     // private Task OnCerSealsChanged(IEnumerable<string> values)
@@ -1453,8 +1455,6 @@
     {
         selectedtb = value;
     }
-
-
     private async void SubmitForm()
     {
         try
@@ -1515,7 +1515,8 @@
                 return;
             }
 
-            IncomingInspectionDTO IncomingDataDTO = new IncomingInspectionDTO()
+
+            IncomingInspection IncomingDataDTO = new IncomingInspection()
                 {
 
                     Customer = inspection.Customer,
@@ -1526,21 +1527,21 @@
                     Initials = inspection.Initials,
                     Make = selectedMake,
                     Dia = inspection.Dia,
-                    Len = inspection.Len,
+                    Len = inspection.Dia,
                     Fits = inspection.Fits,
                     Materials = SelectedMaterials,
-                    SalesOrderNumber=inspection.SalesOrderNumber,
+                    SalesOrderNumber = inspection.SalesOrderNumber,
                     Others = SelectedOthers,
                     RotorsDia = inspection.RotorsDia,
-                //  RotorStyle = selectedRotorStyle,
+                    //  RotorStyle = selectedRotorStyle,
                     RotorStyle = SelectedRotorsStyle,
                     Type = SelectedType,
-                //Type = selectedType,
+                    //Type = selectedType,
                     BearingRemoved = selectedberrem,
                     Bearing = selectedBearings,
-                // BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
-                //   CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
-                 BearingSeals=  string.Join(", ", selectedBearSeals),               
+                    // BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
+                    //   CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
+                    BearingSeals = string.Join(", ", selectedBearSeals),
                     CeramicSeals = string.Join(",", selectedCerSeals),
                     Right = selectedRL,
                     yRight = inspection.yRight,
@@ -1551,14 +1552,14 @@
                     WedgelockAlignmentMarks = selectedpre,
                     CenterGrinding = selectedctr,
                     IfYCenterGrinding = selectedycg,
-                    ADDQTYdata = inspection.ADDQTYdata?.ToString() ?? "",
+                    ADDQTYdata = inspection.ADDQTYdata,
                     NewBoxRequiredBox = SelectedNewBoxRequiredNumberData,
                     NewBoxRequired = selectedNewBoxRequiredBox,
 
                     Aligned = selectedalign,
                     PlasticSleaves = selectedps,
                     Welding = selectedwelding,
-                    WeldingNum = inspection.WeldingNum?.ToString() ?? "",
+                    WeldingNum = inspection.WeldingNum,
                     BedKnife = selectebkid,
                     BoxReceivedWithSaddles = selectedRB,
                     ReProfile = selectedrp,
@@ -1583,68 +1584,51 @@
             // var userResponse = await HttpClient.GetAsync("https://localhost:7172/api/Users/getuserlist?sales=true");
 
 
-            var userResponse = await HttpClient.GetAsync($"{ApiConstants.GetsalesEmails}?sales=true");
 
-            if (userResponse.IsSuccessStatusCode)
+            var jsonPart = JsonConvert.SerializeObject(IncomingDataDTO);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+
+            // var response = await HttpClient.PostAsync("https://localhost:7172/api/IncomingInspection/addincoming", content);
+            var response = await HttpClient.PostAsync(ApiConstants.AddRotorIncoming, content);
+            // var emailQuery = $"?userEmail={useraddemail}";
+            //  var response = await HttpClient.PostAsync(ApiConstants.AddRotorIncoming + emailQuery, content);
+
+            if (response.IsSuccessStatusCode)
             {
-                var allUserData = await userResponse.Content.ReadFromJsonAsync<List<AppUser>>();
 
-                // Get only users where IsSalesUser is true
-                var filteredUsers = allUserData.Where(u => u.IsSalesUser).ToList();
+                var ProjectImageData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
+                var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
 
-                // Extract their email IDs
-                // var emailIds = filteredUsers.Select(u => u.Email).Where(email => !string.IsNullOrEmpty(email)).ToList();
-                var emailIds = filteredUsers.Select(u => u.Email).Where(email => !string.IsNullOrEmpty(email)).ToList();
-                IncomingDataDTO.SalesEmails = emailIds;
+                // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
 
-                var jsonPart = JsonConvert.SerializeObject(IncomingDataDTO);
-                var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
-
-                // var response = await HttpClient.PostAsync("https://localhost:7172/api/IncomingInspection/addincoming", content);
-                var response = await HttpClient.PostAsync(ApiConstants.AddRotorIncoming, content);
-                // var emailQuery = $"?userEmail={useraddemail}";
-                //  var response = await HttpClient.PostAsync(ApiConstants.AddRotorIncoming + emailQuery, content);
-
-                if (response.IsSuccessStatusCode)
+                if (projectimageresponse.IsSuccessStatusCode)
                 {
+                    await localStorage.RemoveItemAsync("IncomingImageData");
+                    // Console.WriteLine("Images added successfully.");
 
-                    var ProjectImageData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
-                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
-                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
-
-                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
-                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
-
-                    if (projectimageresponse.IsSuccessStatusCode)
-                    {
-                        await localStorage.RemoveItemAsync("IncomingImageData");
-                        // Console.WriteLine("Images added successfully.");
-
-                    }
-
-                    Snackbar.Add("Incoming Inspection form submitted successfully!", Severity.Success);
-                    Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
-                    showForm = false;
-                    ClearAll();
-                    showContent = false;
-                    await OnInitializedAsync();
-
-                    StateHasChanged();
                 }
-                else
-                {
-                    Snackbar.Add("Error submitting form.", Severity.Error);
-                }
+
+                Snackbar.Add("Rotor Incoming Inspection form submitted successfully!", Severity.Success);
+                Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
+                showForm = false;
+                ClearAll();
+                showContent = false;
+                await OnInitializedAsync();
+
+                StateHasChanged();
             }
-
-
+            else
+            {
+                Snackbar.Add("Error submitting form.", Severity.Error);
+            }
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
     }
-
     private async Task Save()
     {
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
@@ -1694,7 +1678,7 @@
                 Initials = inspection.Initials,
                 Make = selectedMake,
                 Dia = inspection.Dia,
-                Len = inspection.Dia,
+                Len = inspection.Len,
                 Fits = inspection.Fits,
                 Materials = SelectedMaterials,
                 Others = SelectedOthers,
@@ -1703,8 +1687,8 @@
                 Type = SelectedType,
                 BearingRemoved = selectedberrem,
                 Bearing = selectedBearings,
-            //  BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
-            //CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
+                //  BearingSeals = string.Join(", ", selectedBearSeals ?? new List<string>()),
+                //CeramicSeals = string.Join(", ", selectedCerSeals ?? new List<string>()),
                 BearingSeals = string.Join(", ", selectedBearSeals),
                 CeramicSeals = string.Join(",", selectedCerSeals),
                 Right = selectedRL,
@@ -1716,13 +1700,13 @@
                 WedgelockAlignmentMarks = selectedpre,
                 CenterGrinding = selectedctr,
                 IfYCenterGrinding = selectedycg,
-                ADDQTYdata = inspection.ADDQTYdata?.ToString() ?? "",
+                ADDQTYdata = inspection.ADDQTYdata,
                 NewBoxRequiredBox = SelectedNewBoxRequiredNumberData,
                 NewBoxRequired = selectedNewBoxRequiredBox,
                 Aligned = selectedalign,
                 PlasticSleaves = selectedps,
                 Welding = selectedwelding,
-                WeldingNum = inspection.WeldingNum?.ToString() ?? "",
+                WeldingNum = inspection.WeldingNum,
                 BedKnife = selectebkid,
                 BoxReceivedWithSaddles = selectedRB,
                 ReProfile = selectedrp,
@@ -1763,15 +1747,55 @@
                 {
                     // Update existing
                     response = await HttpClient.PutAsync(ApiConstants.UpdateRotorIISavedData, content);
+
+                    var ProjectImageData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
+                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
+
+                    if (projectimageresponse.IsSuccessStatusCode)
+                    {
+                        await localStorage.RemoveItemAsync("IncomingImageData");
+                        // Console.WriteLine("Images added successfully.");
+
+                    }
                 }
                 else
                 {
                     // Create new
                     response = await HttpClient.PostAsync(ApiConstants.AddRotorIISavedData, content);
+                    var ProjectImageData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
+                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
+
+                    if (projectimageresponse.IsSuccessStatusCode)
+                    {
+                        await localStorage.RemoveItemAsync("IncomingImageData");
+                        // Console.WriteLine("Images added successfully.");
+
+                    }
                 }
 
                 if (response.IsSuccessStatusCode)
                 {
+                    var ProjectImageData = await localStorage.GetItemAsync<IncomingInspectionImageDTO>("ProjectImageData");
+                    var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
+                    var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
+
+                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesIncoming, projectimagecontent);
+
+                    if (projectimageresponse.IsSuccessStatusCode)
+                    {
+                        await localStorage.RemoveItemAsync("IncomingImageData");
+                        // Console.WriteLine("Images added successfully.");
+
+                    }
                     Snackbar.Add("Incoming Inspection Data saved successfully!", Severity.Success);
                     showForm = false;
                     ClearAll();
@@ -1927,10 +1951,10 @@
                         selectedalign = response.Aligned;
                         selectedps = response.PlasticSleaves;
                         selectedwelding = response.Welding;
-                        inspection.WeldingNum = int.Parse(response.WeldingNum);
+                        inspection.WeldingNum = response.WeldingNum;
                         selectebkid = response.BedKnife;
                         selectedRB = response.BoxReceivedWithSaddles;
-                        inspection.ADDQTYdata = int.Parse(response.ADDQTYdata);
+                        inspection.ADDQTYdata = response.ADDQTYdata;
                         selectedrp = response.ReProfile;
                         selectedManualLabour = response.ManualLabor;
                         selectedNewBoxRequiredBox = response.NewBoxRequired;
@@ -1973,7 +1997,7 @@
                 }
 
 
-            
+
             };
 
             _onCameraPermissionFailedAction = (error) => OnCameraPermissionFailed(error);
@@ -2076,7 +2100,7 @@
                 ["selectedManualLabour"] = selectedManualLabour,
                 ["selectedMake"] = selectedMake,
                 ["SelectedBearSeals"] = string.Join(", ", selectedBearSeals ?? new List<string>()),
-              ["SelectedNewBoxRequiredNumberData"] = SelectedNewBoxRequiredNumberData,
+                ["SelectedNewBoxRequiredNumberData"] = SelectedNewBoxRequiredNumberData,
                 ["SelectedCerSeals"] = string.Join(", ", selectedCerSeals ?? new List<string>()),
                 ["SelectedRL"] = selectedRL,
                 ["SelectedLR"] = selectedLR,
@@ -2175,8 +2199,8 @@
                     SerialNumber = ProjectimagesData.SerialNumber?.Trim(),
                     Images = ProjectimagesData.Images.Select(img => new Imagedata
                     {
-                    // Data = img.Data,
-                    // ID = img.ITSImageID
+                        // Data = img.Data,
+                        // ID = img.ITSImageID
                     }).ToList()
                 });
         }
@@ -2184,11 +2208,10 @@
         StateHasChanged(); // ✅ This triggers UI refresh
     }
 
-
     private async Task ClearAll()
     {
         //  inspection = new IncomingInspection();
-   
+
         //  selectedCerSeals = new();
         selectedBearSeals.Clear();
         mudSelectMetal?.Reset();
@@ -2196,10 +2219,10 @@
         //   selectedBearSeals = new List<string>();
         //  selectedCerSeals = new List<string>();
         //OnCerSealsChanged(selectedCerSeals);
-          selectedCerSeals.Clear();
+        selectedCerSeals.Clear();
 
         mudSelect?.Reset();
-    //    selectedCerSeals = new List<string>();
+        //    selectedCerSeals = new List<string>();
         inspection.Customer = null;
         inspection.Location = null;
         inspection.SerialNumber = null;
@@ -2216,7 +2239,7 @@
         SelectedType = null;
         selectedBearings = null;
         selectedberrem = null;
-     
+
         selectedRL = null;
         inspection.yLeft = null;
         inspection.yRight = null;
@@ -2227,7 +2250,7 @@
         selectedctr = null;
         selectedycg = null;
         selectedalign = null;
-      
+
         qrCodeData = string.Empty;
         SelectedProject = null;
         ProjectimagesData = null;
@@ -2270,7 +2293,7 @@
         public string? SalesOrderNumber { get; set; }
         public string? WorkOrder { get; set; }
 
-        public string? ADDQTYdata { get; set; }
+        public int? ADDQTYdata { get; set; }
         public string? NewBoxRequired { get; set; }
         public string? NewBoxRequiredBox { get; set; }
         public string? MatNumber { get; set; }
@@ -2305,7 +2328,7 @@
         public string? Aligned { get; set; }
         public string? PlasticSleaves { get; set; }
         public string? Welding { get; set; }
-        public string? WeldingNum { get; set; }
+        public int? WeldingNum { get; set; }
         public string? BedKnife { get; set; }
         public string? BoxReceivedWithSaddles { get; set; }
         public string? ReProfile { get; set; }

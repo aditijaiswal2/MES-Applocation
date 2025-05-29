@@ -16,7 +16,7 @@
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; overflow-y: scroll; padding-bottom:30px;">
                 <div class="table-container">
-                    <MudTable Items="@combinedData" Class="table table-bordered table-striped">
+                    <MudTable Items="@combinedData.Where(x => x.CurrentLocation != "Shipped")" Class="table table-bordered table-striped">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
@@ -89,31 +89,40 @@
         try
         {
 
-            var receivingResponse = await HttpClient.GetAsync(ApiConstants.GetReceiving);
-            var inspectionResponse = await HttpClient.GetAsync(ApiConstants.GetRotorIncoming); // add this
-            var SalesResponse = await HttpClient.GetAsync(ApiConstants.GetAllSalesData);
+            var receivingResponse = HttpClient.GetAsync(ApiConstants.GetReceiving);
+            var inspectionResponse = HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
+            var SalesResponse = HttpClient.GetAsync(ApiConstants.GetAllSalesData);
 
-            if (receivingResponse.IsSuccessStatusCode && inspectionResponse.IsSuccessStatusCode && SalesResponse.IsSuccessStatusCode)
+            await Task.WhenAll(receivingResponse, inspectionResponse, SalesResponse);
+
+            async Task<List<T>> ReadListAsync<T>(Task<HttpResponseMessage> task)
             {
+                try
+                {
+                    var response = await task;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<T>();
+                    }
+                }
+                catch { }
+                return new List<T>();
+            }
 
+      
 
-                var receivingJson = await receivingResponse.Content.ReadAsStringAsync();
-                var inspectionJson = await inspectionResponse.Content.ReadAsStringAsync();
-                var SalesJson = await SalesResponse.Content.ReadAsStringAsync();
+            var receivingList = await ReadListAsync<Receiving>(receivingResponse);
+            var inspectionList = await ReadListAsync<IncomingInspection>(inspectionResponse);
+            var salesDataList = await ReadListAsync<RotorSalesData>(SalesResponse);
 
-                var receivingList = System.Text.Json.JsonSerializer.Deserialize<List<Receiving>>(receivingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                var inspectionList = System.Text.Json.JsonSerializer.Deserialize<List<IncomingInspection>>(inspectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                var SalesList = System.Text.Json.JsonSerializer.Deserialize<List<RotorSalesData>>(SalesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-
-
-                if (receivingList != null && inspectionList != null && SalesList!=null)
+            if (receivingList != null && inspectionList != null && salesDataList != null)
                 {
 
                     var combinedData = await Task.WhenAll(receivingList.Select(async receiving =>
        {
            var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
-           var matchingSales = SalesList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
+       var matchingSales = salesDataList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
 
            var serial = receiving.SerialNumber;
            var currentLocation = await GetCurrentLocation(serial);
@@ -138,11 +147,7 @@
                     //  var combinedList = combinedData.ToList();
 
                 }
-            }
-            else
-            {
-                Snackbar.Add("Failed to load data.", Severity.Error);
-            }
+          
         }
         catch (Exception ex)
         {
@@ -154,7 +159,6 @@
     {
         var receivingTask = HttpClient.GetAsync(ApiConstants.GetReceiving);
         var inspectionTask = HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
-        var shippingTask = HttpClient.GetAsync(ApiConstants.GetAllShippedData);
         var finalInspectionTask = HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData);
         var salesDataTask = HttpClient.GetAsync(ApiConstants.GetAllSalesData);
         var salesClearanceTask = HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
@@ -163,9 +167,10 @@
         var productionDataTask = HttpClient.GetAsync(ApiConstants.GetAllProductionSavesData);
         var damageGrindingTask = HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
         var damageGrindingSaveTask = HttpClient.GetAsync(ApiConstants.GetAllSaveGrindingData);
+        var ShippingTask = HttpClient.GetAsync(ApiConstants.GetAllShippedData);
 
         await Task.WhenAll(
-            receivingTask, inspectionTask, shippingTask, finalInspectionTask, salesDataTask,
+            receivingTask, inspectionTask, ShippingTask, finalInspectionTask, salesDataTask,
             salesClearanceTask, productionSavedTask, grindingSavedTask, productionDataTask,
             damageGrindingTask, damageGrindingSaveTask
         );
@@ -189,7 +194,6 @@
         // Deserialize all lists safely
         var receivingList = await ReadListAsync<Receiving>(receivingTask);
         var inspectionList = await ReadListAsync<IncomingInspection>(inspectionTask);
-        var rotorShippingList = await ReadListAsync<RotorShipping>(shippingTask);
         var finalInspectionList = await ReadListAsync<RotorsFinalInspection>(finalInspectionTask);
         var salesDataList = await ReadListAsync<RotorSalesData>(salesDataTask);
         var salesClearanceList = await ReadListAsync<RotorSalesClearance>(salesClearanceTask);
@@ -198,11 +202,12 @@
         var productionDataList = await ReadListAsync<RotorProductionSavedData>(productionDataTask);
         var damageGrindingList = await ReadListAsync<RotorDamageGrindingDataFromGrinding>(damageGrindingTask);
         var damageGrindingSaveList = await ReadListAsync<RotorDamageGrindingSaveData>(damageGrindingSaveTask);
+        var ShippingDataList = await ReadListAsync<RotorShipping>(ShippingTask);
 
         serial = serial?.Trim().ToUpper();
+        if (ShippingDataList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipped";
 
-        if (rotorShippingList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipped";
-        if (salesClearanceList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipping";
+         if (salesClearanceList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipping";
         if (finalInspectionList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Ready To Close";
 
         var latestDamageEntry = damageGrindingSaveList

@@ -45,7 +45,7 @@ namespace MES.Server.Data
         public DbSet<NewBoxRequiredNumber> NewBoxRequiredNumbers { get; set; }
         public DbSet<RotorSalesSavedData> RotorSalesSavedData { get; set; }
         public DbSet<RotorsFinalInspection> RotorsFinalInspections { get; set; }
-
+        public DbSet<FinalInspectionSaveData> finalInspectionSaveDatas { get; set; }
         public DbSet<RotorProductionData> RotorProductionData { get; set; }
         public DbSet<RotorProductionSavedData> RotorProductionSavedData { get; set; }
         //public DbSet<RotorProcessDimensionsReport> RotorProcessDimensionsReports { get; set; }
@@ -99,6 +99,8 @@ namespace MES.Server.Data
             modelBuilder.Entity<FinalInspection>()
  .HasKey(i => i.Id);
 
+            modelBuilder.Entity<FinalInspectionSaveData>()
+        .HasKey(f => f.Id);
             modelBuilder.Entity<MES.Shared.Models.Rotors.FinalImagedata>()
                 .HasKey(i => i.ID);
 

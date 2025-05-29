@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using SkiaSharp;
 using MES.Shared.Models;
 using MES.Server.Data;
+using MES.Shared.Entities;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace MES.Server.Controllers
@@ -33,6 +35,7 @@ namespace MES.Server.Controllers
         private readonly HttpClient _httpClient;
         private readonly IncomingInspectionRepository _repository;
         private readonly ProjectdbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
         //public WIPDataController(HttpClient httpClient, IncomingInspectionRepository repository)
         //{
@@ -40,11 +43,12 @@ namespace MES.Server.Controllers
         //    _wipService = wipService;
         //}
 
-        public IncomingInspectionController(HttpClient httpClient, IncomingInspectionRepository repository, ProjectdbContext context)
+        public IncomingInspectionController(HttpClient httpClient, IncomingInspectionRepository repository, ProjectdbContext context, UserManager<AppUser> userManager)
         {
             _httpClient = httpClient;
             _repository = repository;
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/IncomingInspection
@@ -87,7 +91,7 @@ namespace MES.Server.Controllers
         /// <summary>
         /// Generates a PDF file from the form data.
         /// </summary>
-        private byte[] GeneratePDF(IncomingInspectionDTO IncomingDataDTO)
+        private byte[] GeneratePDF(IncomingInspection IncomingDataDTO)
         {
             using (MemoryStream stream = new MemoryStream())
             {
@@ -125,13 +129,13 @@ namespace MES.Server.Controllers
                 }
                 AddRow("Serial Number:", IncomingDataDTO.SerialNumber);
                 AddRow("Module:", IncomingDataDTO.Module);
-             
+
                 AddRow("Customer:", IncomingDataDTO.Customer);
                 AddRow("Location:", IncomingDataDTO.Location);
                 AddRow("Received:", IncomingDataDTO.Received);
                 AddRow("Inspected:", IncomingDataDTO.Inspected);
                 AddRow("Rotors:", IncomingDataDTO.RotorsNumber);
-            
+
                 AddRow("Make:", IncomingDataDTO.Make);
                 AddRow("Dia:", IncomingDataDTO.Dia);
                 AddRow("Len:", IncomingDataDTO.Len);
@@ -155,10 +159,9 @@ namespace MES.Server.Controllers
                 AddRow("Aligned:", IncomingDataDTO.Aligned);
                 AddRow("Plastic Sleaves:", IncomingDataDTO.PlasticSleaves);
                 AddRow("Welding:", IncomingDataDTO.Welding);
-                AddRow("Welding Num:", IncomingDataDTO.WeldingNum);
                 AddRow("Bed knife in box:", IncomingDataDTO.BedKnife);
                 AddRow("Replace Blades:", IncomingDataDTO.BoxReceivedWithSaddles);
-                AddRow("Qty:", IncomingDataDTO.ADDQTYdata);
+
                 AddRow("Re-Profile:", IncomingDataDTO.ReProfile);
                 AddRow("Sand Blasting:", IncomingDataDTO.SandBlasting);
                 AddRow("Manual Labor:", IncomingDataDTO.ManualLabor);
@@ -179,7 +182,7 @@ namespace MES.Server.Controllers
         /// <summary>
         /// Sends an email with the generated PDF attachment.
         /// </summary>
-        private async Task SendEmailWithAttachment(byte[] pdfBytes, IncomingInspectionDTO IncomingDataDTO)
+        private async Task SendEmailWithAttachment(byte[] pdfBytes, IncomingInspection IncomingDataDTO)
         {
             var fromEmail = "aditi.jaiswal@axiscades.in";
             var emailSubject = $"{IncomingDataDTO.SerialNumber} - {IncomingDataDTO.Customer}";
@@ -192,18 +195,34 @@ Regards,
 Incoming Inspection 
 {IncomingDataDTO.Users}";
 
+            // Fetch users where IsSalesUser == true
+            var salesUsers = await _userManager.Users
+                .Where(u => u.IsSalesUser && u.isDeleted == 0)
+                .ToListAsync();
+
+            var salesEmails = salesUsers
+                .Where(u => !string.IsNullOrEmpty(u.Email)) // Ensure Email is not null
+                .Select(u => u.Email)
+                .Distinct()
+                .ToList();
+
+            if (salesEmails.Count == 0)
+            {
+                // No sales users found
+                return;
+            }
+
             var bodyPart = new TextPart(TextFormat.Plain) { Text = bodyText };
 
             //  var emailBodyText = "Please find the attached inspection report.";
 
-            foreach (var recipientEmail in IncomingDataDTO.SalesEmails.Distinct())
+            foreach (var recipientEmail in salesEmails)
             {
                 var email = new MimeMessage();
                 email.From.Add(new MailboxAddress("MES", fromEmail));
                 email.To.Add(new MailboxAddress("Sales Team", recipientEmail));
                 email.Subject = emailSubject;
 
-                var body = new TextPart(TextFormat.Plain) { Text = bodyText };
                 var attachment = new MimePart("application", "pdf")
                 {
                     Content = new MimeContent(new MemoryStream(pdfBytes)),
@@ -213,7 +232,7 @@ Incoming Inspection
                 };
 
                 var multipart = new Multipart("mixed");
-                multipart.Add(body);
+                multipart.Add(bodyPart);
                 multipart.Add(attachment);
                 email.Body = multipart;
 
@@ -234,31 +253,27 @@ Incoming Inspection
         }
 
         [HttpPost("addincoming")]
-        public async Task<IActionResult> Create([FromBody] IncomingInspectionDTO incomingDataDTO)
+        public async Task<ActionResult<IncomingInspection>> PostRotorsFinalInspection(IncomingInspection incomingDataDTO)
         {
+
             if (incomingDataDTO == null)
             {
                 return BadRequest("Incoming data is null.");
             }
 
+
             try
             {
 
-                // Add the inspection to the database
-                var createdInspection = await _repository.Add(incomingDataDTO);
-
-                if (createdInspection == null)
-                {
-                    return StatusCode(500, "Failed to create inspection.");
-                }
-
-                // Generate PDF from the incoming data
+                _context.IncomingInspections.Add(incomingDataDTO);
                 byte[] pdfBytes = GeneratePDF(incomingDataDTO);
 
                 // Send email with PDF as attachment
                 await SendEmailWithAttachment(pdfBytes, incomingDataDTO);
 
-                return CreatedAtAction(nameof(Get), new { id = createdInspection.Id }, createdInspection);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(Get), new { id = incomingDataDTO.Id }, incomingDataDTO);
             }
             catch (Exception ex)
             {
@@ -266,10 +281,8 @@ Incoming Inspection
                 Console.WriteLine($"Error occurred: {ex.Message}");
                 return StatusCode(500, "Internal server error.");
             }
+
         }
-
-
-
 
         [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<Receiving>>> GetAlldata()
@@ -281,5 +294,18 @@ Incoming Inspection
 
             return Ok(records);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IncomingInspection>> Get(int id)
+        {
+            var inspection = await _context.IncomingInspections.FindAsync(id);
+            if (inspection == null)
+            {
+                return NotFound();
+            }
+
+            return inspection;
+        }
+
     }
 }

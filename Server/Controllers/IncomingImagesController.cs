@@ -164,8 +164,9 @@ namespace MES.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(images);
+            return Ok(new List<IncomingImages> { images });
         }
+
 
 
     }
