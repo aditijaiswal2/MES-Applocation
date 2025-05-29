@@ -17,6 +17,8 @@ namespace MES.Server.Contracts
 
         Task<IncomingImages> GetImagesBySerialNumberAsync(string serialnumber);
 
+        Task<List<IncomingImages>> GetImagesBySerialNumberAsyncforsales(string serialNumber);
+
 
 
 

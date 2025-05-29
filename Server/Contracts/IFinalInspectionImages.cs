@@ -18,6 +18,8 @@ namespace MES.Server.Contracts
 
         Task<FinalInspection> GetImagesBySerialNumberAsync(string serialnumber);
 
+        Task<List<FinalInspection>> GetImagesBySerialNumberAsyncforsales(string serialNumber);
+
 
 
 

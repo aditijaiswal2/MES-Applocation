@@ -168,12 +168,14 @@ namespace MES.Server.Controllers
         }
 
 
+        // Don't Edit 
+
         [HttpGet("getImages/{serialNumber}")]
         public async Task<IActionResult> GetImagesByserialNumber(string serialNumber)
         {
-            var images = await _imageRepository.GetImagesBySerialNumberAsync(serialNumber);
+            var images = await _imageRepository.GetImagesBySerialNumberAsyncforsales(serialNumber);
 
-            if (images == null)
+            if (images == null || !images.Any())
             {
                 return NotFound();
             }

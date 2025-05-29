@@ -135,30 +135,34 @@ namespace MES.Server.Data.Repositories
         }
 
 
-        public async Task<ShipmentImage> GetImagesBySerialNumberAsync(string serialNumber)
+        public async Task<List<ShipmentImage>> GetImagesBySerialNumberAsync(string serialNumber)
         {
             try
             {
                 var partImages = await _context.ShipmentImage
                                     .Where(i => i.SerialNumber == serialNumber)
                                     .Include(i => i.Images)
-                                    .FirstOrDefaultAsync();
+                                    .ToListAsync();
 
-                if (partImages != null)
+
+                if (partImages != null && partImages.Any())
                 {
-                    foreach (var image in partImages.Images)
+                    foreach (var partImage in partImages)
                     {
-                        if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
+                        foreach (var image in partImage.Images)
                         {
-                            try
+                            if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
                             {
-                                var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
-                                image.Data = await File.ReadAllBytesAsync(imagePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error reading file at path {image.ImageFilePath}: {ex.Message}");
-                                throw;
+                                try
+                                {
+                                    var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
+                                    image.Data = await File.ReadAllBytesAsync(imagePath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error reading file at path {image.ImageFilePath}: {ex.Message}");
+                                    throw;
+                                }
                             }
                         }
                     }

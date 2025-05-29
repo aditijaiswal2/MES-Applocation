@@ -42,9 +42,25 @@
                                           Class="m-2 mb-8 shades-text" id="username" @bind-Value="loginModel.Username" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" @onkeydown="HandleKeyDown"
                                           For="@(() => loginModel.Username)" Style="background-color:white;"></MudTextField>
 
-                            <MudTextField MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
-                                          Class="m-2 shades-text " id="password" @bind-Value="loginModel.Password" InputType="InputType.Password" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense" @onkeydown="HandleKeyDown"
-                                          For="@(() => loginModel.Password)" Style="background-color:white"></MudTextField>
+                            <MudTextField MaxLength="250"
+                                          Immediate="true"
+                                          Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                                          Class="m-2 shades-text"
+                                          id="password"
+                                          @bind-Value="loginModel.Password"
+                                          InputType="@PasswordInputType"
+                                          Label="Password"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense"
+                                          For="@(() => loginModel.Password)"
+                                          Style="background-color:white"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@PasswordVisibilityIcon"
+                                          OnAdornmentClick="TogglePasswordVisibility"
+                                          AdornmentColor="Color.Primary"
+                                          @onkeydown="HandleKeyDown">
+                            </MudTextField>
+
 
                             <MudItem Class="d-flex justify-center align-center mt-6">
                                 <MudButton Class="text-white" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Style="background-color:#ffbe26" @onkeydown="HandleKeyDown"
@@ -106,6 +122,27 @@
 
     private List<string> routePages = new List<string>();
     private List<UserPagesAndRouter> userPagesPrevlgs = new List<UserPagesAndRouter>();
+
+    private InputType PasswordInputType = InputType.Password;
+    private string PasswordVisibilityIcon = Icons.Material.Filled.VisibilityOff;
+
+
+    private void TogglePasswordVisibility()
+    {
+        if (PasswordInputType == InputType.Password)
+        {
+            PasswordInputType = InputType.Text;
+            PasswordVisibilityIcon = Icons.Material.Filled.Visibility;
+        }
+        else
+        {
+            PasswordInputType = InputType.Password;
+            PasswordVisibilityIcon = Icons.Material.Filled.VisibilityOff;
+        }
+    }
+
+   
+
 
     private IEnumerable<string> MaxCharacters(string ch)
     {

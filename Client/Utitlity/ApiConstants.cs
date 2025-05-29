@@ -85,7 +85,7 @@
         public const string AddRotorIncoming = $"{BaseUrl}/IncomingInspection/addincoming";
         public const string AddImagesIncoming = $"{BaseUrl}/IncomingImages/addbi";
         public const string CheckSerialNumber = $"{BaseUrl}/IncomingInspection/CheckSerialExists";
-        public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImages";
+        public const string GetImagesbySerialNumber = $"{BaseUrl}/IncomingImages/getImagestodisplayinsales";
         public const string GetsalesEmails = $"{BaseUrl}/Users/getuserlist";
 
 

@@ -132,6 +132,7 @@ namespace MES.Server.Data.Repositories
         }
 
 
+      
         public async Task<IncomingImages> GetImagesBySerialNumberAsync(string serialNumber)
         {
             try
@@ -169,6 +170,50 @@ namespace MES.Server.Data.Repositories
                 throw;
             }
         }
+
+
+        // Don't Edit 
+        public async Task<List<IncomingImages>> GetImagesBySerialNumberAsyncforsales(string serialNumber)
+        {
+            try
+            {
+                var partImages = await _context.IncomingImages
+                    .Where(i => i.SerialNumber == serialNumber)
+                    .Include(i => i.Images)
+                    .ToListAsync();
+
+                if (partImages != null && partImages.Any())
+                {
+                    foreach (var partImage in partImages)
+                    {
+                        foreach (var image in partImage.Images)
+                        {
+                            if (!string.IsNullOrEmpty(image.ImageFilePath) && File.Exists(image.ImageFilePath))
+                            {
+                                try
+                                {
+                                    var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, image.ImageFilePath);
+                                    image.Data = await File.ReadAllBytesAsync(imagePath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error reading file at path {image.ImageFilePath}: {ex.Message}");
+                                    throw;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return partImages;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 }
 

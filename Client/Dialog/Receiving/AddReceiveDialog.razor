@@ -81,7 +81,8 @@
 
         var data = new Receiving
             {
-                Date = DateTime.Parse(Date),
+               // Date = DateTime.Parse(Date),
+                Date = DateTime.UtcNow,
                 SerialNumber = SerialNumber,
                 SelectedOption = SelectedOption,
                 Customer = Customer,

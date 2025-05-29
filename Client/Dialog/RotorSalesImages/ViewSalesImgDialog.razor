@@ -31,17 +31,21 @@
                     <MudContainer>
                         <MudGrid Class="d-flex mt-4 mb-4" Spacing="2" Justify="Justify.Center">
               
-                            @if (Images != null && Images.Images != null)
+                            @if (Images != null && Images.Any())
                             {
 
-                                foreach (var image in Images.Images)
+                                foreach (var incoming in Images)
                                 {
-                                    <MudCard Class="pa-2" Outlined="true" Style="width: 100px; margin: 5px;">
+                                    foreach (var image in incoming.Images)
+                                    {
+                                        <MudCard Class="pa-2" Outlined="true" Style="width: 100px; margin: 5px;">
 
-                                        <MudCardMedia @onclick="OpenDialog"
-                                                      Image="@($"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}")"
-                                                      Height="80" />
-                                    </MudCard>
+                                            <MudCardMedia @onclick="() => OpenDialog(incoming.Images)"
+                                                          Image="@($"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}")"
+                                                          Height="80" />
+                                        </MudCard>
+                                    }
+                                  
                                 }
                             }
                            
@@ -77,32 +81,40 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public IncomingImages Images { get; set; }
+    [Parameter] public List<IncomingImages> Images { get; set; }
     [Inject] private IDialogService DialogService { get; set; } = default!;
 
    
 
-    private void OpenDialog()
+    private void OpenDialog(List<Imagedata> images)
     {
-        var parameters = new DialogParameters<ImageDisplayDialog>();
-        parameters.Add("Images", Images.Images);
+        var parameters = new DialogParameters();
+        parameters.Add("Images", images);
 
         DialogService.Show<ImageDisplayDialog>("Images", parameters, DialogSettings.ViewImageDialogOptions);
     }
 
+
     private async Task DownloadAllImages()
     {
-        if (Images?.Images == null || Images.Images.Count == 0)
+        if (Images == null || !Images.Any())
             return;
 
         int index = 1;
-        foreach (var image in Images.Images)
+        foreach (var incoming in Images)
         {
-            var base64 = $"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}";
-            var filename = $"Image_{index++}.jpg";
+            if (incoming.Images != null)
+            {
+                foreach (var image in incoming.Images)
+                {
+                    var base64 = $"data:image/jpeg;base64,{Convert.ToBase64String(image.Data)}";
+                    var filename = $"Image_{index++}.jpg";
 
-            await JS.InvokeVoidAsync("downloadImageFromBase64", base64, filename);
+                    await JS.InvokeVoidAsync("downloadImageFromBase64", base64, filename);
+                }
+            }
         }
     }
+
 
 }

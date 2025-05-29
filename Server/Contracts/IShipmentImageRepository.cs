@@ -16,6 +16,7 @@ namespace MES.Server.Contracts
 
         Task<ShipmentImage> GetImagesByDTOAsync(ShipmentImagesDto wIPForProjectJOBDTO);
 
-        Task<ShipmentImage> GetImagesBySerialNumberAsync(string serialnumber);
+        Task<List<ShipmentImage>> GetImagesBySerialNumberAsync(string serialnumber);
+      
     }
 }

@@ -165,7 +165,7 @@ namespace MES.Server.Controllers
         {
             var images = await _imageRepository.GetImagesBySerialNumberAsync(serialNumber);
 
-            if (images == null)
+            if (images == null || !images.Any())
             {
                 return NotFound();
             }

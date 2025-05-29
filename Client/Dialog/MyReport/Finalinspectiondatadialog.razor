@@ -188,7 +188,7 @@
     
     private RotorsFinalInspection? FinalInspectionData;
 
-    public IncomingImages? serialImages;
+    public List<IncomingImages>? serialImages = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -235,12 +235,13 @@
             {
                 var data = await imageResponse.Content.ReadAsStringAsync();
 
-                var recentData = JsonSerializer.Deserialize<IncomingImages>(data,
+
+                var recentData = JsonSerializer.Deserialize<List<IncomingImages>>(data,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                serialImages = recentData;
+                serialImages = recentData ?? new List<IncomingImages>();
 
-                if (serialImages?.Images != null && serialImages.Images.Any())
+                if (serialImages != null && serialImages.Any())
                 {
                     var parameters = new DialogParameters
                 {

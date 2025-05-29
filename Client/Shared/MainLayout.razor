@@ -18,6 +18,17 @@
             <img src="Image/MAAG-removebg-preview.png" alt="Logo" class="px-4 mt-2 mb-2"
                  Style="width:200px;height:40px;" />
         </MudItem>
+
+        <MudIconButton Icon="@Icons.Material.Filled.Home"
+                       Color="Color.Inherit"
+                       Class="nav-button"
+                       OnClick="@Homepage" />
+
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh"
+                       Color="Color.Inherit"
+                       Class="nav-button"
+                       OnClick="@Refreshpage" />
+
         <MudIconButton Icon="@Icons.Material.Filled.Brightness4"
                        Color="Color.Inherit"
                        Class="nav-button"
@@ -93,6 +104,16 @@
     {
         NavManager.NavigateTo("/");
         Snackbar.Add("Logged Out Successfully.", Severity.Success);
+    }
+
+    private async Task Homepage()
+    {
+        NavManager.NavigateTo("/asr");
+    }
+
+    private async Task Refreshpage()
+    {
+
     }
 
 }
