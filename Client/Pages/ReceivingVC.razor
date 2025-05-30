@@ -32,7 +32,7 @@
             <MudItem md="12" sm="12" xs="12">
                 <div style="max-height: 500px; max-width:100%;">
 
-                    <MudTable Items="@combinedModuleData" Class="table table-bordered table-striped mt-2">
+                    <MudTable Items="@combinedModuleData" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")" Class="table table-bordered table-striped mt-2">
                         <HeaderContent>
                             <MudTh Style="text-align:center;width:150px">Report Number</MudTh>
                             <MudTh Style="text-align:center;width:150px">Received Date</MudTh>
@@ -77,6 +77,8 @@
     private IEnumerable<CombinedData> combinedModuleData = new List<CombinedData>();
     private List<NewRotorData> NewRotorData = new();
     //private IEnumerable<ITSLocation> iTSLocations = new List<ITSLocation>();
+    bool fixed_header = true;
+    bool fixed_footer = false;
 
     protected override async Task OnInitializedAsync()
     {

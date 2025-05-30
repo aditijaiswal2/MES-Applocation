@@ -30,8 +30,8 @@
                 @foreach (var item in inspections.Where(i => i.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                 {
                     <MudListItem Button="true" OnClick="() => SelectInspection(item)" Class="@(hoveredInspection == item ? "hover-highlight" : null)"
-                                 @onmouseover="() => hoveredInspection = item"
-                                 @onmouseout="() => hoveredInspection = null">
+                    @onmouseover="() => hoveredInspection = item"
+                    @onmouseout="() => hoveredInspection = null">
                         <MudText>@item.SerialNumber - @item.Customer - @item.RotorsNumber</MudText>
                     </MudListItem>
                 }
@@ -148,7 +148,7 @@
 
                         </MudItem>
 
-                       
+
 
                         <MudItem xs="4">
                             <MudTextField Label="Basic Sharpening" @bind-Value="selectedInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
@@ -179,7 +179,7 @@
                             <MudTextField Label="Aligned" @bind-Value="selectedInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                         </MudItem>                   
-                                              
+
 
                         <MudItem xs="4">
                             <MudTextField Label="Welding" @bind-Value="selectedInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
@@ -275,9 +275,9 @@
                     <MudGrid>
                         <MudItem md="6" sm="12" xs="12">
                             <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="fromDate"
-                                           Variant="Variant.Outlined"
-                                           Label="Target Date Entry"
-                                           MinDate="DateTime.Today" />
+                            Variant="Variant.Outlined"
+                            Label="Target Date Entry"
+                            MinDate="DateTime.Today" />
                         </MudItem>
 
                         @*  <MudItem md="6" sm="12" xs="12">
@@ -293,24 +293,24 @@
 
                         <MudItem md="3" sm="12" xs="12">
                             <MudNumericField @bind-Value="Hours"
-                                             Label="Hours"
-                                             Min="0"
-                                             Max="150"
-                                             Required="true"
-                                             Immediate="true"
-                                             Variant="Variant.Outlined"
-                                             ErrorText="Enter a value between 0 and 150" />
+                            Label="Hours"
+                            Min="0"
+                            Max="150"
+                            Required="true"
+                            Immediate="true"
+                            Variant="Variant.Outlined"
+                            ErrorText="Enter a value between 0 and 150" />
                         </MudItem>
 
                         <MudItem md="3" sm="12" xs="12">
                             <MudNumericField @bind-Value="Minutes"
-                                             Label="Minutes"
-                                             Min="1"
-                                             Max="59"
-                                             Required="true"
-                                             Immediate="true"
-                                             Variant="Variant.Outlined"
-                                             ErrorText="Enter a value between 1 and 59" />
+                            Label="Minutes"
+                            Min="1"
+                            Max="59"
+                            Required="true"
+                            Immediate="true"
+                            Variant="Variant.Outlined"
+                            ErrorText="Enter a value between 1 and 59" />
                         </MudItem>
 
 
@@ -326,9 +326,9 @@
 
                         <MudItem md="6" sm="12" xs="12">
                             <MudTextField Label="Customer Instructions"
-                                          @bind-Value="CustomerInstructions"
-                                          Variant="Variant.Outlined"
-                                          FullWidth="true" />
+                            @bind-Value="CustomerInstructions"
+                            Variant="Variant.Outlined"
+                            FullWidth="true" />
                         </MudItem>
                     </MudGrid>
                     <br />
@@ -340,11 +340,11 @@
                         <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="PreviewImg">Preview Image</MudButton>
                         @*  <MudButton Class="mr-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="AttacheFile">Attach File</MudButton> *@
                         <MudButton Class="mr-2"
-                                   Variant="Variant.Filled"
-                                   Size="Size.Small"
-                                   Color="@((isFileAttached ? Color.Success : Color.Primary))"
-                                   Disabled="@(isFileAttached)"
-                                   OnClick="AttacheFile">
+                        Variant="Variant.Filled"
+                        Size="Size.Small"
+                        Color="@((isFileAttached ? Color.Success : Color.Primary))"
+                        Disabled="@(isFileAttached)"
+                        OnClick="AttacheFile">
                             @(isFileAttached ? "Done" : "Attach File")
                         </MudButton>
 
@@ -371,12 +371,12 @@
 <style>
 
     .hover-highlight {
-        background-color: #c4c4c4;
-        cursor: pointer;
+    background-color: #c4c4c4;
+    cursor: pointer;
     }
 
     .overflow-visible {
-        overflow: visible !important;
+    overflow: visible !important;
     }
 
 </style>
@@ -508,6 +508,9 @@
             var latest = rotorSalesSavedDatas.First();
             SelectedPriority = latest.CustomerImportance ?? string.Empty;
             CustomerInstructions = latest.CustomerInstructions ?? string.Empty;
+            selectedInspection.SalesOrderNumber = latest.SalesOrderNumber ?? string.Empty;
+            selectedInspection.WorkOrder = latest.WorkOrder ?? string.Empty;
+            selectedInspection.MatNumber = latest.MatNumber ?? string.Empty;
             fromDate = latest.TargetDate ?? DateTime.Today;
             plannedHours = latest.PlannedHours ?? string.Empty;
             if (!string.IsNullOrWhiteSpace(plannedHours))
@@ -530,6 +533,9 @@
             CustomerInstructions = string.Empty;
             fromDate = DateTime.Today;
             plannedHours = $"{Hours:D2}:{Minutes:D2}";
+            selectedInspection.SalesOrderNumber = string.Empty;
+            selectedInspection.WorkOrder = string.Empty;
+            selectedInspection.MatNumber = string.Empty;
         }
     }
 
@@ -584,7 +590,7 @@
                 SubmitedBy = useradd,
                 SubmitDate = DateTime.Now
             };
-       
+
         try
         {
             var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(tempSubmission);
@@ -834,7 +840,7 @@
         Hours = 0;
         Minutes = 0;
         plannedHours = $"{Hours:D2}:{Minutes:D2}"; // This will now be "00:00"
-        selectedInspection = null;
+        //selectedInspection = null;
         SelectedPriority = string.Empty;
         CustomerInstructions = string.Empty;
         errorMessage = string.Empty;
@@ -844,6 +850,15 @@
         selectedPdfFile = null;
         fileName = string.Empty;
         isFileAttached = false;
+
+        if (selectedInspection != null)
+        {
+            selectedInspection.SalesOrderNumber = string.Empty;
+            selectedInspection.WorkOrder = string.Empty;
+            selectedInspection.MatNumber = string.Empty;
+        }
+
+        selectedInspection = null;
 
         StateHasChanged();
     }
