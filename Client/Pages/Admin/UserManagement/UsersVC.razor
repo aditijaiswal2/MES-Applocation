@@ -33,7 +33,7 @@
                 </MudItem>
                 <br />
                 <div style="max-height: 500px; max-width:100%;">
-                    <MudTable Items="@appUsers" Class="table table-bordered table-striped mt-2">
+                    <MudTable Items="@appUsers" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")" Class="table table-bordered table-striped mt-2">
                         <HeaderContent>
                             <MudTh Style="text-align:center;width:150px">User Name</MudTh>
                             <MudTh Style="text-align:center;width:200px">Name</MudTh>
@@ -93,6 +93,9 @@ else
 
     public bool IsCompleted { get; set; } = false;
     private int currentPage = 1;
+
+    bool fixed_header = true;
+    bool fixed_footer = false;
 
     protected override async Task OnInitializedAsync()
     {

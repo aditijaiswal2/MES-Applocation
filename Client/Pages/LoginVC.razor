@@ -194,7 +194,8 @@
                                     UserName = user.UserName,
                                  
                                     UserEmail = user.Email,
-                                     Pages = user.PageNames != null ? new List<string> { user.PageNames } : null
+                                     Pages = user.PageNames != null ? new List<string> { user.PageNames } : null,
+                                    SelectedWorkCenter = user.SelectedWorkCenter
                                 };
 
                             if (user.Routes != null)
@@ -211,7 +212,8 @@
                                 {
                                     UserName = user.UserName,
                                     EMail = user.Email,
-                                    LoginDateAndTime = DateTime.Now
+                                    LoginDateAndTime = DateTime.Now,
+                                    SelectedWorkCenter = user.SelectedWorkCenter
                                 };
 
                             //  var loginDetailsResponse = await HttpClient.PostAsJsonAsync("https://localhost:7146/api/users/adduser", loginDetails);
@@ -252,6 +254,7 @@
         public string UserEmail { get; set; }
          public IEnumerable<string>? Pages { get; set; }
          public List<string>? Router { get; set; } // Change to List<string>
+        public string? SelectedWorkCenter { get; set; }
 
          public void SetRouterFromString(string routerString)
          {

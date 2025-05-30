@@ -6,6 +6,7 @@
 @using MES.Shared.Models
 @using MES.Shared.Models.Rotors
 @using ReactorBlazorQRCodeScanner
+@using static MES.Client.Pages.LoginVC
 
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -21,7 +22,12 @@
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; padding-bottom:30px;margin-top:20px">
                 <div class="table-container">
-                    <MudTable Items="@RotorProductionDatas.DistinctBy(x => x.SerialNumber).ToList()" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")" Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
+                    <MudTable Items="RotorProductionDatas.Where(x => userWorkCenters
+                                    .Any(wc => string.Equals(wc, x.Workcenters, StringComparison.OrdinalIgnoreCase)))
+                                .DistinctBy(x => x.SerialNumber)
+                                .ToList()"
+                                  FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")" 
+                                  Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
                               Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
@@ -143,6 +149,8 @@
     bool fixed_header = true;
     bool fixed_footer = false;
 
+    private List<string> userWorkCenters = new();
+
 
 
     protected override async Task OnInitializedAsync()
@@ -159,6 +167,13 @@
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
             }
         }
+
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        // Safely split work centers into a list
+        userWorkCenters = userData?.SelectedWorkCenter?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(wc => wc.Trim())
+            .ToList() ?? new List<string>();
 
         await LoadData();
     }
@@ -465,14 +480,31 @@
         return FilterFunc(element);
     }
 
+    // private bool FilterFunc(RotorProductionData element)
+    // {
+    //     if (string.IsNullOrWhiteSpace(Selectedworkcenters))
+    //         return true;
+
+
+    //     return element.Workcenters?.Contains(Selectedworkcenters, StringComparison.OrdinalIgnoreCase) == true;
+    // }
+
     private bool FilterFunc(RotorProductionData element)
     {
         if (string.IsNullOrWhiteSpace(Selectedworkcenters))
             return true;
 
+        // Check if the serial number exists in the SecondaryWorkCentersData
+        var secondaryData = SecondaryWorkCentersData
+            .FirstOrDefault(x => x.SerialNumber == element.SerialNumber);
 
-        return element.Workcenters?.Contains(Selectedworkcenters, StringComparison.OrdinalIgnoreCase) == true;
+        string workCenterToUse = secondaryData != null
+            ? secondaryData.SecondaryWorkCenters
+            : element.Workcenters;
+
+        return workCenterToUse?.Contains(Selectedworkcenters, StringComparison.OrdinalIgnoreCase) == true;
     }
+
 
 
     private async Task HandleKeyDown(KeyboardEventArgs e)

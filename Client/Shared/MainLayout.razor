@@ -111,9 +111,10 @@
         NavManager.NavigateTo("/asr");
     }
 
-    private async Task Refreshpage()
+    private void Refreshpage()
     {
-
+        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
     }
+
 
 }

@@ -11,5 +11,6 @@ namespace MES.Shared.DTOs
         public string UserName { get; set; }
         public string EMail { get; set; }
         public DateTime LoginDateAndTime { get; set; }
+        public string? SelectedWorkCenter { get; set; }
     }
 }
