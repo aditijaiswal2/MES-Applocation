@@ -64,17 +64,6 @@ namespace MES.Server.Controllers
             }
         }
 
-
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult> Update(int id, FinalInspection image)
-        //{
-        //    if (id != image.Id)
-        //        return BadRequest();
-
-        //    await _imageRepository.UpdateIncomingImageAsync(image);
-        //    return NoContent();
-        //}
-
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] FinalInspection image)
         {
@@ -86,7 +75,7 @@ namespace MES.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             await _imageRepository.DeleteIncomingImageAsync(id);
             return NoContent();
@@ -102,6 +91,9 @@ namespace MES.Server.Controllers
 
             try
             {
+
+              //  await _imageRepository.DeleteIncomingImageAsync(IncomingImagesDTO.SerialNumber);
+
                 var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
                 //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
                 // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");

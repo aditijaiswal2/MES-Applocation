@@ -305,7 +305,7 @@
 
                 <MudItem xs="12" md="3" class="outlined-box">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Sub-Module</MudText>
-                    <MudText Typo="Typo.body1">@Selecteddd</MudText>
+                    <MudText Typo="Typo.body1">@InspectionData.ComponentType</MudText>
                 </MudItem>
 
             </MudGrid>
@@ -457,7 +457,7 @@
             var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");
 
             // Serialize receiving data
-            if (string.IsNullOrWhiteSpace(Selectedddrc) || string.IsNullOrWhiteSpace(Selecteddd) || string.IsNullOrWhiteSpace(InspectionData.Customer) || string.IsNullOrWhiteSpace(InspectionData.Location) || string.IsNullOrWhiteSpace(InspectionData.RotorsNumber))
+            if (string.IsNullOrWhiteSpace(Selectedddrc)  || string.IsNullOrWhiteSpace(InspectionData.Customer) || string.IsNullOrWhiteSpace(InspectionData.Location) || string.IsNullOrWhiteSpace(InspectionData.RotorsNumber))
             {
                 Snackbar.Add("Please fill in all the mandatory fields before print.", Severity.Warning);
                 return;

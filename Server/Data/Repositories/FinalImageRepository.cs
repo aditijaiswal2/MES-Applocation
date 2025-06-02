@@ -42,12 +42,25 @@ namespace MES.Server.Data.Repositories
             return await _context.FinalInspections.AnyAsync(x => x.SerialNumber == serialNumber);
         }
 
-        public async Task DeleteIncomingImageAsync(int id)
+        //public async Task DeleteIncomingImageAsync(string SerialNumber)
+        //{
+        //    var image = await _context.FinalInspections.FindAsync(SerialNumber);
+        //    if (image != null)
+        //    {
+        //        _context.FinalInspections.Remove(image);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
+
+        public async Task DeleteIncomingImageAsync(string serialNumber)
         {
-            var image = await _context.FinalInspections.FindAsync(id);
-            if (image != null)
+            var images = await _context.FinalInspections
+                .Where(img => img.SerialNumber == serialNumber)
+                .ToListAsync();
+
+            if (images.Any())
             {
-                _context.FinalInspections.Remove(image);
+                _context.FinalInspections.RemoveRange(images);
                 await _context.SaveChangesAsync();
             }
         }

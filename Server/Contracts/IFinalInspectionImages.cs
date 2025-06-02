@@ -11,7 +11,7 @@ namespace MES.Server.Contracts
         Task<bool> SerialNumberExistsAsync(string serialNumber);
         Task AddIncomingImageAsync(FinalInspection image);
         Task UpdateIncomingImageAsync(FinalInspection image);
-        Task DeleteIncomingImageAsync(int id);
+        Task DeleteIncomingImageAsync(string SerialNumber);
         Task<FinalInspection> AddImagesAsync(FinalInspection wIPForProjectJOB);
 
         Task<FinalInspection> GetImagesByDTOAsync(FinalInspectionImageDTO wIPForProjectJOBDTO);

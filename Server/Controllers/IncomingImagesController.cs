@@ -76,7 +76,7 @@ namespace MES.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{SerialNumber}")]
         public async Task<ActionResult> Delete(string SerialNumber)
         {
             await _imageRepository.DeleteIncomingImageAsync(SerialNumber);
@@ -93,25 +93,16 @@ namespace MES.Server.Controllers
 
             try
             {
-                await _imageRepository.DeleteIncomingImageAsync(IncomingImagesDTO.SerialNumber);
-
                 var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
-                //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
-                // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
-
                 var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}", "IncomingInspection");
 
-                // Automatically create the directory if it doesn't exist
+                // Create directory if it doesn't exist
                 if (!Directory.Exists(partNumberFolder))
                 {
                     Directory.CreateDirectory(partNumberFolder);
                 }
 
-                if (!Directory.Exists(partNumberFolder))
-                {
-                    Directory.CreateDirectory(partNumberFolder);
-                }
-
+                // Prepare images
                 var images = IncomingImagesDTO.Images.Select(imageDto => new Imagedata { Data = imageDto.Data }).ToList();
 
                 foreach (var image in images)
@@ -120,22 +111,36 @@ namespace MES.Server.Controllers
                     var filePath = Path.Combine(partNumberFolder, fileName);
 
                     await System.IO.File.WriteAllBytesAsync(filePath, image.Data);
-
                     image.Data = new byte[0];
-
                     image.ImageFilePath = filePath;
                 }
 
-                var bOMImage = new IncomingImages
+                // Check if entry for SerialNumber already exists
+                var existingEntry = await _imageRepository.GetImagesBySerialNumberAsync(IncomingImagesDTO.SerialNumber);
+
+                if (existingEntry != null)
                 {
-                    SerialNumber = IncomingImagesDTO.SerialNumber,
-                    // Project = projectJobImagesDTO.Project,
-                    Images = images
-                };             
+                    // Add images to the existing entity
+                    if (existingEntry.Images == null)
+                        existingEntry.Images = new List<Imagedata>();
 
-                var result = await _imageRepository.AddImagesAsync(bOMImage);
+                    existingEntry.Images.AddRange(images);
+                    await _imageRepository.UpdateIncomingImageAsync(existingEntry);
 
-                return CreatedAtAction(nameof(GetImagesByDTO), new { wipDTO = new IncomingInspectionImageDTO { SerialNumber = result.SerialNumber } }, result);
+                    return Ok(existingEntry); // You could also return NoContent or custom success message
+                }
+                else
+                {
+                    // Create a new entity if not existing
+                    var bOMImage = new IncomingImages
+                    {
+                        SerialNumber = IncomingImagesDTO.SerialNumber,
+                        Images = images
+                    };
+
+                    var result = await _imageRepository.AddImagesAsync(bOMImage);
+                    return CreatedAtAction(nameof(GetImagesByDTO), new { wipDTO = new IncomingInspectionImageDTO { SerialNumber = result.SerialNumber } }, result);
+                }
             }
             catch (Exception ex)
             {

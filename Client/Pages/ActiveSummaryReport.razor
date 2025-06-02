@@ -10,18 +10,23 @@
     <MudGrid Class="d-flex">
         <MudItem md="12" sm="12" xs="12">
             <div style="margin-top:20px">
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DownloadForOffline" Size="Size.Small" Color="Color.Primary" OnClick="@Downloadreport">Download Report</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DownloadForOffline" Size="Size.Small" Color="Color.Primary" OnClick="@DownloadReport">
+                    Download Report
+                </MudButton>
             </div>
         </MudItem>
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; padding-bottom:30px;">
                 <div class="table-container">
-                    <MudTable Items="@combinedData.Where(x => x.CurrentLocation != "Shipped")" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")" Class="table table-bordered table-striped">
+                    <MudTable Items="@combinedData.Where(x => !string.Equals(x.CurrentLocation, "Shipped", StringComparison.OrdinalIgnoreCase))"
+                              FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "400px" : "")"
+                              Class="table table-bordered table-striped"
+                              Filter="new Func<ReceivingInspectionViewModel, bool>(FilterFunc1)">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6"></MudText>
                             <MudSpacer />
-                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.End"
-                            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown"></MudTextField>
+                            <MudTextField @bind-Value="searchString1" Placeholder="Search by Rotor Number" Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" @onkeydown="HandleKeyDown" />
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh Style="text-align:center">Report Number</MudTh>
@@ -34,7 +39,6 @@
                             <MudTh Style="text-align:center">Received Date</MudTh>
                             <MudTh Style="text-align:center">Days in Plant</MudTh>
                         </HeaderContent>
-
                         <RowTemplate>
                             <MudTd Style="text-align:center">@context.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@context.Customer</MudTd>
@@ -43,7 +47,7 @@
                             <MudTd Style="text-align:center">@context.Type</MudTd>
                             <MudTd Style="text-align:center">@context.Categorize</MudTd>
                             <MudTd Style="text-align:center">@context.CurrentLocation</MudTd>
-                            <MudTd Style="text-align:center">@context.Date</MudTd>
+                            <MudTd Style="text-align:center">@context.Date.ToShortDateString()</MudTd>
                             <MudTd Style="text-align:center">@((DateTime.Now - context.Date).Days)</MudTd>
                         </RowTemplate>
                         <PagerContent>
@@ -57,47 +61,59 @@
 </MudContainer>
 
 @code {
+    // Combined data displayed in the table
     private List<ReceivingInspectionViewModel> combinedData = new();
-    private IEnumerable<Receiving> iTSLocations = new List<Receiving>();
-    private IEnumerable<IncomingInspection> inspection = new List<IncomingInspection>();
-    private IEnumerable<NewRotorData> NewRotor = new List<NewRotorData>();
-    private IEnumerable<RotorSalesClearance> SalesClearances = new List<RotorSalesClearance>();
-    private IEnumerable<RotorDamageGrindingDataFromGrinding> GrindingDataFromGrinding = new List<RotorDamageGrindingDataFromGrinding>();
-    private IEnumerable<RotorDamageGrindingSaveData> GrindingSaveData = new List<RotorDamageGrindingSaveData>();
-    private IEnumerable<RotorDamageGrindingSubmitedData> GrindingSubmitedData = new List<RotorDamageGrindingSubmitedData>();
-    private IEnumerable<RotorGrindingData> RotorGrindingData = new List<RotorGrindingData>();
-    private IEnumerable<RotorGrindingSavedData> RotorGrindingSavedData = new List<RotorGrindingSavedData>();
-    private IEnumerable<RotorIncominInspectionSavedData> RotorIncominInspectionSavedData = new List<RotorIncominInspectionSavedData>();
-    private IEnumerable<RotorProductionSavedData> RotorProductionSavedData = new List<RotorProductionSavedData>();
-    private IEnumerable<RotorProductionData> RotorProductionData = new List<RotorProductionData>();
-    private IEnumerable<RotorSalesData> RotorSalesData = new List<RotorSalesData>();
-    private IEnumerable<RotorsFinalInspection> RotorsFinalInspection = new List<RotorsFinalInspection>();
-    private IEnumerable<RotorShipping> RotorShipping = new List<RotorShipping>();
+
+    // Raw data cached to avoid repetitive calls
+    private List<Receiving> receivingList = new();
+    private List<IncomingInspection> inspectionList = new();
+    private List<RotorSalesData> salesDataList = new();
+    private List<NewRotorData> newRotorList = new();
+    private List<RotorsFinalInspection> finalInspectionList = new();
+    private List<RotorSalesClearance> salesClearanceList = new();
+    private List<RotorProductionData> productionSavedList = new();
+    private List<RotorGrindingSavedData> grindingSavedList = new();
+    private List<RotorProductionSavedData> productionDataList = new();
+    private List<RotorDamageGrindingDataFromGrinding> damageGrindingList = new();
+    private List<RotorDamageGrindingSaveData> damageGrindingSaveList = new();
+    private List<NewRotorData> NewRotorDatas = new();
+    private List<RotorShipping> shippingDataList = new();
 
     private string searchString1 = "";
-
-    bool fixed_header = true;
-    bool fixed_footer = false;
-
+    private bool fixed_header = true;
+    private bool fixed_footer = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadLocations();
+        await LoadAllDataAsync();
+        BuildCombinedData();
     }
 
-    private async Task LoadLocations()
+    // Load all data once from APIs and cache it
+    private async Task LoadAllDataAsync()
     {
         Snackbar.Clear();
-
         try
         {
+            var tasks = new List<Task<HttpResponseMessage>>
+            {
+                HttpClient.GetAsync(ApiConstants.GetReceiving),
+                HttpClient.GetAsync(ApiConstants.GetRotorIncoming),
+                HttpClient.GetAsync(ApiConstants.GetAllSalesData),
+                HttpClient.GetAsync(ApiConstants.GetAllNewRotorData),
+                HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData),
+                HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData),
+                HttpClient.GetAsync(ApiConstants.GetAllProductionData),
+                HttpClient.GetAsync(ApiConstants.GetAllGrindingData),
+                HttpClient.GetAsync(ApiConstants.GetAllProductionSavesData),
+                HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData),
+                HttpClient.GetAsync(ApiConstants.GetAllSaveGrindingData),
+                HttpClient.GetAsync(ApiConstants.GetAllShippedData),
+            };
 
-            var receivingResponse = HttpClient.GetAsync(ApiConstants.GetReceiving);
-            var inspectionResponse = HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
-            var SalesResponse = HttpClient.GetAsync(ApiConstants.GetAllSalesData);
+            await Task.WhenAll(tasks);
 
-            await Task.WhenAll(receivingResponse, inspectionResponse, SalesResponse);
-
+            // Helper local method to deserialize safely
             async Task<List<T>> ReadListAsync<T>(Task<HttpResponseMessage> task)
             {
                 try
@@ -109,108 +125,95 @@
                         return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<T>();
                     }
                 }
-                catch { }
+                catch
+                {
+                    // Log or handle error here if needed
+                }
                 return new List<T>();
             }
 
-      
-
-            var receivingList = await ReadListAsync<Receiving>(receivingResponse);
-            var inspectionList = await ReadListAsync<IncomingInspection>(inspectionResponse);
-            var salesDataList = await ReadListAsync<RotorSalesData>(SalesResponse);
-
-            if (receivingList != null && inspectionList != null && salesDataList != null)
-                {
-
-                    var combinedData = await Task.WhenAll(receivingList.Select(async receiving =>
-       {
-           var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
-       var matchingSales = salesDataList.FirstOrDefault(i => i.SerialNumber == receiving.SerialNumber);
-
-           var serial = receiving.SerialNumber;
-           var currentLocation = await GetCurrentLocation(serial);
-
-           return new ReceivingInspectionViewModel
-               {
-                   SerialNumber = receiving.SerialNumber,
-                   Customer = matchingInspection?.Customer,
-                   CustomerPriority= matchingSales?.CustomerImportance,
-                   RotorNumber = matchingInspection?.RotorsNumber,
-                   Type = matchingInspection?.RotorCategorization,
-                   Categorize = matchingInspection?.ComponentType,
-                   CurrentLocation = currentLocation,
-                   Date = receiving.Date,
-               // InspectionStatus = matchingInspection?.Status,
-               // InspectorName = matchingInspection?.InspectorName
-               };
-       }));
-                    this.combinedData = combinedData.ToList();
-
-                    // If needed as List<ReceivingInspectionViewModel>
-                    //  var combinedList = combinedData.ToList();
-
-                }
-          
+            receivingList = await ReadListAsync<Receiving>(tasks[0]);
+            inspectionList = await ReadListAsync<IncomingInspection>(tasks[1]);
+            salesDataList = await ReadListAsync<RotorSalesData>(tasks[2]);
+            newRotorList = await ReadListAsync<NewRotorData>(tasks[3]);
+            finalInspectionList = await ReadListAsync<RotorsFinalInspection>(tasks[4]);
+            salesClearanceList = await ReadListAsync<RotorSalesClearance>(tasks[5]);
+            productionSavedList = await ReadListAsync<RotorProductionData>(tasks[6]);
+            grindingSavedList = await ReadListAsync<RotorGrindingSavedData>(tasks[7]);
+            productionDataList = await ReadListAsync<RotorProductionSavedData>(tasks[8]);
+            damageGrindingList = await ReadListAsync<RotorDamageGrindingDataFromGrinding>(tasks[9]);
+            damageGrindingSaveList = await ReadListAsync<RotorDamageGrindingSaveData>(tasks[10]);
+            shippingDataList = await ReadListAsync<RotorShipping>(tasks[11]);
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Error loading data: {ex.Message}", Severity.Error);
         }
     }
 
-    private async Task<string> GetCurrentLocation(string? serial)
+    // Combine data and determine location once from cached data
+    private void BuildCombinedData()
     {
-        var receivingTask = HttpClient.GetAsync(ApiConstants.GetReceiving);
-        var inspectionTask = HttpClient.GetAsync(ApiConstants.GetRotorIncoming);
-        var finalInspectionTask = HttpClient.GetAsync(ApiConstants.GetAllFinalInspectionData);
-        var salesDataTask = HttpClient.GetAsync(ApiConstants.GetAllSalesData);
-        var salesClearanceTask = HttpClient.GetAsync(ApiConstants.GetAllSalesClearanceData);
-        var productionSavedTask = HttpClient.GetAsync(ApiConstants.GetAllProductionData);
-        var grindingSavedTask = HttpClient.GetAsync(ApiConstants.GetAllGrindingData);
-        var productionDataTask = HttpClient.GetAsync(ApiConstants.GetAllProductionSavesData);
-        var damageGrindingTask = HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
-        var damageGrindingSaveTask = HttpClient.GetAsync(ApiConstants.GetAllSaveGrindingData);
-        var ShippingTask = HttpClient.GetAsync(ApiConstants.GetAllShippedData);
+        var list = new List<ReceivingInspectionViewModel>();
 
-        await Task.WhenAll(
-            receivingTask, inspectionTask, ShippingTask, finalInspectionTask, salesDataTask,
-            salesClearanceTask, productionSavedTask, grindingSavedTask, productionDataTask,
-            damageGrindingTask, damageGrindingSaveTask
-        );
-
-        // Helper function to safely read JSON and deserialize to list
-        async Task<List<T>> ReadListAsync<T>(Task<HttpResponseMessage> task)
+        // Combine Receiving + Inspection + Sales and get current location
+        foreach (var receiving in receivingList)
         {
-            try
-            {
-                var response = await task;
-                if (response.IsSuccessStatusCode)
+            var serial = receiving.SerialNumber?.Trim().ToUpper() ?? "";
+
+            var matchingInspection = inspectionList.FirstOrDefault(i => i.SerialNumber?.Trim().ToUpper() == serial);
+            var matchingSales = salesDataList.FirstOrDefault(i => i.SerialNumber?.Trim().ToUpper() == serial);
+
+            var location = GetCurrentLocation(serial);
+
+            list.Add(new ReceivingInspectionViewModel
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<T>();
-                }
-            }
-            catch { }
-            return new List<T>();
+                    SerialNumber = receiving.SerialNumber,
+                    Customer = matchingInspection?.Customer,
+                    CustomerPriority = matchingSales?.CustomerImportance,
+                    RotorNumber = matchingInspection?.RotorsNumber,
+                    Type = matchingInspection?.RotorCategorization,
+                    Categorize = matchingInspection?.ComponentType,
+                    CurrentLocation = location,
+                    Date = receiving.Date,
+                });
         }
 
-        // Deserialize all lists safely
-        var receivingList = await ReadListAsync<Receiving>(receivingTask);
-        var inspectionList = await ReadListAsync<IncomingInspection>(inspectionTask);
-        var finalInspectionList = await ReadListAsync<RotorsFinalInspection>(finalInspectionTask);
-        var salesDataList = await ReadListAsync<RotorSalesData>(salesDataTask);
-        var salesClearanceList = await ReadListAsync<RotorSalesClearance>(salesClearanceTask);
-        var productionSavedList = await ReadListAsync<RotorProductionData>(productionSavedTask);
-        var grindingSavedList = await ReadListAsync<RotorGrindingSavedData>(grindingSavedTask);
-        var productionDataList = await ReadListAsync<RotorProductionSavedData>(productionDataTask);
-        var damageGrindingList = await ReadListAsync<RotorDamageGrindingDataFromGrinding>(damageGrindingTask);
-        var damageGrindingSaveList = await ReadListAsync<RotorDamageGrindingSaveData>(damageGrindingSaveTask);
-        var ShippingDataList = await ReadListAsync<RotorShipping>(ShippingTask);
+        // Add New Rotor data where not already in receivingList
+        var newRotorsOnly = newRotorList.Where(n => !receivingList.Any(r => string.Equals(r.SerialNumber?.Trim(), n.SerialNumber?.Trim(), StringComparison.OrdinalIgnoreCase)));
+
+        foreach (var n in newRotorsOnly)
+        {
+            var serial = n.SerialNumber?.Trim().ToUpper() ?? "";
+            var location = GetCurrentLocation(serial);
+
+            list.Add(new ReceivingInspectionViewModel
+                {
+                    SerialNumber = n.SerialNumber,
+                    Customer = n.CustomerName,
+                    CustomerPriority = n.CustomerImportance,
+                    RotorNumber = n.RotorsNumber,
+                    Type = "Rotors",
+                    Categorize = n.ComponentType,
+                    CurrentLocation = location,
+                    Date = n.NewRotorDataSubmitDate.GetValueOrDefault()
+                });
+        }
+
+        // Sort descending by date
+        combinedData = list.OrderByDescending(x => x.Date).ToList();
+    }
+
+    // Determine the current location for the serial number by searching various lists
+    private string GetCurrentLocation(string serial)
+    {
+        if (string.IsNullOrWhiteSpace(serial))
+            return "";
 
         serial = serial?.Trim().ToUpper();
-        if (ShippingDataList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipped";
+        if (shippingDataList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipped";
 
-         if (salesClearanceList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipping";
+        if (salesClearanceList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Shipping";
         if (finalInspectionList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Ready To Close";
 
         var latestDamageEntry = damageGrindingSaveList
@@ -227,6 +230,7 @@
         }
 
         if (grindingSavedList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Final Inspection";
+        if (newRotorList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Grinding";
         if (damageGrindingList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Damage Grinding";
         if (productionSavedList.Any(x => x.SerialNumber?.Trim().ToUpper() == serial)) return "Grinding";
 
@@ -251,8 +255,32 @@
     }
 
 
+    // Filter logic for MudTable
+    private bool FilterFunc1(ReceivingInspectionViewModel model)
+    {
+        if (string.IsNullOrWhiteSpace(searchString1))
+            return true;
 
-    async Task Downloadreport()
+        var search = searchString1.Trim().ToUpper();
+
+        return (model.SerialNumber?.ToUpper().Contains(search) ?? false)
+               || (model.CurrentLocation?.ToUpper().Contains(search) ?? false)
+               || (model.Customer?.ToUpper().Contains(search) ?? false)
+               || (model.RotorNumber?.ToUpper().Contains(search) ?? false);
+    }
+
+    // Called when user presses Enter in search textbox
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            // Optionally, you could reload data or re-filter here
+            // For now, just re-trigger StateHasChanged
+            StateHasChanged();
+        }
+    }
+
+    async Task DownloadReport()
     {
         try
         {
@@ -279,15 +307,6 @@
         }
     }
 
-
-    private async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            await LoadLocations();
-        }
-    }
-
     public class ReceivingInspectionViewModel
     {
         public string? SerialNumber { get; set; }
@@ -299,11 +318,7 @@
         public string? CurrentLocation { get; set; }
         public DateTime Date { get; set; }
         public int DaysInPlant => (DateTime.Now - Date).Days;
-
-        // Extra fields from IncomingInspection
         public string? InspectionStatus { get; set; }
         public string? InspectorName { get; set; }
     }
-
-
 }
