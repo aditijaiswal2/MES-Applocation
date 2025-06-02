@@ -761,7 +761,7 @@
         string currentuser = userData?.UserName ?? "User";
         inspection.Inspected = currentuser;
         inspection.Received = currentDateTime.ToString();
-        inspection.ComponentType = "Rotors";
+        inspection.ComponentType = "Rotor";
 
         HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
         var workcenterResponse = await HttpClient.GetAsync(ApiConstants.GetRotorsStyle);
@@ -1571,7 +1571,7 @@
                     Initials = inspection.Initials,
                     Make = selectedMake,
                     Dia = inspection.Dia,
-                    Len = inspection.Dia,
+                    Len = inspection.Len,
                     Fits = inspection.Fits,
                     Materials = SelectedMaterials,
                     SalesOrderNumber = inspection.SalesOrderNumber,
