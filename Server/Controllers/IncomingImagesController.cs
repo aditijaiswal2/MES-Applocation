@@ -1,4 +1,5 @@
-﻿using MES.Server.Contracts;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using MES.Server.Contracts;
 using MES.Shared.DTOs;
 using MES.Shared.Models.Rotors;
 using Microsoft.AspNetCore.Hosting;
@@ -65,7 +66,7 @@ namespace MES.Server.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateRotorIISavedData/{id}")]
         public async Task<ActionResult> Update(int id, IncomingImages image)
         {
             if (id != image.Id)
@@ -76,9 +77,9 @@ namespace MES.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string SerialNumber)
         {
-            await _imageRepository.DeleteIncomingImageAsync(id);
+            await _imageRepository.DeleteIncomingImageAsync(SerialNumber);
             return NoContent();
         }
 
@@ -92,9 +93,11 @@ namespace MES.Server.Controllers
 
             try
             {
+                await _imageRepository.DeleteIncomingImageAsync(IncomingImagesDTO.SerialNumber);
+
                 var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
                 //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
-               // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
+                // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
 
                 var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}", "IncomingInspection");
 
@@ -126,9 +129,9 @@ namespace MES.Server.Controllers
                 var bOMImage = new IncomingImages
                 {
                     SerialNumber = IncomingImagesDTO.SerialNumber,
-                   // Project = projectJobImagesDTO.Project,
+                    // Project = projectJobImagesDTO.Project,
                     Images = images
-                };
+                };             
 
                 var result = await _imageRepository.AddImagesAsync(bOMImage);
 
@@ -167,10 +170,6 @@ namespace MES.Server.Controllers
             return Ok(new List<IncomingImages> { images });
         }
 
-
-
-        // Don't Edit 
-
         [HttpGet("getImagestodisplayinsales/{serialNumber}")]
         public async Task<IActionResult> GetgetImagestodisplayinsales(string serialNumber)
         {
@@ -185,7 +184,6 @@ namespace MES.Server.Controllers
         }
 
 
-
+      
     }
 }
-

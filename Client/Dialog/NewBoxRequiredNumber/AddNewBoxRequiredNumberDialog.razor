@@ -17,7 +17,7 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+            <MudTextField T="string" MaxLength="250" InputType="InputType.Number" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="New Box Required Number" @bind-Value="typesdetails.NewBoxRequiredNumberName" Variant="Variant.Outlined" Class="mb-6" />
             <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
                           Label="New Box Required Number Description" @bind-Value="typesdetails.Description" Variant="Variant.Outlined" Class="mb-4" />

@@ -97,7 +97,6 @@ namespace MES.Server.Controllers
             }
         }
 
-
         [HttpGet("GetRecentIncomingData")]
         public async Task<IActionResult> GetRecentSalesData(string serialNumber, string module)
         {
@@ -154,7 +153,7 @@ namespace MES.Server.Controllers
             existing.Left = data.Left;
             existing.yLeft = data.yLeft;
             existing.Right = data.Right;
-            existing.yRight = data.yLeft;
+            existing.yRight = data.yRight;
             existing.BasicSharpening = data.BasicSharpening;
             existing.IfYBasicSharpening = data.IfYBasicSharpening;
             existing.WedgelockAlignmentMarks = data.WedgelockAlignmentMarks;

@@ -1034,37 +1034,16 @@
                     var projectjsonData = JsonConvert.SerializeObject(ProjectImageData);
                     var projectimagecontent = new StringContent(projectjsonData, Encoding.UTF8, "application/json");
 
-                    // // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
-                    // var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
+                    // var projectimageresponse = await HttpClient.PostAsync("https://localhost:7172/api/IncomingImages/addbi", projectimagecontent);
+                    var projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
 
-                    // if (projectimageresponse.IsSuccessStatusCode)
-                    // {
-                    //     await localStorage.RemoveItemAsync("IncomingImageData");
-                    //     // Console.WriteLine("Images added successfully.");
-
-                    // }
-                    // Step 1: Check if serial number already exists
-                    var checkResponsedata = await HttpClient.GetAsync($"{ApiConstants.GetImagesFinal}/{ProjectImageData.SerialNumber}");
-
-                   // var checkResponsedata = await HttpClient.GetAsync($"https://localhost:7172/api/FinalInspectionImages/getImages/{ProjectImageData.SerialNumber}");
-                    bool serialExists = checkResponse.IsSuccessStatusCode;
-
-                    // Step 2: Update if exists, otherwise Add
-                    HttpResponseMessage projectimageresponse;
-                    if (serialExists)
+                    if (projectimageresponse.IsSuccessStatusCode)
                     {
-                        // Deserialize the existing data (optional, if you want to retain existing metadata)
-                        var existingDataJson = await checkResponsedata.Content.ReadAsStringAsync();
-                        var existingData = JsonConvert.DeserializeObject<FinalInspection>(existingDataJson);
+                        await localStorage.RemoveItemAsync("IncomingImageData");
+                        // Console.WriteLine("Images added successfully.");
 
-                        // You may need to attach existing image IDs or FinalInspection.Id to ProjectImageData here if necessary
-
-                        projectimageresponse = await HttpClient.PutAsync($"{ApiConstants.UpdateImagesFinal}/{existingData.Id}", projectimagecontent);
                     }
-                    else
-                    {
-                        projectimageresponse = await HttpClient.PostAsync(ApiConstants.AddImagesFinal, projectimagecontent);
-                    }
+                  
 
                 }
                 else

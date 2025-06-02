@@ -37,12 +37,15 @@ namespace MES.Server.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteIncomingImageAsync(int id)
+        public async Task DeleteIncomingImageAsync(string serialNumber)
         {
-            var image = await _context.IncomingImages.FindAsync(id);
-            if (image != null)
+            var images = await _context.IncomingImages
+                .Where(img => img.SerialNumber == serialNumber)
+                .ToListAsync();
+
+            if (images.Any())
             {
-                _context.IncomingImages.Remove(image);
+                _context.IncomingImages.RemoveRange(images);
                 await _context.SaveChangesAsync();
             }
         }
@@ -76,7 +79,7 @@ namespace MES.Server.Data.Repositories
 
             return wIPForProjectJOB;
         }
-        
+
 
         public async Task<IncomingImages> GetImagesByDTOAsync(IncomingInspectionImageDTO wIPForProjectJOBDTO)
         {
@@ -132,7 +135,7 @@ namespace MES.Server.Data.Repositories
         }
 
 
-      
+
         public async Task<IncomingImages> GetImagesBySerialNumberAsync(string serialNumber)
         {
             try
@@ -172,7 +175,6 @@ namespace MES.Server.Data.Repositories
         }
 
 
-        // Don't Edit 
         public async Task<List<IncomingImages>> GetImagesBySerialNumberAsyncforsales(string serialNumber)
         {
             try
@@ -214,6 +216,5 @@ namespace MES.Server.Data.Repositories
             }
         }
 
-    }
 }
-
+}
