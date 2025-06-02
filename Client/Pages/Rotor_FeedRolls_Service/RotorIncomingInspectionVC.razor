@@ -275,24 +275,24 @@
 
 
                                                 <MudItem xs="12" md="3">
-                                                    <MudSelect T="string" ValueChanged="OnBearSealsChanged" Label="Bearing Seals" @bind-Values="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
+                                                    <MudSelect T="string" SelectedValuesChanged="OnBearSealsChanged" Label="Bearing Seals" SelectedValues="selectedBearSeals" MultiSelection="true" Variant="Variant.Outlined" FullWidth="true">
                                                         @foreach (var bearseal in BearSeals)
                                                         {
-                                                            <MudSelectItem Value="@bearseal" />
+                                                            <MudSelectItem Value="@bearseal" Disabled="@disabledBearSeals.Contains(bearseal)" />
                                                         }
                                                     </MudSelect>
                                                 </MudItem>
 
                                                 <MudItem xs="12" md="3">
-                                                    <MudSelect @ref="mudSelect" T="string" ValueChanged="OnbearcerChanged"
+                                                    <MudSelect @ref="mudSelect" T="string" SelectedValuesChanged="OnbearcerChanged"
                                                     Label="Ceramic Seals"
-                                                    @bind-Values="selectedCerSeals"
+                                                    SelectedValues="selectedCerSeals"
                                                     MultiSelection="true"
                                                     Variant="Variant.Outlined"
                                                     FullWidth="true">
                                                         @foreach (var cerseal in CerSeals)
                                                         {
-                                                            <MudSelectItem Value="@cerseal" />
+                                                            <MudSelectItem Value="@cerseal" Disabled="@disabledCerSeals.Contains(cerseal)" />
                                                         }
                                                     </MudSelect>
                                                 </MudItem>
@@ -747,6 +747,11 @@
 
     private List<RotorIncominInspectionSavedData> rotorIncomingSavedDatas = new();
     private DateTime currentDateTime = DateTime.Now;
+
+    private List<string> disabledBearSeals = new();
+
+    private List<string> disabledCerSeals = new();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -1339,18 +1344,54 @@
     }
 
     //selectedBearSeals
-    private async Task OnBearSealsChanged(string values)
+    // private async Task OnBearSealsChanged(string values)
+    // {
+    //     selectedBearSeals = values.Split(',').ToList();
+    //     // Add custom logic here if needed
+    // }
+
+    private void OnBearSealsChanged(IEnumerable<string> values)
     {
-        selectedBearSeals = values.Split(',').ToList();
-        // Add custom logic here if needed
+        selectedBearSeals = values.Where(v => !string.IsNullOrWhiteSpace(v))
+        .Select(v => v.Trim())
+        .ToList();
+        
+        disabledBearSeals.Clear();
+
+        if (selectedBearSeals.Contains("Replace Inner x1"))
+            disabledBearSeals.Add("Replace Inner x2");
+        else if (selectedBearSeals.Contains("Replace Inner x2"))
+            disabledBearSeals.Add("Replace Inner x1");
+
+        if (selectedBearSeals.Contains("Replace Outer x1"))
+            disabledBearSeals.Add("Replace Outer x2");
+        else if (selectedBearSeals.Contains("Replace Outer x2"))
+            disabledBearSeals.Add("Replace Outer x1");
     }
 
 
-
     //  private void OnCerSealsChanged(List<string> values)
-    private async Task OnbearcerChanged(string values)
+    private void OnbearcerChanged(IEnumerable<string> values)
     {
-        selectedCerSeals = values.Split(',').ToList();
+        selectedCerSeals = values.Where(v => !string.IsNullOrWhiteSpace(v))
+        .Select(v => v.Trim())
+        .ToList();
+
+
+        disabledCerSeals.Clear();
+
+        if (selectedCerSeals.Contains("Replace Inner x1"))
+            disabledCerSeals.Add("Replace Inner x2");
+        else if (selectedCerSeals.Contains("Replace Inner x2"))
+            disabledCerSeals.Add("Replace Inner x1");
+
+        if (selectedCerSeals.Contains("Replace Outer x1"))
+            disabledCerSeals.Add("Replace Outer x2");
+        else if (selectedCerSeals.Contains("Replace Outer x2"))
+            disabledCerSeals.Add("Replace Outer x1");
+
+
+
     }
 
     // private Task OnCerSealsChanged(IEnumerable<string> values)
