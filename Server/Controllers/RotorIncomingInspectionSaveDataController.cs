@@ -190,5 +190,53 @@ namespace MES.Server.Controllers
         }
 
 
+        [HttpGet("GetRecentIncomingsavedDatabasedonserialnumber/{serialNumber}")]       
+        public async Task<IActionResult> GetRecentIncomingsavedDatabasedonserialnumber(string serialNumber)
+        {
+            try
+            {
+                var recentData = await _context.rotorIncominInspectionSavedDatas
+                    .Where(r =>
+                        r.SerialNumber == serialNumber)
+                    .OrderByDescending(r => r.DateTime)
+                    .FirstOrDefaultAsync();
+
+                if (recentData == null)
+                    return NoContent(); 
+
+
+                return Ok(recentData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving rotor Incoming Inspection data: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet("GetRecentIncomingsabmitDatabasedonserialnumber/{serialNumber}")]       
+        public async Task<IActionResult> GetRecentIncomingsabmitDatabasedonserialnumber(string serialNumber)
+        {
+            try
+            {
+                var recentData = await _context.IncomingInspections
+                    .Where(r =>
+                        r.SerialNumber == serialNumber)
+                    .OrderByDescending(r => r.DateTime)
+                    .FirstOrDefaultAsync();
+
+                if (recentData == null)
+                    return NoContent(); 
+
+
+                return Ok(recentData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving rotor Incoming Inspection data: {ex.Message}");
+            }
+        }
+
+
     }
 }

@@ -1,0 +1,111 @@
+﻿@using MES.Client.Utitlity;
+@using MES.Shared.Models
+@using System.ComponentModel.DataAnnotations;
+@using Newtonsoft.Json
+@using System.Text
+@using static MES.Client.Pages.ReceivingVC
+
+
+@inject ISnackbar Snackbar
+@inject HttpClient HttpClient
+@inject IDialogCompletionService CompletionService
+@inject IHttpClientFactory _httpClient
+
+<div>
+    <MudDialog>
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.EditLocation" Class="mr-2 mb-n1" />
+                Update Customer
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Report Number" @bind-Value="@receive.SerialNumber" Variant="Variant.Outlined" Class="mb-6" ReadOnly/>
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Rotor/Feed Roll" @bind-Value="@receive.SelectedOption" Variant="Variant.Outlined" Class="mb-4" ReadOnly />
+
+            <MudTextField T="string" MaxLength="250" Immediate="true" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))"
+                          Label="Customer" @bind-Value="@receive.Customer" Variant="Variant.Outlined" Class="mb-4" />
+
+        </DialogContent>
+        <DialogActions>
+            <MudButton Class="mr-4 mb-2" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" OnClick="Save">Save</MudButton>           
+        </DialogActions>
+    </MudDialog>
+</div>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }   
+
+    [Parameter] public CombinedData receive { get; set; } = new CombinedData();
+
+
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 250 <= ch?.Length)
+            yield return "Max 250 characters";
+    }
+
+    private async Task Save()
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(receive);
+
+        if (!Validator.TryValidateObject(receive, validationContext, validationResults, true))
+        {
+            foreach (var validationResult in validationResults)
+            {
+                Snackbar.Add(validationResult.ErrorMessage, Severity.Error);
+            }
+            return;
+        }
+        try
+        {
+            var jsonPart = JsonConvert.SerializeObject(receive);
+            var content = new StringContent(jsonPart, Encoding.UTF8, "application/json");            
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var response = await HttpClient.PutAsync(ApiConstants.EditRiceivedata, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Receive data edited successfully.", Severity.Success);
+                CompletionService.IsCompleted = true;
+            }
+            else
+            {
+                var newjsonPart = JsonConvert.SerializeObject(receive);
+                var newcontent = new StringContent(jsonPart, Encoding.UTF8, "application/json");
+                HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+                var newresponse = await HttpClient.PutAsync(ApiConstants.EditNewReciveRotorData, content);
+
+                if (newresponse.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Receive data edited successfully.", Severity.Success);
+                    CompletionService.IsCompleted = true;
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to edit Receive data,Try again ! Status code: {response.StatusCode}", Severity.Error);
+                    CompletionService.IsCompleted = false;
+                }
+
+               
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error Occured {ex.Message}", Severity.Warning);
+        }
+
+        MudDialog?.Close();
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
+}

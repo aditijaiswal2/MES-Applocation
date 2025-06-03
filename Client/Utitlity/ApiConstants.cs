@@ -2,8 +2,8 @@
 {
     public class ApiConstants
     {
-       //   private const string BaseUrl = "https://localhost:7172/api";
-        private const string BaseUrl = "https://maag-mes.dover-global.net/api";
+       private const string BaseUrl = "https://localhost:7172/api";
+        //private const string BaseUrl = "https://maag-mes.dover-global.net/api";
 
         public const string GetUserRoles = $"{BaseUrl}/Users/getuserroles";
         public const string GetRole = $"{BaseUrl}/Role/getrole";
@@ -139,6 +139,10 @@
         public const string UpdateRIsdelete = $"{BaseUrl}/NewRotorDetails/updateRIsdelete";
         public const string UpNewISDeleteStatus = $"{BaseUrl}/NewRotorDetails/UpNewISDelete";
 
+        public const string EditRiceivedata = $"{BaseUrl}/NewRotorDetails/editreceiveData";
+        public const string EditNewReciveRotorData = $"{BaseUrl}/NewRotorDetails/editnewrotorreceiveData";
+
+
         // Rotor Grinding Data
         public const string AddRotorGrindingData = $"{BaseUrl}/RotorGrinding/AddGrindingData";
         public const string GetAllGrindingData = $"{BaseUrl}/RotorGrinding/GetAllGrindingData";
@@ -220,6 +224,13 @@
 
         // Feed Roles Sales Page
         public const string GetAllFeedRolesIncominginspectionData = $"{BaseUrl}/FeedRoleSalesSumited/GetAll";
+
+
+        // recieved page get the data from incoming saved and submit table
+
+        public const string GetRecentIncomingsavedDatabasedonserialnumber = $"{BaseUrl}/RotorIncomingInspectionSaveData/GetRecentIncomingsavedDatabasedonserialnumber";
+
+        public const string GetRecentIncomingsabmitDatabasedonserialnumber = $"{BaseUrl}/RotorIncomingInspectionSaveData/GetRecentIncomingsabmitDatabasedonserialnumber";
 
     }
 }

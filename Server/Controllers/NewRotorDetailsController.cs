@@ -96,5 +96,51 @@ namespace MES.Server.Controllers
 
 
 
+        // EDIT the  receive Data 
+        [HttpPut("editreceiveData")]
+        public async Task<IActionResult> EditreceiveData([FromBody] Receiving receiving)
+        {
+            var rotor = await _context.Receivings
+                .FirstOrDefaultAsync(r => r.SerialNumber == receiving.SerialNumber);
+
+            if (rotor == null)
+            {
+                return NotFound("Rotor with specified serial number not found.");
+            }
+
+            rotor.Customer = receiving.Customer;
+            rotor.Date = DateTime.UtcNow;
+
+            _context.Receivings.Update(rotor);
+            await _context.SaveChangesAsync();
+
+            return Ok("Rotor updated.");
+        }
+
+
+
+        // edit new rotor data 
+        [HttpPut("editnewrotorreceiveData")]
+        public async Task<IActionResult> EditnewrotorreceiveData([FromBody] Receiving receiving)
+        {
+            var rotor = await _context.NewRotorData
+                .FirstOrDefaultAsync(r => r.SerialNumber == receiving.SerialNumber);
+
+            if (rotor == null)
+            {
+                return NotFound("Rotor with specified serial number not found.");
+            }
+
+            rotor.CustomerName = receiving.Customer;
+            rotor.NewRotorDataSubmitDate = DateTime.UtcNow;
+
+            _context.NewRotorData.Update(rotor);
+            await _context.SaveChangesAsync();
+
+            return Ok("Rotor updated.");
+        }
+
+
+
     }
 }

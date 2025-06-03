@@ -13,6 +13,8 @@
 @inject IDialogService DialogService
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
+@inject IDialogCompletionService CompletionService
+
 
 <MudContainer Class="pa-2">
     <MudGrid Class="d-flex justify-content-around">
@@ -23,7 +25,7 @@
 
             <MudItem md="11" sm="12" xs="12">
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add"
-                           Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
+                Size="Size.Small" Color="Color.Primary" OnClick="@NewReceive">
                     ADD
                 </MudButton>
             </MudItem>
@@ -51,8 +53,9 @@
                             <MudTd Style="text-align:center">
                                 @*   <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
                            *@ 
-                             <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
-                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.QrCode" Color="Color.Tertiary" OnClick="@(() => GenerateQR(appUsers))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditLocation(appUsers))" />
+                                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLocation(appUsers))" />
 
                             </MudTd>
                         </RowTemplate>
@@ -99,8 +102,8 @@
 
                 if (!string.IsNullOrEmpty(NEWDataJson))
                 {
-                   var Data = System.Text.Json.JsonSerializer.Deserialize<List<NewRotorData>>(NEWDataJson,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<NewRotorData>();
+                    var Data = System.Text.Json.JsonSerializer.Deserialize<List<NewRotorData>>(NEWDataJson,
+                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<NewRotorData>();
 
                     var now = DateTime.Now;
                     NewRotorData = Data
@@ -110,7 +113,7 @@
 
                 }
             }
-           
+
         }
         catch (Exception ex)
         {
@@ -124,7 +127,7 @@
         public DateTime? Date { get; set; }
         public string Customer { get; set; }
         public string SelectedOption { get; set; }
-       
+
     }
 
 
@@ -136,7 +139,7 @@
                 Date = r.Date,
                 Customer = r.Customer,
                 SelectedOption = r.SelectedOption,
-                
+
             })
         .Union(NewRotorData.Select(nr => new CombinedData
             {
@@ -144,7 +147,7 @@
                 Date = nr.NewRotorDataSubmitDate,
                 Customer = nr.CustomerName,
                 SelectedOption = "Rotor",
-                
+
             }))
         .ToList();
     }
@@ -268,11 +271,11 @@
 
         try
         {
-                 bool? result = await DialogService.ShowMessageBox(
-               "Delete Confirmation",
-               "Are you sure you want to delete this QR Code?",
-               "Yes", "No"
-           );
+            bool? result = await DialogService.ShowMessageBox(
+          "Delete Confirmation",
+          "Are you sure you want to delete this QR Code?",
+          "Yes", "No"
+      );
             if (result == true)
             {
                 var jsonPart = Newtonsoft.Json.JsonConvert.SerializeObject(receive);
@@ -309,7 +312,7 @@
                 }
             }
 
-            
+
         }
         catch (Exception ex)
         {
@@ -371,6 +374,75 @@
         {
             Snackbar.Add($"Error generating QR code: {ex.Message}", Severity.Error);
         }
+    }
+
+
+
+
+    async Task EditLocation(CombinedData data)
+    {
+        // Check if the serial number exists in either of the two sources        
+
+        RotorIncominInspectionSavedData? savedDataResponse = null;
+        IncomingInspection? incomingDataResponse = null;
+
+        try
+        {
+            var savedResponse = await HttpClient.GetAsync(
+                $"{ApiConstants.GetRecentIncomingsavedDatabasedonserialnumber}/{data.SerialNumber}");
+
+            if (savedResponse.IsSuccessStatusCode)
+            {
+                savedDataResponse = await savedResponse.Content.ReadFromJsonAsync<RotorIncominInspectionSavedData>();
+            }
+        }
+
+        catch (Exception ex)
+        {
+            // Snackbar.Add("Error while checking saved data. Please try again.", Severity.Error);
+            Console.WriteLine($"SavedData API error: {ex.Message}");
+        }
+
+        try
+        {
+            var incomingResponse = await HttpClient.GetAsync(
+                $"{ApiConstants.GetRecentIncomingsabmitDatabasedonserialnumber}/{data.SerialNumber}");
+
+            if (incomingResponse.IsSuccessStatusCode)
+            {
+                incomingDataResponse = await incomingResponse.Content.ReadFromJsonAsync<IncomingInspection>();
+            }
+        }
+        catch (Exception ex)
+        {
+           // Snackbar.Add("Error while checking submitted data. Please try again.", Severity.Error);
+            Console.WriteLine($"IncomingData API error: {ex.Message}");
+        }
+
+        if (savedDataResponse != null || incomingDataResponse != null)
+        {
+            Snackbar.Add("This rotor/feedrole is already used and can't be modified.", Severity.Error);
+            return;
+        }
+
+
+                     
+       
+
+        var parameters = new DialogParameters
+            {
+                ["receive"] = data
+            };
+
+        var dialog = await DialogService.ShowAsync<EditReceiveDialog>("EDIT RECEIVE DATA", parameters, DialogSettings.DialogOptionsAddEditDelete);
+
+        CompletionService.CompletionChanged += async (sender, args) =>
+        {
+            await LoadUser();
+            await LoadNewRotorData();
+            CombineData();
+            StateHasChanged();
+        };
     }
 
 }﻿
