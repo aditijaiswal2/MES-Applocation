@@ -91,54 +91,79 @@ namespace MES.Server.Controllers
 
             try
             {
-
-              //  await _imageRepository.DeleteIncomingImageAsync(IncomingImagesDTO.SerialNumber);
-
                 var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "MES", "Rotors and Feed Rolls");
-                //var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
-                // var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
-
                 var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}", "FinalInspection");
 
-                // Automatically create the directory if it doesn't exist
+
+                // Create directory if it doesn't exist
                 if (!Directory.Exists(partNumberFolder))
                 {
                     Directory.CreateDirectory(partNumberFolder);
                 }
 
-                //var uploadsFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FinalInspection");
-                ////var partNumberFolder = Path.Combine(uploadsFolderPath, bOMImageDto.ToString());
-                //var partNumberFolder = Path.Combine(uploadsFolderPath, $"{IncomingImagesDTO.SerialNumber}");
+                // Prepare images
+                var existingEntry = await _imageRepository.GetImagesBySerialNumberAsync(IncomingImagesDTO.SerialNumber);
+                var existingFilePaths = existingEntry?.Images?.Select(i => i.ImageFilePath).ToHashSet() ?? new HashSet<string>();
 
-                //if (!Directory.Exists(partNumberFolder))
-                //{
-                //    Directory.CreateDirectory(partNumberFolder);
-                //}
+                var newImages = new List<FinalImagedata>();
 
-                var images = IncomingImagesDTO.Images.Select(imageDto => new FinalImagedata { Data = imageDto.Data }).ToList();
-
-                foreach (var image in images)
+                foreach (var imageDto in IncomingImagesDTO.Images)
                 {
                     var fileName = $"{Guid.NewGuid()}.png";
                     var filePath = Path.Combine(partNumberFolder, fileName);
 
-                    await System.IO.File.WriteAllBytesAsync(filePath, image.Data);
+                    // Save the image temporarily
+                    await System.IO.File.WriteAllBytesAsync(filePath, imageDto.Data);
 
-                    image.Data = new byte[0];
+                    // Optional: check for duplicate by size or hash (not path)
+                    var isDuplicate = existingFilePaths.Any(existingPath =>
+                        System.IO.File.Exists(existingPath) &&
+                        new FileInfo(existingPath).Length == imageDto.Data.Length
+                    );
 
-                    image.ImageFilePath = filePath;
+                    if (!isDuplicate)
+                    {
+                        newImages.Add(new FinalImagedata
+                        {
+                            Data = new byte[0],
+                            ImageFilePath = filePath
+                        });
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(filePath); // Remove duplicate saved file
+                    }
                 }
 
-                var bOMImage = new FinalInspection
+                if (existingEntry != null)
                 {
-                    SerialNumber = IncomingImagesDTO.SerialNumber,
-                    // Project = projectJobImagesDTO.Project,
-                    Images = images
-                };
+                    if (existingEntry.Images == null)
+                        existingEntry.Images = new List<FinalImagedata>();
 
-                var result = await _imageRepository.AddImagesAsync(bOMImage);
+                    foreach (var img in newImages)
+                    {
+                        existingEntry.Images.Add(img);
+                    }
 
-                return CreatedAtAction(nameof(GetImagesByDTO), new { wipDTO = new IncomingInspectionImageDTO { SerialNumber = result.SerialNumber } }, result);
+                    await _imageRepository.UpdateIncomingImageAsync(existingEntry);
+                    return Ok(existingEntry);
+
+                }
+                else
+                {
+                    // Create a new entity if not existing
+                    var bOMImage = new FinalInspection
+                    {
+                        SerialNumber = IncomingImagesDTO.SerialNumber,
+                        Images = newImages
+                    };
+
+                    var result = await _imageRepository.AddImagesAsync(bOMImage);
+                    return CreatedAtAction(nameof(GetImagesByDTO), new { wipDTO = new FinalInspectionImageDTO { SerialNumber = result.SerialNumber } }, result);
+
+
+
+                }
             }
             catch (Exception ex)
             {

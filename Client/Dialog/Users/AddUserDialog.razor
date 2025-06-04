@@ -56,6 +56,23 @@
                             }
                         }
                     </MudSelect>
+
+
+
+                    <MudSelect T="string"
+                               Label="Update Work Center"
+                               SelectedValues="@selectedMESWorkCenters"
+                               SelectedValuesChanged="@(values => OnMESWorkChanged(values))"
+                               MultiSelection="true"
+                               Variant="Variant.Outlined">
+                        @if (MESWorkcenters != null)
+                        {
+                            @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+                            {
+                                <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
                 }
             </div>
             <div class="mb-4">
@@ -100,6 +117,35 @@
     {
         "Receiving", "Active Summary","Rotors Incoming Inspection","Rotors Sales","Rotors Production Scheduling","Rotors Grinding","Damage During Grinding","Rotors Final Inspection","Manage User","Manage Rotors","Manage Workcenters","Shipping","My Reports",
     };
+
+
+    private List<string> allWorkCenterNames = new();
+
+    private HashSet<string> selectedMESWorkCenters = new();
+
+    private void OnMESWorkChanged(IEnumerable<string> selectedValues)
+    {
+
+        // selectedMESWorkCenters = selectedValues.ToHashSet();
+
+        var cleanedValues = selectedValues
+            .Where(v => !string.IsNullOrWhiteSpace(v))
+            .Select(v => v.Trim())
+            .ToList();
+
+        // If "All" is selected and not already everything selected
+        if (cleanedValues.Contains("All") && cleanedValues.Count != allWorkCenterNames.Count)
+        {
+            selectedMESWorkCenters = allWorkCenterNames.ToHashSet(); // Select all
+        }
+        // If "All" is deselected or not present, just use current cleaned selection
+        else if (!cleanedValues.Contains("All"))
+        {
+            selectedMESWorkCenters = cleanedValues.ToHashSet();
+        }
+        user.SelectedWorkCenter = string.Join(",", selectedMESWorkCenters);
+    }
+
 
     //  private string[] WC =
     //   {
@@ -235,6 +281,7 @@
 
                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+                allWorkCenterNames = MESWorkcenters?.Select(m => m.Workcenters).ToList() ?? new();
             }
         }
     }

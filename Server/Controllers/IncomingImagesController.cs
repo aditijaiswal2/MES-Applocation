@@ -103,31 +103,49 @@ namespace MES.Server.Controllers
                 }
 
                 // Prepare images
-                var images = IncomingImagesDTO.Images.Select(imageDto => new Imagedata { Data = imageDto.Data }).ToList();
+                var existingEntry = await _imageRepository.GetImagesBySerialNumberAsync(IncomingImagesDTO.SerialNumber);
+                var existingFilePaths = existingEntry?.Images?.Select(i => i.ImageFilePath).ToHashSet() ?? new HashSet<string>();
 
-                foreach (var image in images)
+                var newImages = new List<Imagedata>();
+
+                foreach (var imageDto in IncomingImagesDTO.Images)
                 {
                     var fileName = $"{Guid.NewGuid()}.png";
                     var filePath = Path.Combine(partNumberFolder, fileName);
 
-                    await System.IO.File.WriteAllBytesAsync(filePath, image.Data);
-                    image.Data = new byte[0];
-                    image.ImageFilePath = filePath;
-                }
+                    // Save the image temporarily
+                    await System.IO.File.WriteAllBytesAsync(filePath, imageDto.Data);
 
-                // Check if entry for SerialNumber already exists
-                var existingEntry = await _imageRepository.GetImagesBySerialNumberAsync(IncomingImagesDTO.SerialNumber);
+                    // Optional: check for duplicate by size or hash (not path)
+                    var isDuplicate = existingFilePaths.Any(existingPath =>
+                        System.IO.File.Exists(existingPath) &&
+                        new FileInfo(existingPath).Length == imageDto.Data.Length
+                    );
+
+                    if (!isDuplicate)
+                    {
+                        var image = new Imagedata
+                        {
+                            Data = new byte[0],
+                            ImageFilePath = filePath
+                        };
+
+                        newImages.Add(image);
+                    }
+                    else
+                    {
+                        System.IO.File.Delete(filePath); // Remove duplicate saved file
+                    }
+                }
 
                 if (existingEntry != null)
                 {
-                    // Add images to the existing entity
                     if (existingEntry.Images == null)
                         existingEntry.Images = new List<Imagedata>();
 
-                    existingEntry.Images.AddRange(images);
+                    existingEntry.Images.AddRange(newImages);
                     await _imageRepository.UpdateIncomingImageAsync(existingEntry);
-
-                    return Ok(existingEntry); // You could also return NoContent or custom success message
+                    return Ok(existingEntry);
                 }
                 else
                 {
@@ -135,7 +153,7 @@ namespace MES.Server.Controllers
                     var bOMImage = new IncomingImages
                     {
                         SerialNumber = IncomingImagesDTO.SerialNumber,
-                        Images = images
+                        Images = newImages
                     };
 
                     var result = await _imageRepository.AddImagesAsync(bOMImage);

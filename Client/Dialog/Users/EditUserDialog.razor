@@ -1,4 +1,4 @@
-﻿@using MES.Client.Utitlity
+﻿﻿@using MES.Client.Utitlity
 @using MES.Shared.Entities
 @using MES.Shared.Models
 @using System.ComponentModel.DataAnnotations;
@@ -46,15 +46,21 @@
             <div class="mb-4">
                 @if (appUsers?.PageNames != null && appUsers.PageNames.Contains("Rotors Grinding"))
                 {
-                    <MudSelect Variant="Variant.Outlined" Label="Update Work Center" MultiSelection="true" @bind-Value="appUsers.SelectedWorkCenter">
-                        @if (MESWorkcenters != null)
-                        {
-                            @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
-                            {
-                                <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
-                            }
-                        }
-                    </MudSelect>
+                   <MudSelect T="string"
+           Label="Update Work Center"
+           SelectedValues="@selectedMESWorkCenters"
+           SelectedValuesChanged="@(values => OnMESWorkChanged(values))"
+           MultiSelection="true"
+           Variant="Variant.Outlined">
+    @if (MESWorkcenters != null)
+    {
+        @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
+        {
+            <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
+        }
+    }
+</MudSelect>
+
 
                 }
 
@@ -107,13 +113,41 @@
           { "Manage User", "/adduser" },
          {"Manage Workcenters","/wc"},
           {"Manage Rotors", "/rs"},
-      
+
          {"Damage During Grinding","/ddgr"},
           {"Shipping","/shippingvc"},
             {"My Reports","/myrvc"}
-
-
      };
+
+    private List<string> allWorkCenterNames = new();
+
+    private HashSet<string> selectedMESWorkCenters = new();
+
+    private void OnMESWorkChanged(IEnumerable<string> selectedValues)
+    {
+
+       // selectedMESWorkCenters = selectedValues.ToHashSet();
+
+        var cleanedValues = selectedValues
+            .Where(v => !string.IsNullOrWhiteSpace(v))
+            .Select(v => v.Trim())
+            .ToList();
+
+        // If "All" is selected and not already everything selected
+        if (cleanedValues.Contains("All") && cleanedValues.Count != allWorkCenterNames.Count)
+        {
+            selectedMESWorkCenters = allWorkCenterNames.ToHashSet(); // Select all
+        }
+        // If "All" is deselected or not present, just use current cleaned selection
+        else if (!cleanedValues.Contains("All"))
+        {
+            selectedMESWorkCenters = cleanedValues.ToHashSet();
+        }
+        appUsers.SelectedWorkCenter = string.Join(",", selectedMESWorkCenters);
+    }
+
+
+
     //  private string[] WC =
     //     {
     // "All","C1","C2","C3","C4","H1","H2","Saacke","JTEKT OD","Drake","Global","N/A",
@@ -146,8 +180,10 @@
             if (locationResult != null)
             {
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
-                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
-                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
+                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+
+                allWorkCenterNames = MESWorkcenters?.Select(m => m.Workcenters).ToList() ?? new();
             }
         }
     }

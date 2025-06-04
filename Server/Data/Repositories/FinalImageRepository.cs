@@ -143,32 +143,11 @@ namespace MES.Server.Data.Repositories
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task UpdateIncomingImageAsync(FinalInspection updatedImage)
+        public async Task UpdateIncomingImageAsync(FinalInspection image)
         {
-            var existing = await _context.FinalInspections
-                .Include(i => i.Images)
-                .FirstOrDefaultAsync(x => x.Id == updatedImage.Id);
-
-            if (existing == null) return;
-
-            // Update only desired fields
-            existing.SerialNumber = updatedImage.SerialNumber;
-
-            // Optionally clear and replace images, or merge new ones
-            _context.FinalImagedatas.RemoveRange(existing.Images);
-            await _context.SaveChangesAsync(); // Delete old images before adding new
-
-            foreach (var image in updatedImage.Images)
-            {
-                image.FinalInspectionId = updatedImage.Id;
-                _context.FinalImagedatas.Add(image);
-            }
-
+            _context.FinalInspections.Update(image);
             await _context.SaveChangesAsync();
         }
-
-
-
         public async Task<FinalInspection> GetImagesBySerialNumberAsync(string serialNumber)
         {
             try
