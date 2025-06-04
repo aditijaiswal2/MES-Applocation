@@ -524,8 +524,8 @@
 
                                                 <MudItem xs="12" md="3">
 
-                                                    <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
-                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
+                                                    <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedSaddlePartNumber"
+                                                               AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
                                                         @if (SaddleData != null)
                                                         {
                                                             @foreach (var location in SaddleData.OrderBy(l => l.SaddlePartNumberName))
@@ -534,6 +534,18 @@
                                                             }
                                                         }
                                                     </MudSelect>
+
+
+                                                   @*  <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedSaddlePartNumber"
+                                                    AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedSaddlePartNumber" Label="Saddle Part Number">
+                                                        @if (SaddleData != null)
+                                                        {
+                                                            @foreach (var location in SaddleData.OrderBy(l => l.SaddlePartNumberName))
+                                                            {
+                                                                <MudSelectItem Value="@location.SaddlePartNumberName">@location.SaddlePartNumberName</MudSelectItem>
+                                                            }
+                                                        }
+                                                    </MudSelect> *@
                                                 </MudItem>
 
 
@@ -582,8 +594,8 @@
 
                                                     <MudItem xs="12" md="3">
 
-                                                        <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
-                                                        AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
+                                                        <MudSelect Variant="Variant.Outlined" @bind-Value="SelectedNewBoxRequiredNumberData"
+                                                                   AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Part Number">
                                                             @if (NewBoxRequiredNumberData != null)
                                                             {
                                                                 @foreach (var location in NewBoxRequiredNumberData.OrderBy(l => l.NewBoxRequiredNumberName))
@@ -592,6 +604,17 @@
                                                                 }
                                                             }
                                                         </MudSelect>
+
+                                                       @*  <MudSelect T="string" Variant="Variant.Outlined" @bind-value="SelectedNewBoxRequiredNumberData"
+                                                        AnchorOrigin="Origin.BottomCenter" ValueExpression="() => SelectedNewBoxRequiredNumberData" Label="New Box Required Number">
+                                                            @if (NewBoxRequiredNumberData != null)
+                                                            {
+                                                                @foreach (var location in NewBoxRequiredNumberData.OrderBy(l => l.NewBoxRequiredNumberName))
+                                                                {
+                                                                    <MudSelectItem Value="@location.NewBoxRequiredNumberName">@location.NewBoxRequiredNumberName</MudSelectItem>
+                                                                }
+                                                            }
+                                                        </MudSelect> *@
                                                     </MudItem>
 
                                                 }
@@ -756,7 +779,7 @@
     protected override async Task OnInitializedAsync()
     {
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
-        
+
         // Assign user name or default to "User" if userData is null
         string currentuser = userData?.UserName ?? "User";
         inspection.Inspected = currentuser;
@@ -903,16 +926,19 @@
                 inspection.WeldingNum = response.WeldingNum;
                 selectebkid = response.BedKnife;
                 selectedRB = response.BoxReceivedWithSaddles;
+                // inspection.ADDQTYdata = response.ADDQTYdata;
                 inspection.ADDQTYdata = response.ADDQTYdata;
                 inspection.ComponentType = response.ComponentType;
                 selectedrp = response.ReProfile;
                 selectedManualLabour = response.ManualLabor;
                 selectedNewBoxRequiredBox = response.NewBoxRequired;
                 SelectedNewBoxRequiredNumberData = response.NewBoxRequiredBox;
+                //   SelectedNewBoxRequiredNumberData = response.NewBoxRequiredBox;
                 selectedtb = response.Top;
                 selectedbt = response.Bottom;
                 inspection.AddQty = response.AddQty;
-                SelectedSaddlePartNumber = response.SaddlePartNumber;
+                //SelectedSaddlePartNumber = response.SaddlePartNumber;
+                SelectedSaddlePartNumber=response.SaddlePartNumber;
                 selectedddrc = response.RotorCategorization;
                 selecteddd = response.ComponentType;
                 var imageResponse = await HttpClient.GetAsync($"{ApiConstants.GetImagesbySerialNumber}/{response.SerialNumber}");
@@ -944,7 +970,74 @@
             //  Console.WriteLine("No matching data found: " + ex.Message);
             showContent = false; // Still show content if you want to allow fresh input
             showForm = true;
-            ClearAll();
+            //ClearAll();
+            //  inspection = new IncomingInspection();
+
+            //  selectedCerSeals = new();
+            selectedBearSeals.Clear();
+            mudSelectMetal?.Reset();
+            //   selectedBearSeals = new();
+            //   selectedBearSeals = new List<string>();
+            //  selectedCerSeals = new List<string>();
+            //OnCerSealsChanged(selectedCerSeals);
+            selectedCerSeals.Clear();
+
+            mudSelect?.Reset();
+            //    selectedCerSeals = new List<string>();
+            inspection.Customer = null;
+            inspection.Location = null;
+            inspection.SerialNumber = null;
+            inspection.Customer = null;
+            inspection.RotorsNumber = null;
+            selectedMake = null;
+            inspection.Len = null;
+            inspection.Dia = null;
+            inspection.Fits = null;
+            inspection.Initials = null;
+            SelectedMaterials = null;
+            SelectedOthers = null;
+            inspection.RotorsDia = null;
+            SelectedRotorsStyle = null;
+            SelectedType = null;
+            selectedBearings = null;
+            selectedberrem = null;
+
+            selectedRL = null;
+            inspection.yLeft = null;
+            inspection.yRight = null;
+            selectedLR = null;
+            selectedbs = null;
+            selectedybasicsharp = null;
+            selectedpre = null;
+            selectedctr = null;
+            selectedycg = null;
+            selectedalign = null;
+
+            qrCodeData = string.Empty;
+            SelectedProject = null;
+            ProjectimagesData = null;
+            selectedImagesFromSM.Clear();
+            selectedps = null;
+            selectedwelding = null;
+            inspection.WeldingNum = null;
+            selectebkid = null;
+            selectedRB = null;
+            selectedtb = null;
+            selectedbt = null;
+            selectedBearSeals.Clear();
+            inspection.ADDQTYdata = null;
+            selectedrp = null;
+            selectedManualLabour = null;
+            SelectedNewBoxRequiredNumberData = null;
+            selectedNewBoxRequiredBox = null;
+            inspection.NewBoxRequiredBox = null;
+            SelectedSaddlePartNumber = null;
+            inspection.AddQty = null;
+            selectedddrc = null;
+            selecteddd = null;
+            // Reset serial number/module selections
+            SelectedSerialNumber = null;
+            SelectedModuleName = null;
         }
 
         StateHasChanged();
@@ -956,7 +1049,74 @@
 
         showContent = true;
         showForm = false;
-        ClearAll();
+       // ClearAll();
+        //  inspection = new IncomingInspection();
+
+        //  selectedCerSeals = new();
+        selectedBearSeals.Clear();
+        mudSelectMetal?.Reset();
+        //   selectedBearSeals = new();
+        //   selectedBearSeals = new List<string>();
+        //  selectedCerSeals = new List<string>();
+        //OnCerSealsChanged(selectedCerSeals);
+        selectedCerSeals.Clear();
+
+        mudSelect?.Reset();
+        //    selectedCerSeals = new List<string>();
+        inspection.Customer = null;
+        inspection.Location = null;
+        inspection.SerialNumber = null;
+        inspection.Customer = null;
+        inspection.RotorsNumber = null;
+        selectedMake = null;
+        inspection.Len = null;
+        inspection.Dia = null;
+        inspection.Fits = null;
+        inspection.Initials = null;
+        SelectedMaterials = null;
+        SelectedOthers = null;
+        inspection.RotorsDia = null;
+        SelectedRotorsStyle = null;
+        SelectedType = null;
+        selectedBearings = null;
+        selectedberrem = null;
+
+        selectedRL = null;
+        inspection.yLeft = null;
+        inspection.yRight = null;
+        selectedLR = null;
+        selectedbs = null;
+        selectedybasicsharp = null;
+        selectedpre = null;
+        selectedctr = null;
+        selectedycg = null;
+        selectedalign = null;
+
+        qrCodeData = string.Empty;
+        SelectedProject = null;
+        ProjectimagesData = null;
+        selectedImagesFromSM.Clear();
+        selectedps = null;
+        selectedwelding = null;
+        inspection.WeldingNum = null;
+        selectebkid = null;
+        selectedRB = null;
+        selectedtb = null;
+        selectedbt = null;
+        selectedBearSeals.Clear();
+        inspection.ADDQTYdata = null;
+        selectedrp = null;
+        selectedManualLabour = null;
+        SelectedNewBoxRequiredNumberData = null;
+        selectedNewBoxRequiredBox = null;
+        inspection.NewBoxRequiredBox = null;
+        SelectedSaddlePartNumber = null;
+        inspection.AddQty = null;
+        selectedddrc = null;
+        selecteddd = null;
+        // Reset serial number/module selections
+        SelectedSerialNumber = null;
+        SelectedModuleName = null;
 
         try
         {
@@ -1658,7 +1818,74 @@
                 Snackbar.Add("Rotor Incoming Inspection form submitted successfully!", Severity.Success);
                 Receivealldata.RemoveAll(x => x.SerialNumber == inspection.SerialNumber);
                 showForm = false;
-                ClearAll();
+                //ClearAll();
+                //  inspection = new IncomingInspection();
+
+                //  selectedCerSeals = new();
+                selectedBearSeals.Clear();
+                mudSelectMetal?.Reset();
+                //   selectedBearSeals = new();
+                //   selectedBearSeals = new List<string>();
+                //  selectedCerSeals = new List<string>();
+                //OnCerSealsChanged(selectedCerSeals);
+                selectedCerSeals.Clear();
+
+                mudSelect?.Reset();
+                //    selectedCerSeals = new List<string>();
+                inspection.Customer = null;
+                inspection.Location = null;
+                inspection.SerialNumber = null;
+                inspection.Customer = null;
+                inspection.RotorsNumber = null;
+                selectedMake = null;
+                inspection.Len = null;
+                inspection.Dia = null;
+                inspection.Fits = null;
+                inspection.Initials = null;
+                SelectedMaterials = null;
+                SelectedOthers = null;
+                inspection.RotorsDia = null;
+                SelectedRotorsStyle = null;
+                SelectedType = null;
+                selectedBearings = null;
+                selectedberrem = null;
+
+                selectedRL = null;
+                inspection.yLeft = null;
+                inspection.yRight = null;
+                selectedLR = null;
+                selectedbs = null;
+                selectedybasicsharp = null;
+                selectedpre = null;
+                selectedctr = null;
+                selectedycg = null;
+                selectedalign = null;
+
+                qrCodeData = string.Empty;
+                SelectedProject = null;
+                ProjectimagesData = null;
+                selectedImagesFromSM.Clear();
+                selectedps = null;
+                selectedwelding = null;
+                inspection.WeldingNum = null;
+                selectebkid = null;
+                selectedRB = null;
+                selectedtb = null;
+                selectedbt = null;
+                selectedBearSeals.Clear();
+                inspection.ADDQTYdata = null;
+                selectedrp = null;
+                selectedManualLabour = null;
+                SelectedNewBoxRequiredNumberData = null;
+                selectedNewBoxRequiredBox = null;
+                inspection.NewBoxRequiredBox = null;
+                SelectedSaddlePartNumber = null;
+                inspection.AddQty = null;
+                selectedddrc = null;
+                selecteddd = null;
+                // Reset serial number/module selections
+                SelectedSerialNumber = null;
+                SelectedModuleName = null;
                 showContent = false;
                 await OnInitializedAsync();
 
@@ -1830,7 +2057,74 @@
                 {
                     Snackbar.Add("Incoming Inspection Data saved successfully!", Severity.Success);
                     showForm = false;
-                    ClearAll();
+                   // ClearAll();
+                    //  inspection = new IncomingInspection();
+
+                    //  selectedCerSeals = new();
+                    selectedBearSeals.Clear();
+                    mudSelectMetal?.Reset();
+                    //   selectedBearSeals = new();
+                    //   selectedBearSeals = new List<string>();
+                    //  selectedCerSeals = new List<string>();
+                    //OnCerSealsChanged(selectedCerSeals);
+                    selectedCerSeals.Clear();
+
+                    mudSelect?.Reset();
+                    //    selectedCerSeals = new List<string>();
+                    inspection.Customer = null;
+                    inspection.Location = null;
+                    inspection.SerialNumber = null;
+                    inspection.Customer = null;
+                    inspection.RotorsNumber = null;
+                    selectedMake = null;
+                    inspection.Len = null;
+                    inspection.Dia = null;
+                    inspection.Fits = null;
+                    inspection.Initials = null;
+                    SelectedMaterials = null;
+                    SelectedOthers = null;
+                    inspection.RotorsDia = null;
+                    SelectedRotorsStyle = null;
+                    SelectedType = null;
+                    selectedBearings = null;
+                    selectedberrem = null;
+
+                    selectedRL = null;
+                    inspection.yLeft = null;
+                    inspection.yRight = null;
+                    selectedLR = null;
+                    selectedbs = null;
+                    selectedybasicsharp = null;
+                    selectedpre = null;
+                    selectedctr = null;
+                    selectedycg = null;
+                    selectedalign = null;
+
+                    qrCodeData = string.Empty;
+                    SelectedProject = null;
+                    ProjectimagesData = null;
+                    selectedImagesFromSM.Clear();
+                    selectedps = null;
+                    selectedwelding = null;
+                    inspection.WeldingNum = null;
+                    selectebkid = null;
+                    selectedRB = null;
+                    selectedtb = null;
+                    selectedbt = null;
+                    selectedBearSeals.Clear();
+                    inspection.ADDQTYdata = null;
+                    selectedrp = null;
+                    selectedManualLabour = null;
+                    SelectedNewBoxRequiredNumberData = null;
+                    selectedNewBoxRequiredBox = null;
+                    inspection.NewBoxRequiredBox = null;
+                    SelectedSaddlePartNumber = null;
+                    inspection.AddQty = null;
+                    selectedddrc = null;
+                    selecteddd = null;
+                    // Reset serial number/module selections
+                    SelectedSerialNumber = null;
+                    SelectedModuleName = null;
                     StateHasChanged();
                 }
                 else
@@ -2323,6 +2617,8 @@
         // Reset serial number/module selections
         SelectedSerialNumber = null;
         SelectedModuleName = null;
+        
+        HttpResponseMessage response = await HttpClient.DeleteAsync($"{ApiConstants.DeleteImagesIncoming}/{selectedReceive.SerialNumber}");
 
         StateHasChanged();
 
