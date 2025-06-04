@@ -181,7 +181,7 @@
             {
                 MESWorkcenters = locationResult.OrderByDescending(l => l.Id).ToList();
                  MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
-                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+                // MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
 
                 allWorkCenterNames = MESWorkcenters?.Select(m => m.Workcenters).ToList() ?? new();
             }

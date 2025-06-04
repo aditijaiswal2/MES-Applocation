@@ -47,7 +47,7 @@
             <div class="mb-4">
                 @if (user?.PageNames != null && user.PageNames.Contains("Rotors Grinding"))
                 {
-                    <MudSelect T="string" Variant="Variant.Outlined" Label="Work Center" MultiSelection="true" @bind-Value="user.SelectedWorkCenter">
+                   @*  <MudSelect T="string" Variant="Variant.Outlined" Label="Work Center" MultiSelection="true" @bind-Value="user.SelectedWorkCenter">
                         @if (MESWorkcenters != null)
                         {
                             @foreach (var location in MESWorkcenters.OrderBy(l => l.Workcenters))
@@ -55,12 +55,12 @@
                                 <MudSelectItem Value="@location.Workcenters">@location.Workcenters</MudSelectItem>
                             }
                         }
-                    </MudSelect>
+                    </MudSelect> *@
 
 
 
                     <MudSelect T="string"
-                               Label="Update Work Center"
+                               Label="Work Center"
                                SelectedValues="@selectedMESWorkCenters"
                                SelectedValuesChanged="@(values => OnMESWorkChanged(values))"
                                MultiSelection="true"
@@ -73,6 +73,11 @@
                             }
                         }
                     </MudSelect>
+
+
+
+
+
                 }
             </div>
             <div class="mb-4">
@@ -280,7 +285,7 @@
                 // Add "All" and "NA" options at the top
 
                 MESWorkcenters.Insert(0, new MESWorkcenters { Id = -1, Workcenters = "All" });
-                MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
+               // MESWorkcenters.Insert(0, new MESWorkcenters { Id = -2, Workcenters = "NA" });
                 allWorkCenterNames = MESWorkcenters?.Select(m => m.Workcenters).ToList() ?? new();
             }
         }
