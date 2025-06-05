@@ -51,15 +51,15 @@ namespace MES.Server.Services
                 else
                 {
                     var wcListArr = roleData.ListItems.Split(',').ToList();
-                    var listItems = await _context.WorkCenters
-                        .Where(wc => wcListArr.Contains(wc.Id.ToString()))
-                        .Where(wc => wc.order > 1000)
-                        .Select(wc => wc.order)
-                        .ToListAsync();
-                    if (listItems.Count > 0)
-                    {
-                        claims.Add(new Claim("Admin", String.Join(',', listItems)));
-                    }
+                    //var listItems = await _context.WorkCenters
+                    //    .Where(wc => wcListArr.Contains(wc.Id.ToString()))
+                    //    .Where(wc => wc.order > 1000)
+                    //    .Select(wc => wc.order)
+                    //    .ToListAsync();
+                    //if (listItems.Count > 0)
+                    //{
+                    //    claims.Add(new Claim("Admin", String.Join(',', listItems)));
+                    //}
                 }
             }
 

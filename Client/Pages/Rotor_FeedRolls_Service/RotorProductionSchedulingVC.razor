@@ -16,7 +16,7 @@
 @inject IHttpClientFactory _httpClient
 @inject IJSRuntime JS;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-
+@inject NavigationManager NavigationManager
 
 <MudContainer Class="mt-5">
     <MudGrid>
@@ -469,7 +469,7 @@
                                                                 </MudItem>
 
                                                                 <MudItem xs="4">
-                                                                    <MudTextField Label=" Basic Sharpening Details" @bind-Value="selectedAdvanceInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                                    <MudTextField Label="Basic Sharpening Details" @bind-Value="selectedAdvanceInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                                                                 </MudItem>
 
@@ -1252,6 +1252,16 @@
             </MudPaper>
 
 
+              <!-- Damage Grinding Section -->
+            <MudPaper Class="pa-4 mb-2">
+                <div class="cursor-pointer" @onclick="NavigateToDamageGrinding">
+                    <MudText Typo="Typo.h6">
+                        ▶ Damage During Grinding (@(damageinspections?.Count ?? 0))
+                    </MudText>
+                </div>
+            </MudPaper>
+
+
         </MudItem>
     </MudGrid>
 </MudContainer>
@@ -1303,6 +1313,14 @@
     private List<RotorSalesData> scrapList = new();
     bool ShowscrapFilters = false;
     private RotorSalesData selectedscrapInspection;
+
+    private List<RotorDamageGrindingSubmitedData> RotorGrindingSubitedDatas = new();
+    private List<RotorDamageGrindingDataFromGrinding> damageinspections = new();
+    private bool isLoading = false;
+    private string errorMessage = "";
+
+
+      bool ShowdamagegrindingFilters = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -1386,6 +1404,61 @@
             advanceRotorList = rotorList
                 .Where(r => r.RotorCategorization?.Equals("Advance", StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
+        }
+
+        // damage grinding part
+
+        try
+        {
+
+
+            // Get all existing damage grinding submited data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotordamagegrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllDDGSubmitedData);
+
+            if (rotordamagegrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var damageDataJson = await rotordamagegrindingDatasResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrEmpty(damageDataJson))
+                {
+                    RotorGrindingSubitedDatas = JsonSerializer.Deserialize<List<RotorDamageGrindingSubmitedData>>(damageDataJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingSubmitedData>();
+                }
+            }
+
+            // Get all existing Moved outside operation Rotor grinding Data
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+            var rotorgrindingDatasResponse = await HttpClient.GetAsync(ApiConstants.GetAllMovedOOPGrindingData);
+
+            if (rotorgrindingDatasResponse.IsSuccessStatusCode)
+            {
+                var outsidedata = await rotorgrindingDatasResponse.Content.ReadAsStringAsync();
+                var outsidedataallInspections = JsonSerializer.Deserialize<List<RotorDamageGrindingDataFromGrinding>>(outsidedata,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RotorDamageGrindingDataFromGrinding>();
+
+                // Filter only those where IsMoveoutsideoperation is true
+                // inspections = allInspections.Where(x => x.IsMoveoutsideoperation).ToList();
+
+                damageinspections = outsidedataallInspections
+                   .Where(i => !RotorGrindingSubitedDatas.Any(r =>
+                       string.Equals(r.SerialNumber, i.SerialNumber, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(r.Module, i.Module, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(r.RotorsNumber, i.RotorsNumber, StringComparison.OrdinalIgnoreCase)))
+                   .ToList();
+
+            }
+
+
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
         }
 
     }
@@ -1782,6 +1855,19 @@
     {
         selectedscrapInspection = null;
         StateHasChanged();
+    }
+
+
+    // damage grinding part
+    void Toggledamagegrinding()
+    {
+        ShowdamagegrindingFilters = !ShowdamagegrindingFilters;
+    }
+
+    // Navigation method
+    void NavigateToDamageGrinding()
+    {
+        NavigationManager.NavigateTo("/ddgr");
     }
 
 

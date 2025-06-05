@@ -83,8 +83,8 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddScoped<ILogindetailrepository, Logindetailrepository>();
-builder.Services.AddTransient<Logindetailrepository>();
+//builder.Services.AddScoped<ILogindetailrepository, Logindetailrepository>();
+//builder.Services.AddTransient<Logindetailrepository>();
 
 
 // Optional: Add Swagger for API documentation

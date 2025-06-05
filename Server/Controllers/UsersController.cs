@@ -227,40 +227,40 @@ namespace MES.Server.Controllers
         }
 
 
-        [AllowAnonymous]
-        [HttpGet("contact")]
-        public async Task<ActionResult> GetContact()
-        {
-            var contact = await _context.Params.Where(p => p.Name == "contact").Select(p => p.Value).FirstOrDefaultAsync();
-            return Ok(contact);
-        }
+        //[AllowAnonymous]
+        //[HttpGet("contact")]
+        //public async Task<ActionResult> GetContact()
+        //{
+        //    var contact = await _context.Params.Where(p => p.Name == "contact").Select(p => p.Value).FirstOrDefaultAsync();
+        //    return Ok(contact);
+        //}
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("params")]
-        public async Task<ActionResult> UpdateParams(WcDto paramInfo)
-        {
-            var param = await _context.Params.Where(p => p.Name == paramInfo.tla).SingleOrDefaultAsync();
-            if (EqualityComparer<Params>.Default.Equals(param, default(Params)))
-            {
-                return BadRequest("Could not find param " + paramInfo.tla);
-            }
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost("params")]
+        //public async Task<ActionResult> UpdateParams(WcDto paramInfo)
+        //{
+        //    var param = await _context.Params.Where(p => p.Name == paramInfo.tla).SingleOrDefaultAsync();
+        //    if (EqualityComparer<Params>.Default.Equals(param, default(Params)))
+        //    {
+        //        return BadRequest("Could not find param " + paramInfo.tla);
+        //    }
 
-            param.Value = paramInfo.name;
-            _context.Entry(param).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+        //    param.Value = paramInfo.name;
+        //    _context.Entry(param).State = EntityState.Modified;
+        //    await _context.SaveChangesAsync();
 
-            var retDesc = paramInfo.tla;
-            if (retDesc == "contact")
-            {
-                retDesc = "Contact Information";
-            }
-            else if (retDesc == "doc_email")
-            {
-                retDesc = "Documentation Email Information";
-            }
+        //    var retDesc = paramInfo.tla;
+        //    if (retDesc == "contact")
+        //    {
+        //        retDesc = "Contact Information";
+        //    }
+        //    else if (retDesc == "doc_email")
+        //    {
+        //        retDesc = "Documentation Email Information";
+        //    }
 
-            return Ok(retDesc + " Updated");
-        }
+        //    return Ok(retDesc + " Updated");
+        //}
 
 
         /**
