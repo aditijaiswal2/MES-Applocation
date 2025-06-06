@@ -66,22 +66,8 @@ namespace MES.Shared.Models.Rotors
         public DateTime? SubmitDate { get; set; }
         public string SubmitedBy { get; set; }
         public string? AdvancedSharpingStatus { get; set; }
-        public string Workcenters { get; set; }
-        public DateTime? ProductionSubmitDate { get; set; }
-        public string ProductionSubmitBy { get; set; }
-        public string RotorsDiaLeft { get; set; }
-        public string RotorsDiaRight { get; set; }
-        public string ReliefLand { get; set; }
-        public string ToothFaceLeft { get; set; }
-        public string ToothFaceRight { get; set; }
-        public string CentersLeft { get; set; }
-        public string CentersRight { get; set; }
-        public string VisualChecks { get; set; }
-        public string InspectedBy { get; set; }
+        public string Workcenters { get; set; }  
         public DateTime? GrindingStartDate { get; set; }
-        public string Notes { get; set; }
-        public string DelayReasonTracking { get; set; }
-        public string AdditionalSalesComments { get; set; }
         public bool IsMoveoutsideoperation { get; set; }
         public string GrindingdataSubmiteddBy { get; set; }
         public string GrindingdataSubmitedByDate { get; set; }

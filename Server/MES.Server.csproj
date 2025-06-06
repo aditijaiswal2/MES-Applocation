@@ -9,12 +9,16 @@
   <ItemGroup>
     <Compile Remove="FinalInspection\**" />
     <Compile Remove="Incoming Inspection\**" />
+    <Compile Remove="SalesFileUploads\**" />
     <Content Remove="FinalInspection\**" />
     <Content Remove="Incoming Inspection\**" />
+    <Content Remove="SalesFileUploads\**" />
     <EmbeddedResource Remove="FinalInspection\**" />
     <EmbeddedResource Remove="Incoming Inspection\**" />
+    <EmbeddedResource Remove="SalesFileUploads\**" />
     <None Remove="FinalInspection\**" />
     <None Remove="Incoming Inspection\**" />
+    <None Remove="SalesFileUploads\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,7 +52,6 @@
 
   <ItemGroup>
     <Folder Include="MES\Rotors and Feed Rolls\" />
-    <Folder Include="SalesFileUploads\" />
   </ItemGroup>
 
 

@@ -13,7 +13,7 @@
 
 @using MES.Client.Dialog.QRPrint
 
-<MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
+@* <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
     <DialogContent>
 
         <MudGrid >
@@ -262,9 +262,9 @@
 
     <DialogActions>
         @*  <MudButton OnClick="PrintDialog" Color="Color.Primary">Print</MudButton>
-        *@ <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton>
+         <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton> 
     </DialogActions>
-</MudDialog>
+</MudDialog> *@ 
 
 
 <style>

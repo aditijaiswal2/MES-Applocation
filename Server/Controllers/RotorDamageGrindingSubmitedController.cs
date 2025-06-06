@@ -102,7 +102,6 @@ namespace MES.Server.Controllers
             }
         }
 
-
         [HttpGet("GetAllDDGSubmitedData")]
         public async Task<ActionResult<IEnumerable<RotorDamageGrindingSubmitedData>>> GetAllRotorDamageGrindingData()
         {

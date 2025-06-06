@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MES.Server.Migrations
 {
     [DbContext(typeof(ProjectdbContext))]
-    [Migration("20250604150023_Initial")]
-    partial class Initial
+    [Migration("20250606071756_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -187,51 +187,6 @@ namespace MES.Server.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("MES.Shared.Entities.Params", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Params");
-                });
-
-            modelBuilder.Entity("MES.Shared.Entities.WcList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("tla")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WorkCenters");
-                });
-
             modelBuilder.Entity("MES.Shared.Models.Image", b =>
                 {
                     b.Property<int>("ID")
@@ -256,54 +211,6 @@ namespace MES.Server.Migrations
                     b.HasIndex("ShipmentImageId");
 
                     b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("MES.Shared.Models.LoginUserDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EMail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LoginDateAndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LoginUserDetails");
-                });
-
-            modelBuilder.Entity("MES.Shared.Models.Logindetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Logindetails");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.MESDelayReason", b =>
@@ -521,46 +428,13 @@ namespace MES.Server.Migrations
                     b.Property<string>("AGNum")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersLeft")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -570,9 +444,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerImportance")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerInstructions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerPoNum")
@@ -593,9 +464,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Dressedwithnewbearing")
                         .HasColumnType("nvarchar(max)");
 
@@ -606,9 +474,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Finish")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FluteDiameterFinish")
@@ -624,15 +489,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("GrindingSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Inspected")
@@ -665,12 +521,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("LandWidthStart")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
@@ -678,12 +528,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocknutThreadsStart")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
@@ -704,21 +548,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("Oktoship")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Received")
                         .HasColumnType("nvarchar(max)");
 
@@ -731,13 +560,7 @@ namespace MES.Server.Migrations
                     b.Property<string>("ReliefLand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
@@ -752,13 +575,7 @@ namespace MES.Server.Migrations
                     b.Property<string>("RotorsNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
@@ -776,12 +593,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("Start")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TIRStart")
                         .HasColumnType("nvarchar(max)");
 
@@ -797,22 +608,10 @@ namespace MES.Server.Migrations
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ToothFaceLeft")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToothFaceRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Users")
@@ -821,31 +620,16 @@ namespace MES.Server.Migrations
                     b.Property<string>("VisualChecks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WedgelockassemblyFinish")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WedgelockassemblyStart")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1268,10 +1052,6 @@ namespace MES.Server.Migrations
                     b.Property<int?>("AddQty")
                         .HasColumnType("int");
 
-                    b.Property<string>("AdditionalSalesComments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("AdvancedSharpingStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -1302,14 +1082,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("CenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CentersLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersRight")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
@@ -1331,10 +1103,6 @@ namespace MES.Server.Migrations
 
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("DelayReasonTracking")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Dia")
                         .HasColumnType("nvarchar(max)");
@@ -1363,10 +1131,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Inspected")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1399,31 +1163,16 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Others")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlasticSleaves")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProductionSubmitBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ReProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Received")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReliefLand")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1438,14 +1187,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaRight")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
@@ -1481,14 +1222,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("TirRightJournal")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ToothFaceLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceRight")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Top")
                         .HasColumnType("nvarchar(max)");
 
@@ -1496,10 +1229,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Users")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VisualChecks")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1538,40 +1267,7 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -1582,14 +1278,6 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerImportance")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerInstructions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("DamageGrindingSavedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1597,130 +1285,26 @@ namespace MES.Server.Migrations
                     b.Property<DateTime?>("DamageGrindingSavedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Inspected")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("MatNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Materials")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Module")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReProfile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Received")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDia")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TargetDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Users")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkOrder")
@@ -1728,12 +1312,6 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("Workcenters")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1960,41 +1538,11 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdditionalSalesComments")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersLeft")
@@ -2003,9 +1551,6 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("CentersRight")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -2020,21 +1565,11 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerInstructions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DelayReasonTracking")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("GrindingStartDate")
@@ -2048,41 +1583,12 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Inspected")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InspectedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMoveoutsideoperation")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
                         .HasColumnType("nvarchar(max)");
@@ -2098,38 +1604,12 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Received")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ReliefLand")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
@@ -2147,34 +1627,15 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToothFaceLeft")
                         .IsRequired()
@@ -2182,12 +1643,6 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("ToothFaceRight")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Users")
@@ -2198,26 +1653,11 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -2233,41 +1673,11 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdditionalSalesComments")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersLeft")
@@ -2276,9 +1686,6 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("CentersRight")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -2293,21 +1700,8 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerInstructions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DateTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DelayReasonTracking")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("GrindingStartDate")
@@ -2321,19 +1715,6 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Inspected")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InspectedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -2341,26 +1722,7 @@ namespace MES.Server.Migrations
                     b.Property<bool>("IsMoveoutsideoperation")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("MatNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Materials")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Module")
@@ -2371,41 +1733,12 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Received")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ReliefLand")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDia")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDiaLeft")
@@ -2420,34 +1753,15 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToothFaceLeft")
                         .IsRequired()
@@ -2457,27 +1771,8 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Users")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("VisualChecks")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkOrder")
@@ -2485,12 +1780,6 @@ namespace MES.Server.Migrations
 
                     b.Property<string>("Workcenters")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -2506,83 +1795,6 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AdditionalSalesComments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersRight")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ComponentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Customer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerImportance")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerInstructions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DelayReasonTracking")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("GrindingStartDate")
                         .HasColumnType("datetime2");
 
@@ -2594,115 +1806,18 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Inspected")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsMoveoutsideoperation")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSecondaryWorkCenters")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MatNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Materials")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Module")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Received")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReliefLand")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorCategorization")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaRight")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecondaryWorkCenters")
@@ -2713,64 +1828,8 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TargetDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceRight")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Users")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VisualChecks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WorkOrder")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Workcenters")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -3399,52 +2458,10 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AGNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdditionalWSalesComments")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -3456,200 +2473,38 @@ namespace MES.Server.Migrations
                     b.Property<string>("CustomerImportance")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerInstructions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerPoNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DWGNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DelayReasonTracking")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dressedwithnewbearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("FinalInspectionSubmitedByDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FinalInspectionSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Finish")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GrindingEndDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("GrindingStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GrindingSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Inspected")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectorComments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectorSing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Materials")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Module")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Oktoship")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Received")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReliefLand")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RotorsDiaLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaRight")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorsNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SaddlePartNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SalesOrderNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SandBlasting")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SerialNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SpecialNoteComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Start")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Users")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VisualChecks")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("WSalesSubmitedByDate")
                         .HasColumnType("datetime2");
@@ -3657,25 +2512,10 @@ namespace MES.Server.Migrations
                     b.Property<string>("WSalesSubmiteddBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -4109,52 +2949,10 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AGNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdditionalWSalesComments")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -4166,157 +2964,28 @@ namespace MES.Server.Migrations
                     b.Property<string>("CustomerImportance")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerInstructions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerPoNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DWGNum")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DelayReasonTracking")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Dressedwithnewbearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("FinalInspectionSubmitedByDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FinalInspectionSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Finish")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GrindingEndDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("GrindingStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GrindingSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Inspected")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectorComments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InspectorSing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Materials")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Module")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Oktoship")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Received")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReliefLand")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDia")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
@@ -4328,70 +2997,13 @@ namespace MES.Server.Migrations
                     b.Property<string>("ShipSubmiteddBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SpecialNoteComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Start")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Users")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VisualChecks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("WSalesSubmitedByDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WSalesSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -4410,46 +3022,13 @@ namespace MES.Server.Migrations
                     b.Property<string>("AGNum")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AddQty")
-                        .HasColumnType("int");
-
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Aligned")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bearing")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingRemoved")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BearingSeals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BedKnife")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Bottom")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BoxReceivedWithSaddles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CenterGrinding")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersLeft")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CentersRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CeramicSeals")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -4461,17 +3040,11 @@ namespace MES.Server.Migrations
                     b.Property<string>("CustomerImportance")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerInstructions")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CustomerPoNum")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DWGNum")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
@@ -4482,9 +3055,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Dia")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Dressedwithnewbearing")
                         .HasColumnType("nvarchar(max)");
 
@@ -4492,12 +3062,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FinalInspectionSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Finish")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Fits")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FluteDiameterFinish")
@@ -4513,15 +3077,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("GrindingSubmiteddBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYBasicSharpening")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IfYCenterGrinding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Initials")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Inspected")
@@ -4554,12 +3109,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("LandWidthStart")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Left")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Len")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
@@ -4567,12 +3116,6 @@ namespace MES.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocknutThreadsStart")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManualLabor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatNumber")
@@ -4584,28 +3127,10 @@ namespace MES.Server.Migrations
                     b.Property<string>("Module")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Oktoship")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Others")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlasticSleaves")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductionSubmitBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ProductionSubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReProfile")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Received")
@@ -4620,13 +3145,7 @@ namespace MES.Server.Migrations
                     b.Property<string>("ReliefLand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Right")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorStyle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RotorsDia")
@@ -4641,13 +3160,7 @@ namespace MES.Server.Migrations
                     b.Property<string>("RotorsNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SaddlePartNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SalesOrderNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SandBlasting")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
@@ -4665,12 +3178,6 @@ namespace MES.Server.Migrations
                     b.Property<string>("Start")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubmitedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TIRStart")
                         .HasColumnType("nvarchar(max)");
 
@@ -4686,22 +3193,10 @@ namespace MES.Server.Migrations
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TirLeftJournal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TirRightJournal")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ToothFaceLeft")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ToothFaceRight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Top")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Users")
@@ -4710,31 +3205,16 @@ namespace MES.Server.Migrations
                     b.Property<string>("VisualChecks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WedgelockAlignmentMarks")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WedgelockassemblyFinish")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WedgelockassemblyStart")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Welding")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeldingNum")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Workcenters")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yLeft")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("yRight")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
