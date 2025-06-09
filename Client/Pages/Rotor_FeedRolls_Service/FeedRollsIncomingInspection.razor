@@ -136,9 +136,19 @@
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Customer" @bind-Value="inspection.Customer" Variant="Variant.Outlined" Required />
                                                 </MudItem>
+                                                <MudSelect T="string" Label="Received with Eccentrics" Value="selectedRWE" ValueExpression="() => selectedRWE" Variant="Variant.Outlined" ValueChanged="OnRWEChanged" FullWidth="true">
+                                                    @foreach (var ber in RWE)
+                                                    {
+                                                        <MudSelectItem Value="@ber">@ber</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+
+
+@* 
+                                                //selectedRWE
                                                 <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Received with Eccentrics" @bind-Value="inspection.ReceivedWithEccentrics" Variant="Variant.Outlined" />
-                                                </MudItem>
+                                                    <MudTextField Label="" @bind-Value="inspection.ReceivedWithEccentrics" Variant="Variant.Outlined" />
+                                                </MudItem> *@
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Feedroll Description" @bind-Value="inspection.FeedRollDesc" Variant="Variant.Outlined" />
                                                 </MudItem>
@@ -492,6 +502,20 @@
     private async Task OnCentersRChanged(string value)
     {
         selectedCentersR = value;
+    }
+
+    private List<string> RWE = new()
+    {
+        "Yes",
+        "No",
+        ""
+    };
+
+    private string selectedRWE { get; set; } = "";
+
+    private async Task OnRWEChanged(string value)
+    {
+        selectedRWE = value;
     }
 
     protected override async Task OnInitializedAsync()

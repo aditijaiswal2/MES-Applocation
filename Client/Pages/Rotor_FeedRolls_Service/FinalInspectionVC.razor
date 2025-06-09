@@ -119,12 +119,17 @@
                         @if (!isExistingSerial && serialNumberData != null)
                         {
                             <div style="margin-top:10px">
-                                <MudButton OnClick="OpenPreviewDialogBox"
-                                           Class="mr-2"
-                                           Color="Color.Primary"
-                                           Variant="Variant.Filled">
-                                    Incoming Inspection Report
-                                </MudButton>
+
+                                @if (serialNumberData != null && serialNumberData.RotorsNumber != "NEW")
+                                {
+                                    <MudButton OnClick="OpenPreviewDialogBox"
+                                               Class="mr-2"
+                                               Color="Color.Primary"
+                                               Variant="Variant.Filled">
+                                        Incoming Inspection Report
+                                    </MudButton>
+                                }
+                              
 
                                 <MudButton Class="mr-2"
                                            Color="Color.Secondary"
