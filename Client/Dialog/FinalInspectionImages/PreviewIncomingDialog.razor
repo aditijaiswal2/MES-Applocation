@@ -13,10 +13,10 @@
 
 @using MES.Client.Dialog.QRPrint
 
-@* <MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
+<MudDialog MaxWidth="MaxWidth.ExtraLarge" FullWidth="true">
     <DialogContent>
 
-        <MudGrid >
+        <MudGrid>
 
 
             <MudGrid Spacing="3">
@@ -34,7 +34,7 @@
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Location" @bind-Value="InspectionData.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Location" @bind-Value="IncomingInspection.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
             </MudGrid>
@@ -42,11 +42,11 @@
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Inspected Date" @bind-Value="InspectionData.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Inspected Date" @bind-Value="IncomingInspection.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Inspected By" @bind-Value="InspectionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Inspected By" @bind-Value="IncomingInspection.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
@@ -54,7 +54,7 @@
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Make" @bind-Value="InspectionData.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Make" @bind-Value="IncomingInspection.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
             </MudGrid>
@@ -62,15 +62,15 @@
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Dia" @bind-Value="InspectionData.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Dia" @bind-Value="IncomingInspection.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Len" @bind-Value="InspectionData.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Len" @bind-Value="IncomingInspection.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Flts" @bind-Value="InspectionData.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Flts" @bind-Value="IncomingInspection.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
@@ -82,7 +82,7 @@
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Others" @bind-Value="InspectionData.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Others" @bind-Value="IncomingInspection.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
@@ -90,31 +90,11 @@
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Rotor Style" @bind-Value="InspectionData.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Rotor Style" @bind-Value="IncomingInspection.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Type" @bind-Value="InspectionData.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-               
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Removed" @bind-Value="InspectionData.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearings" @bind-Value="InspectionData.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Seals" @bind-Value="InspectionData.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Ceramic Seals" @bind-Value="InspectionData.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Type" @bind-Value="IncomingInspection.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
             </MudGrid>
@@ -122,89 +102,109 @@
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="InspectionData.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Bearing Removed" @bind-Value="IncomingInspection.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="InspectionData.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Bearings" @bind-Value="IncomingInspection.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="InspectionData.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Bearing Seals" @bind-Value="IncomingInspection.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Bearing Journal Dia (Right Details)" @bind-Value="InspectionData.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>                           
-               
-            </MudGrid>
-
-            <MudGrid Spacing="3">
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Basic Sharpening" @bind-Value="InspectionData.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Basic Sharpening Detail" @bind-Value="InspectionData.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Wedgelock Alignment Marks Present" @bind-Value="InspectionData.WedgelockAlignmentMarks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>
-
-                <MudItem xs="12" md="3">
-                    <MudTextField Label="Aligned" @bind-Value="InspectionData.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Ceramic Seals" @bind-Value="IncomingInspection.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
-                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Center Grinding" @bind-Value="InspectionData.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="IncomingInspection.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Center Grinding Details" @bind-Value="InspectionData.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />               
+                    <MudTextField Label="Bearing Journal Dia (Left Details)" @bind-Value="IncomingInspection.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Plastic Sleeves" @bind-Value="InspectionData.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="IncomingInspection.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                  <MudItem xs="12" md="3">
-                    <MudTextField Label="Bed Knife in Box" @bind-Value="InspectionData.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>               
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Bearing Journal Dia (Right Details)" @bind-Value="IncomingInspection.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Welding" @bind-Value="InspectionData.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Basic Sharpening" @bind-Value="IncomingInspection.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Welding Number" @bind-Value="InspectionData.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Basic Sharpening Detail" @bind-Value="IncomingInspection.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Welding Comments" @bind-Value="InspectionData.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Wedgelock Alignment Marks Present" @bind-Value="IncomingInspection.WedgelockAlignmentMarks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-              
-
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Re-Profile" @bind-Value="InspectionData.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>   
+                    <MudTextField Label="Aligned" @bind-Value="IncomingInspection.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
 
             </MudGrid>
 
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Replace Blades" @bind-Value="InspectionData.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Center Grinding" @bind-Value="IncomingInspection.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Center Grinding Details" @bind-Value="IncomingInspection.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Plastic Sleeves" @bind-Value="IncomingInspection.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Bed Knife in Box" @bind-Value="IncomingInspection.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Welding" @bind-Value="IncomingInspection.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Welding Number" @bind-Value="IncomingInspection.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Welding Comments" @bind-Value="IncomingInspection.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Re-Profile" @bind-Value="IncomingInspection.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                </MudItem>
+
+            </MudGrid>
+
+            <MudGrid Spacing="3">
+
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Replace Blades" @bind-Value="IncomingInspection.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
@@ -212,41 +212,41 @@
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Manual Labor" @bind-Value="InspectionData.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Manual Labor" @bind-Value="IncomingInspection.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Add QTY" @bind-Value="InspectionData.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Add QTY" @bind-Value="IncomingInspection.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
-             
+
             </MudGrid>
 
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="InspectionData.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="IncomingInspection.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
                 <MudItem xs="12" md="3">
-                    <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="InspectionData.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="IncomingInspection.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
-                  <MudItem xs="12" md="3">
-                    <MudTextField Label="Saddle Part Number" @bind-Value="InspectionData.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                <MudItem xs="12" md="3">
+                    <MudTextField Label="Saddle Part Number" @bind-Value="IncomingInspection.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
                 <MudItem xs="12" md="3">
                     <MudTextField Label="Rotor Categorize" @bind-Value="InspectionData.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
-              
+
             </MudGrid>
 
             <MudGrid Spacing="3">
 
                 <MudItem xs="12" md="4">
                     <MudTextField Label="Component Type" @bind-Value="InspectionData.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                </MudItem>  
-                
-                  <MudItem xs="12" md="4">
+                </MudItem>
+
+                <MudItem xs="12" md="4">
                     <MudTextField Label="New Box Required" @bind-Value="IncomingInspection.NewBoxRequired" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                 </MudItem>
 
@@ -255,16 +255,16 @@
                 </MudItem>
 
             </MudGrid>
-         
+
         </MudGrid>
 
     </DialogContent>
 
     <DialogActions>
         @*  <MudButton OnClick="PrintDialog" Color="Color.Primary">Print</MudButton>
-         <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton> 
+        *@ <MudButton OnClick="CloseDialog" Color="Color.Primary">Close</MudButton>
     </DialogActions>
-</MudDialog> *@ 
+</MudDialog>
 
 
 <style>

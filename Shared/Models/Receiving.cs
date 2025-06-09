@@ -15,6 +15,7 @@ namespace MES.Shared.Models
         public string SerialNumber { get; set; } // Auto-generated serial number
         public string Customer { get; set; }
         public string SelectedOption { get; set; } // Dropdown selection
+        public string user { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

@@ -427,8 +427,11 @@
                 Customer = InspectionData.Customer,
                 Date = DateTime.Now // or whatever date format you need
             };
+        string labelText = $"SN: {receive.SerialNumber}";
+        await JSRuntime.InvokeVoidAsync("printincomingImage", labelText);
 
-        await GenerateQR(receive);
+
+      //  await GenerateQR(receive);
         //  await JSRuntime.InvokeVoidAsync("printDiv", "print-section");
 
 

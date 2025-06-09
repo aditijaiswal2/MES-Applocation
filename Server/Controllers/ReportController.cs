@@ -11,6 +11,12 @@ namespace MES.Server.Controllers
         [HttpPost("downloadreport")]
         public IActionResult DownloadAsrReport([FromBody] List<ReceivingInspectionViewModel> data)
         {
+            // Filter out Scrap and Shipped items
+            var filteredData = data
+                .Where(d => !string.Equals(d.Type, "Scrap", StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(d.Type, "Shipped", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("MES Report");
 
@@ -24,10 +30,10 @@ namespace MES.Server.Controllers
             worksheet.Cell(1, 7).Value = "Received Date";
             worksheet.Cell(1, 8).Value = "Days in Plant";
 
-            // Add data
-            for (int i = 0; i < data.Count; i++)
+            // Add filtered data
+            for (int i = 0; i < filteredData.Count; i++)
             {
-                var item = data[i];
+                var item = filteredData[i];
                 worksheet.Cell(i + 2, 1).Value = item.SerialNumber;
                 worksheet.Cell(i + 2, 2).Value = item.Customer;
                 worksheet.Cell(i + 2, 3).Value = item.RotorNumber;

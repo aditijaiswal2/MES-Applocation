@@ -6,6 +6,8 @@
 @using MES.Shared.DTOs
 @using MES.Shared.Entities
 @using System.Net
+@using static MES.Client.Pages.LoginVC
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using System.ComponentModel.DataAnnotations;
 
 @inject HttpClient Http
@@ -79,6 +81,14 @@
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
+        var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
+        string useradd = userData?.UserName ?? "User";
+        if (userData != null)
+        {
+            useradd = userData.UserName;
+
+        }
+
         var data = new Receiving
             {
                // Date = DateTime.Parse(Date),
@@ -86,6 +96,7 @@
                 SerialNumber = SerialNumber,
                 SelectedOption = SelectedOption,
                 Customer = Customer,
+                user = useradd,
                 IsDeleted = false
             };
 

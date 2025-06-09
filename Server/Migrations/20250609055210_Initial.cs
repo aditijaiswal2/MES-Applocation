@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -385,6 +385,7 @@ namespace MES.Server.Migrations
                     SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Customer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SelectedOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    user = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

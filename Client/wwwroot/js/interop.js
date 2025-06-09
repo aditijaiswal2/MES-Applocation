@@ -132,11 +132,11 @@
     };
 }
 
-function printincomingImage(imageDataUrl, labelText) {
+function printincomingImage(labelText) {
     const previewContent = document.getElementById("print-section");
 
     const htmlContent = `
-       <html>
+    <html>
     <head>
         <style>
             body, * {
@@ -172,7 +172,7 @@ function printincomingImage(imageDataUrl, labelText) {
 
             .mud-grid {
                 display: grid !important;
-                grid-template-columns: repeat(4, 1fr) !important; /* Change to 4 columns */
+                grid-template-columns: repeat(4, 1fr) !important;
                 gap: 12px;
             }
 
@@ -181,26 +181,19 @@ function printincomingImage(imageDataUrl, labelText) {
                 box-sizing: border-box;
             }
 
-         .content-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
+            .content-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 15px;
+            }
 
-.qr-container {
-    flex: 0 0 auto;
-    text-align: center;
-}
+            .qr-container {
+                flex: 0 0 auto;
+                text-align: center;
+            }
 
-.content-area {
-    flex: 1;
-}
-
-
-            .qr-container img {
-                width: 75px !important;
-                height: 75px !important;
-                object-fit: contain;
+            .content-area {
+                flex: 1;
             }
 
             @media print {
@@ -211,51 +204,37 @@ function printincomingImage(imageDataUrl, labelText) {
         </style>
     </head>
     <body>
-      <div class="mud-dialog">
-    <h2 class="dialog-title">INCOMING ROTOR INSPECTION</h2>
-    <div class="content-row">
-        <div class="qr-container">
-            <img id="qr-img" src="${imageDataUrl}" alt="QR Code" />
+        <div class="mud-dialog">
+            <h2 class="dialog-title">INCOMING ROTOR INSPECTION</h2>
+            <div class="content-row">
+                <div class="content-area">
+                    ${previewContent ? previewContent.innerHTML : "<p>No content found</p>"}
+                </div>
+            </div>
         </div>
-        <div class="content-area">
-            ${previewContent ? previewContent.innerHTML : ""}
-        </div>
-    </div>
-</div>
-
 
         <script>
-            window.onload = function() {
-                const img = document.getElementById('qr-img');
-                if (img.complete) {
+            window.onload = function () {
+                setTimeout(() => {
                     window.print();
                     window.onafterprint = () => window.close();
-                } else {
-                    img.onload = function () {
-                        setTimeout(() => {
-                            window.print();
-                            window.onafterprint = () => window.close();
-                        }, 300); // wait for rendering
-                    };
-                }
-            }
+                }, 300); // short delay to allow rendering
+            };
         </script>
     </body>
-</html>
+    </html>
     `;
 
     const printWindow = window.open('', 'PrintWindow', 'width=900,height=700,left=100,top=100,toolbar=no,scrollbars=no,resizable=no');
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
 
-    //const printWindow = window.open('', '_blank');
-
-
-
-    //printWindow.document.write(htmlContent);
-    //printWindow.document.close();
-
+    if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+    } else {
+        alert('Popup was blocked! Please allow popups for this site.');
+    }
 }
+
 function downloadFile(fileName, base64, mimeType) {
     const link = document.createElement('a');
     link.download = fileName;

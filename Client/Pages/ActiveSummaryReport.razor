@@ -18,7 +18,8 @@
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; padding-bottom:30px;">
                 <div class="table-container">
-                    <MudTable Items="@combinedData.Where(x => !string.Equals(x.CurrentLocation, "Shipped", StringComparison.OrdinalIgnoreCase))"
+                    <MudTable Items="@combinedData.Where(x =>
+    !string.Equals(x.CurrentLocation, "Shipped", StringComparison.OrdinalIgnoreCase) && !string.Equals(x.Type, "Scrap", StringComparison.OrdinalIgnoreCase))"
                               FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ? "400px" : "")"
                               Class="table table-bordered table-striped"
                               Filter="new Func<ReceivingInspectionViewModel, bool>(FilterFunc1)">

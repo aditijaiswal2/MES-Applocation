@@ -211,15 +211,21 @@
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Customer" @bind-Value="serialNumberData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                                                 </MudItem>
+
+                                                <MudItem xs="12" md="4">
+                                                    <MudTextField Label="Work Center" @bind-Value="serialNumberData.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                </MudItem>
+
+                                            </MudGrid>
+
+                                            <MudGrid Spacing="3">
+
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Customer PO Number"
                                                                   @bind-Value="FinalInspectionData.CustomerPoNum"
                                                                   FullWidth="true"
                                                                   Variant="Variant.Outlined" />
                                                 </MudItem>
-                                            </MudGrid>
-
-                                            <MudGrid Spacing="3">
 
                                                 <MudItem xs="12" md="4">
                                                     <MudTextField Label="Dwg Number"
@@ -228,16 +234,26 @@
                                                                   Variant="Variant.Outlined" Required />
                                                 </MudItem>
 
-                                                <MudItem xs="12" md="4">
-                                                    <MudTextField Label="Rotors Serial Number" @bind-Value="serialNumberData.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                                                </MudItem>
+                                                @if (serialNumberData != null && serialNumberData.RotorsNumber == "NEW")
+                                                {
+                                                    <MudItem xs="12" md="4">
+                                                        <MudTextField Label="New Rotors Serial Number"
+                                                                      @bind-Value="FinalInspectionData.AGNum"
+                                                                      FullWidth="true"
+                                                                      Variant="Variant.Outlined" />
+                                                    </MudItem>
+                                                }
+                                                else
+                                                {
 
-                                                <MudItem xs="12" md="4">
-                                                    <MudTextField Label="New Rotors Serial Number"
-                                                                  @bind-Value="FinalInspectionData.AGNum"
-                                                                  FullWidth="true"
-                                                                  Variant="Variant.Outlined" Required />
-                                                </MudItem>
+                                                    <MudItem xs="12" md="4">
+                                                        <MudTextField Label="Rotors Serial Number" @bind-Value="serialNumberData.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                                                    </MudItem>
+                                                }
+
+
+
+
                                             </MudGrid>
                                             <MudGrid Spacing="3">
 
@@ -897,7 +913,7 @@
         string useradd = userData?.UserName ?? "User";
         string useraddemail = userData?.UserEmail ?? "User";
 
-        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
+        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) )
         {
             Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
             return;
@@ -1073,7 +1089,7 @@
 
     private async Task Submitdata()
     {
-        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum) || string.IsNullOrWhiteSpace(FinalInspectionData.AGNum))
+        if (string.IsNullOrWhiteSpace(FinalInspectionData.DWGNum))
         {
             Snackbar.Add("Please fill in the mandatory fields.", Severity.Warning);
             return;
@@ -1364,6 +1380,16 @@
         new RotorsFinalInspection { },
 
     };
+
+        if (serialNumberData != null && serialNumberData.RotorsNumber == "NEW")
+        {
+            FinalInspectionData.Description = "New Rotor";
+        }
+        else
+        {
+
+            FinalInspectionData.Description = "Service Rotor";
+        }
 
 
         var userData = await localStorage.GetItemAsync<UserPagesAndRouter>("UserData");
