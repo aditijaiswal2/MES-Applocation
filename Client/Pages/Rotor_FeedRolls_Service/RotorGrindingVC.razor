@@ -49,6 +49,7 @@
                         <HeaderContent>
                             <MudTh>Report Number</MudTh>
                             <MudTh Style="text-align:center">Customer Name</MudTh>
+                            <MudTh Style="text-align:center">Size</MudTh>
                             <MudTh Style="text-align:center">Rotor Number</MudTh>
                             <MudTh Style="text-align:center">Current Work Center</MudTh>
                             @*  <MudTh Style="text-align:center">Secondary Work Center</MudTh> *@
@@ -60,6 +61,7 @@
                         <RowTemplate Context="data">
                             <MudTd>@data.SerialNumber</MudTd>
                             <MudTd Style="text-align:center">@data.Customer</MudTd>
+                            <MudTd Style="text-align:center">@data.Dia*@data.Len*@data.Fits</MudTd>
                             <MudTd Style="text-align:center">@data.RotorsNumber</MudTd>
                             @*   <MudTd Style="text-align:center">@data.Workcenters</MudTd> *@
                             <MudTd Style="text-align:center">
