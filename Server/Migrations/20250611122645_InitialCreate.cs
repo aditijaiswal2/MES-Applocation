@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MES.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -630,48 +630,18 @@ namespace MES.Server.Migrations
                     CustomerImportance = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AdvancedSharpingStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Workcenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RotorsDiaLeft = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RotorsDiaRight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReliefLand = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ToothFaceLeft = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ToothFaceRight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CentersLeft = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CentersRight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VisualChecks = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InspectedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DelayReasonTracking = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdditionalSalesComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
+                    IsStarted = table.Column<bool>(type: "bit", nullable: false),
+                    IsSecondaryWorkCenters = table.Column<bool>(type: "bit", nullable: false),
+                    SecondaryWorkCenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GrindingdataSecondaryWorkCentersSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GrindingdataSecondaryWorkCentersSubmitedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingdataSavedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GrindingdataSavedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RotorGrindingSavedData", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RotorGrindingSecondaryWorkCentersData",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Module = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RotorsNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Workcenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GrindingStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsMoveoutsideoperation = table.Column<bool>(type: "bit", nullable: false),
-                    IsSecondaryWorkCenters = table.Column<bool>(type: "bit", nullable: false),
-                    SecondaryWorkCenters = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GrindingdataSubmiteddBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GrindingdataSubmitedByDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RotorGrindingSecondaryWorkCentersData", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1615,9 +1585,6 @@ namespace MES.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "RotorGrindingSavedData");
-
-            migrationBuilder.DropTable(
-                name: "RotorGrindingSecondaryWorkCentersData");
 
             migrationBuilder.DropTable(
                 name: "rotorIncominInspectionSavedDatas");

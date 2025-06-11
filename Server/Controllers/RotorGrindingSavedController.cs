@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static MES.Client.Dialog.Grinding.GrindingData;
+using static MES.Client.Pages.Rotor_FeedRolls_Service.RotorGrindingVC;
 
 namespace MES.Server.Controllers
 {
@@ -19,7 +20,7 @@ namespace MES.Server.Controllers
         }
 
         [HttpPost("AddGrindingSaveData")]
-        public async Task<IActionResult> AddGrindingSaveData([FromBody] GrindingInspectionSubmission submission)
+        public async Task<IActionResult> AddGrindingSaveData([FromBody] GrindingStartdataSubmission submission)
         {
             if (submission == null || submission.SelectedProductionInspection == null)
                 return BadRequest("Submission is invalid.");
@@ -40,24 +41,16 @@ namespace MES.Server.Controllers
                     TargetDate = submission.SelectedProductionInspection.TargetDate,
                     CustomerImportance = submission.SelectedProductionInspection.CustomerImportance,                   
                     Workcenters = submission.SelectedProductionInspection.Workcenters,
-                    AdvancedSharpingStatus = submission.SelectedProductionInspection.AdvancedSharpingStatus,                   
-                    RotorsDiaLeft = submission.RotorsDiaLeft,
-                    RotorsDiaRight = submission.RotorsDiaRight,
-                    ReliefLand = submission.ReliefLand,
-                    ToothFaceLeft = submission.ToothFaceLeft,
-                    ToothFaceRight = submission.ToothFaceRight,
-                    CentersLeft = submission.CentersLeft,
-                    CentersRight = submission.CentersRight,
-                    VisualChecks = submission.VisualChecks,
-                    InspectedBy = submission.InspectedBy,
-                    Notes = submission.Notes,
+                    AdvancedSharpingStatus = submission.SelectedProductionInspection.AdvancedSharpingStatus, 
                     GrindingStartDate = submission.GrindingStartDate,
-                    DelayReasonTracking = submission.DelayReasonTracking,
-                    AdditionalSalesComments = submission.AdditionalSalesComments,
-                    IsMoveoutsideoperation = submission.IsMoveoutsideoperation,
+                    IsStarted = submission.IsStarted,
+                    IsSecondaryWorkCenters = submission.IsSecondaryWorkCenters,
+                    SecondaryWorkCenters = submission.SecondaryWorkCenters,
+                    GrindingdataSecondaryWorkCentersSubmitedByDate = submission.GrindingdataSecondaryWorkCentersSubmitedByDate,
+                    GrindingdataSecondaryWorkCentersSubmiteddBy = submission.GrindingdataSecondaryWorkCentersSubmiteddBy,
                     GrindingdataSavedBy = submission.GrindingdataSavedBy,
-                    GrindingdataSavedByDate = submission.GrindingdataSavedByDate,                    
-                    
+                    GrindingdataSavedByDate = DateTime.Now.ToString(),
+
                 };
 
                 _context.RotorGrindingSavedData.Add(rotorData);
@@ -68,6 +61,41 @@ namespace MES.Server.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error saving rotor Grinding data: {ex.Message}");
+            }
+        }
+
+
+        [HttpPost("UpdateGrindingSaveData")]
+        public async Task<IActionResult> UpdateGrindingSaveData([FromBody] GrindingStartdataSubmission updateSubmission)
+        {
+            if (updateSubmission == null || string.IsNullOrEmpty(updateSubmission.SelectedProductionInspection.SerialNumber))
+                return BadRequest("Update submission is invalid.");
+
+            try
+            {
+                // Get the latest data for this SerialNumber based on GrindingdataSavedByDate
+                var existingData = await _context.RotorGrindingSavedData
+                    .Where(x => x.SerialNumber == updateSubmission.SelectedProductionInspection.SerialNumber)
+                    .OrderByDescending(x => x.GrindingdataSavedByDate)
+                    .FirstOrDefaultAsync();
+
+                if (existingData == null)
+                    return NotFound($"Rotor Grinding data not found for Serial Number: {updateSubmission.SelectedProductionInspection.SerialNumber}");
+
+                // Update only the necessary fields
+                existingData.IsStarted = updateSubmission.IsStarted;
+                existingData.SecondaryWorkCenters = updateSubmission.SecondaryWorkCenters;
+                existingData.IsSecondaryWorkCenters = updateSubmission.IsSecondaryWorkCenters;
+                existingData.GrindingdataSecondaryWorkCentersSubmiteddBy = updateSubmission.GrindingdataSecondaryWorkCentersSubmiteddBy;
+                existingData.GrindingdataSecondaryWorkCentersSubmitedByDate = updateSubmission.GrindingdataSecondaryWorkCentersSubmitedByDate;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Message = "Rotor Grinding data updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating rotor Grinding data: {ex.Message}");
             }
         }
 

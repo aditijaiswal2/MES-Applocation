@@ -151,6 +151,7 @@
         public const string AddRotorGrindingSavedData = $"{BaseUrl}/RotorGrindingSaved/AddGrindingSaveData";
         public const string GetRotorGrindingSavedDatabyserialnumber = $"{BaseUrl}/RotorGrindingSaved/GGSDBSN";
         public const string GetAllSavedGrindingData = $"{BaseUrl}/RotorGrindingSaved/GetAllSavedGrindingData";
+        public const string UpdateRotorGrindingSavedData = $"{BaseUrl}/RotorGrindingSaved/UpdateGrindingSaveData";
 
 
         // Moving to outside operation Rotor Grinding Data

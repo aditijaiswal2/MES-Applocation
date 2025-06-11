@@ -1674,19 +1674,7 @@ namespace MES.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AdditionalSalesComments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("AdvancedSharpingStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CentersRight")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComponentType")
@@ -1701,10 +1689,6 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DelayReasonTracking")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("GrindingStartDate")
                         .HasColumnType("datetime2");
 
@@ -1716,11 +1700,18 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InspectedBy")
+                    b.Property<string>("GrindingdataSecondaryWorkCentersSubmitedByDate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsMoveoutsideoperation")
+                    b.Property<string>("GrindingdataSecondaryWorkCentersSubmiteddBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSecondaryWorkCenters")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStarted")
                         .HasColumnType("bit");
 
                     b.Property<string>("MatNumber")
@@ -1730,23 +1721,7 @@ namespace MES.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReliefLand")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RotorCategorization")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsDiaRight")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1757,24 +1732,16 @@ namespace MES.Server.Migrations
                     b.Property<string>("SalesOrderNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SecondaryWorkCenters")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ToothFaceLeft")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToothFaceRight")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VisualChecks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkOrder")
                         .HasColumnType("nvarchar(max)");
@@ -1786,56 +1753,6 @@ namespace MES.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RotorGrindingSavedData");
-                });
-
-            modelBuilder.Entity("MES.Shared.Models.Rotors.RotorGrindingSecondaryWorkCentersData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("GrindingStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GrindingdataSubmitedByDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GrindingdataSubmiteddBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsMoveoutsideoperation")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSecondaryWorkCenters")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Module")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RotorsNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecondaryWorkCenters")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerialNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Workcenters")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RotorGrindingSecondaryWorkCentersData");
                 });
 
             modelBuilder.Entity("MES.Shared.Models.Rotors.RotorIncominInspectionSavedData", b =>
