@@ -114,5 +114,19 @@ namespace MES.Server.Controllers
             return Ok(records);
         }
 
+
+        [HttpGet("GetISPDatabySerialNo/{serialNumber}")]
+        public async Task<IActionResult> GetISPDatabySerialNo(string serialNumber)
+        {
+            var data = await _context.RotorProductionData
+                .Where(r => r.SerialNumber.ToLower() == serialNumber.ToLower())
+                .ToListAsync();
+
+            if (data == null || data.Count == 0)
+                return NotFound("No data found for the given serial number.");
+
+            return Ok(data);
+        }
+
     }
 }

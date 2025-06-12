@@ -125,6 +125,7 @@
         // Rotor Production Data
         public const string AddRotorProductionData = $"{BaseUrl}/RotorProduction/AddProductionData";
         public const string GetAllProductionData = $"{BaseUrl}/RotorProduction/GetAllProductionData";
+        public const string GetISPDataBySLno = $"{BaseUrl}/RotorProduction/GetISPDatabySerialNo";
 
         // Rotor Production savedData
         public const string SaveproductionsavedData = $"{BaseUrl}/RotorProductionSaveData/AddProductionSaveData";
@@ -146,6 +147,7 @@
         // Rotor Grinding Data
         public const string AddRotorGrindingData = $"{BaseUrl}/RotorGrinding/AddGrindingData";
         public const string GetAllGrindingData = $"{BaseUrl}/RotorGrinding/GetAllGrindingData";
+        public const string GetGrindingDatabySerialNo = $"{BaseUrl}/RotorGrinding/GetGrindingDatabySerialNo";
 
         // Rotor Grinding Saved  Data
         public const string AddRotorGrindingSavedData = $"{BaseUrl}/RotorGrindingSaved/AddGrindingSaveData";

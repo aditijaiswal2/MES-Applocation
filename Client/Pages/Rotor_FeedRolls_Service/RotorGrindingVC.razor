@@ -23,15 +23,7 @@
         <MudItem md="12" sm="12" xs="12">
             <div style="max-height: 500px; max-width:100%; padding-bottom:30px;margin-top:20px">
                 <div class="table-container">
-                    <MudTable Items="RotorProductionDatas.Where(data =>
-                        userWorkCenters.Any(wc =>
-                                            string.Equals(wc,
-                                                rotorGrindingStartDatas
-                                                    .FirstOrDefault(s => string.Equals(s.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase))
-                                                    ?.SecondaryWorkCenters ?? data.Workcenters,
-                                                StringComparison.OrdinalIgnoreCase)))
-                                    .DistinctBy(data => data.SerialNumber)
-                                    .ToList()"
+                    <MudTable Items="@FilteredRotorProductionDatas"
                     FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")"
                     Class="table table-bordered table-striped" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable" RowClass="cursor-pointer" RowClassFunc="@SelectedRowClassFunc" OnRowClick="@((TableRowClickEventArgs<RotorProductionData> e) => RowClickEvent(e))"
                     Filter="new Func<RotorProductionData, bool>(FilterFunc1)">
@@ -181,6 +173,23 @@
     private List<RotorGrindingSavedData> rotorGrindingStartDatas = new();
 
     private List<string> userWorkCenters = new();
+
+
+    private List<RotorProductionData> FilteredRotorProductionDatas => RotorProductionDatas
+     .Where(data => userWorkCenters.Any(wc =>
+     {
+         var secondaryWC = rotorGrindingStartDatas
+             .FirstOrDefault(s => string.Equals(s.SerialNumber, data.SerialNumber, StringComparison.OrdinalIgnoreCase))
+             ?.SecondaryWorkCenters;
+
+         var workCenterToCompare = string.IsNullOrWhiteSpace(secondaryWC) || secondaryWC == "N/A"
+             ? data.Workcenters
+             : secondaryWC;
+
+         return string.Equals(wc, workCenterToCompare, StringComparison.OrdinalIgnoreCase);
+     }))
+     .DistinctBy(data => data.SerialNumber)
+     .ToList();
 
 
 
@@ -496,16 +505,18 @@
         if (string.IsNullOrWhiteSpace(Selectedworkcenters))
             return true;
 
-       
         var secondaryData = rotorGrindingStartDatas
             .FirstOrDefault(x => x.SerialNumber == element.SerialNumber);
 
-        string workCenterToUse = secondaryData != null
+        // Check for null, empty or "N/A" and fallback to Workcenters
+        string workCenterToUse = (!string.IsNullOrWhiteSpace(secondaryData?.SecondaryWorkCenters)
+                                    && secondaryData.SecondaryWorkCenters != "N/A")
             ? secondaryData.SecondaryWorkCenters
             : element.Workcenters;
 
         return workCenterToUse?.Contains(Selectedworkcenters, StringComparison.OrdinalIgnoreCase) == true;
     }
+
 
 
 

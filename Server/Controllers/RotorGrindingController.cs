@@ -107,5 +107,19 @@ namespace MES.Server.Controllers
             return Ok(exists);
         }
 
+
+        [HttpGet("GetGrindingDatabySerialNo/{serialNumber}")]
+        public async Task<IActionResult> GetGrindingDatabySerialNo(string serialNumber)
+        {
+            var data = await _context.RotorGrindingData
+                .Where(r => r.SerialNumber.ToLower() == serialNumber.ToLower())
+                .ToListAsync();
+
+            if (data == null || data.Count == 0)
+                return NotFound("No data found for the given serial number.");
+
+            return Ok(data);
+        }
+
     }
 }

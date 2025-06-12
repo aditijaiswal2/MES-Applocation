@@ -1,4 +1,4 @@
-﻿@* @using MES.Shared.Models.Rotors
+﻿@using MES.Shared.Models.Rotors
 
 
 @using MES.Client.Utitlity
@@ -25,7 +25,7 @@
         </TitleContent>
         <DialogContent>
 
-            @if (rotorShipping != null)
+            @if (rotorGrindingData != null)
             {
                 <MudGrid>
 
@@ -39,49 +39,49 @@
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Rotor Dia.Left" @bind-Value="rotorShipping.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Rotor Dia.Left" @bind-Value="rotorGrindingData.RotorsDiaLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="6">
-                        <MudTextField Label="Rotor Dia.Right" @bind-Value="rotorShipping.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Rotor Dia.Right" @bind-Value="rotorGrindingData.RotorsDiaRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="6">
-                        <MudTextField Label="Tooth Face Left" @bind-Value="rotorShipping.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Tooth Face Left" @bind-Value="rotorGrindingData.ToothFaceLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="6">
-                        <MudTextField Label="Tooth Face Right" @bind-Value="rotorShipping.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                    </MudItem>
-
-                    <MudItem xs="6">
-                        <MudTextField Label="T.I.R - Centers Left" @bind-Value="rotorShipping.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Tooth Face Right" @bind-Value="rotorGrindingData.ToothFaceRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="T.I.R - Centers Right" @bind-Value="rotorShipping.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="T.I.R - Centers Left" @bind-Value="rotorGrindingData.CentersLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Relief Land" @bind-Value="rotorShipping.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="T.I.R - Centers Right" @bind-Value="rotorGrindingData.CentersRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Visual Checks" @bind-Value="rotorShipping.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Relief Land" @bind-Value="rotorGrindingData.ReliefLand" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Grinding Start Date" @bind-Value="rotorShipping.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Visual Checks" @bind-Value="rotorGrindingData.VisualChecks" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Inspected By" @bind-Value="rotorShipping.InspectedBy" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Grinding Start Date" @bind-Value="rotorGrindingData.GrindingStartDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Notes" @bind-Value="rotorShipping.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Inspected By" @bind-Value="rotorGrindingData.InspectedBy" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudTextField Label="Notes" @bind-Value="rotorGrindingData.Notes" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Delay Reason Tracking" @bind-Value="rotorShipping.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Delay Reason Tracking" @bind-Value="rotorGrindingData.DelayReasonTracking" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>               
 
                     
@@ -110,6 +110,39 @@
 @code {
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public RotorShipping rotorShipping { get; set; }
+    private RotorGrindingData? rotorGrindingData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            var swResponse = await HttpClient.GetAsync($"{ApiConstants.GetGrindingDatabySerialNo}/{rotorShipping.SerialNumber}");
+
+            if (swResponse.IsSuccessStatusCode)
+            {
+                var swDataJson = await swResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(swDataJson))
+                {
+                    var SWDataList = JsonSerializer.Deserialize<List<RotorGrindingData>>(swDataJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    rotorGrindingData = SWDataList?.FirstOrDefault();
+
+                }
+            }
+            else
+            {
+                Console.WriteLine($"API call failed: {swResponse.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching sales clearance data: {ex.Message}");
+        }
+    }
 
 
     private async Task ViewAttachedFile()
@@ -153,4 +186,3 @@
 
 
 }
- *@

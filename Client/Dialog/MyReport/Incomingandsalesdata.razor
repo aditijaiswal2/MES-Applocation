@@ -1,4 +1,4 @@
-﻿@* @using MES.Client.Dialog.RotorSalesImages
+﻿@using MES.Client.Dialog.RotorSalesImages
 @using MES.Shared.Models.Rotors
 
 
@@ -30,232 +30,232 @@
         </TitleContent>
         <DialogContent>
 
-            @if (rotorShipping != null)
+            @if (rotorProductionData != null)
             {
                 <MudGrid>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Customer" @bind-Value="rotorShipping.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Customer" @bind-Value="rotorProductionData.Customer" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudTextField Label="Location" @bind-Value="rotorShipping.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Location" @bind-Value="rotorProductionData.Location" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudTextField Label="Inspected Date" @bind-Value="rotorShipping.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Inspected Date" @bind-Value="rotorProductionData.Received" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudTextField Label="Inspected by" @bind-Value="rotorShipping.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Rotors Serial Number" @bind-Value="rotorShipping.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Inspected by" @bind-Value="rotorProductionData.Inspected" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Make" @bind-Value="rotorShipping.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Rotors Serial Number" @bind-Value="rotorProductionData.RotorsNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Dia" @bind-Value="rotorShipping.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Make" @bind-Value="rotorProductionData.Make" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Len" @bind-Value="rotorShipping.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Dia" @bind-Value="rotorProductionData.Dia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Flts" @bind-Value="rotorShipping.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Len" @bind-Value="rotorProductionData.Len" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Material" @bind-Value="rotorShipping.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
+                        <MudTextField Label="Flts" @bind-Value="rotorProductionData.Fits" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Other" @bind-Value="rotorShipping.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                    </MudItem>
-
-                    <MudItem xs="4">
-
-                        <MudTextField Label="Incoming Rotor Dia." @bind-Value="rotorShipping.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Rotor Style" @bind-Value="rotorShipping.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Material" @bind-Value="rotorProductionData.Materials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Type" @bind-Value="rotorShipping.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Other" @bind-Value="rotorProductionData.Others" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="4">
+
+                        <MudTextField Label="Incoming Rotor Dia." @bind-Value="rotorProductionData.RotorsDia" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Rotor Style" @bind-Value="rotorProductionData.RotorStyle" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Bearing Removed" @bind-Value="rotorShipping.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Type" @bind-Value="rotorProductionData.Type" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Bearings" @bind-Value="rotorShipping.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Removed" @bind-Value="rotorProductionData.BearingRemoved" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Bearing Seals" @bind-Value="rotorShipping.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearings" @bind-Value="rotorProductionData.Bearing" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Ceramic Seals" @bind-Value="rotorShipping.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Seals" @bind-Value="rotorProductionData.BearingSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Ceramic Seals" @bind-Value="rotorProductionData.CeramicSeals" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="rotorShipping.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Journal Dia (Left)" @bind-Value="rotorProductionData.Left" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Bearing Journal Dia (Left Detail)" @bind-Value="rotorShipping.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Journal Dia (Left Detail)" @bind-Value="rotorProductionData.yLeft" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="rotorShipping.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Journal Dia (Right)" @bind-Value="rotorProductionData.Right" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Bearing Journal Dia (Right Detail)" @bind-Value="rotorShipping.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bearing Journal Dia (Right Detail)" @bind-Value="rotorProductionData.yRight" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
 
 
                     <MudItem xs="4">
-                        <MudTextField Label="Basic Sharpening" @bind-Value="rotorShipping.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Basic Sharpening" @bind-Value="rotorProductionData.BasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label=" Basic Sharpening Detail" @bind-Value="rotorShipping.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label=" Basic Sharpening Detail" @bind-Value="rotorProductionData.IfYBasicSharpening" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="rotorShipping.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
+                        <MudTextField Label="Wedgelock Alignment Marks; Present" @bind-Value="rotorProductionData.BasicSharpening" Variant="Variant.Outlined" FullWidth="true" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Center Grinding" @bind-Value="rotorShipping.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Center Grinding" @bind-Value="rotorProductionData.CenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Center Grinding Detail" @bind-Value="rotorShipping.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Center Grinding Detail" @bind-Value="rotorProductionData.IfYCenterGrinding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Aligned" @bind-Value="rotorShipping.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Aligned" @bind-Value="rotorProductionData.Aligned" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
 
                     <MudItem xs="4">
-                        <MudTextField Label="Welding" @bind-Value="rotorShipping.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Welding" @bind-Value="rotorProductionData.Welding" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="No. Of Welding" @bind-Value="rotorShipping.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="No. Of Welding" @bind-Value="rotorProductionData.WeldingNum" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Welding Comments" @bind-Value="rotorShipping.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Welding Comments" @bind-Value="rotorProductionData.Initials" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Bed Knife in Box" @bind-Value="rotorShipping.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Bed Knife in Box" @bind-Value="rotorProductionData.BedKnife" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Re-Profile" @bind-Value="rotorShipping.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Re-Profile" @bind-Value="rotorProductionData.ReProfile" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Manual Labor" @bind-Value="rotorShipping.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Manual Labor" @bind-Value="rotorProductionData.ManualLabor" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Replace Blades" @bind-Value="rotorShipping.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Replace Blades" @bind-Value="rotorProductionData.BoxReceivedWithSaddles" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Box Received with Saddles (Down)" @bind-Value="rotorShipping.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
-
-                    </MudItem>
-
-                    <MudItem xs="4">
-                        <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="rotorShipping.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Box Received with Saddles (Bottom)" @bind-Value="rotorProductionData.Bottom" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Plastic Sleeves" @bind-Value="rotorShipping.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Box Received with Saddles (Top)" @bind-Value="rotorProductionData.Top" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
 
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Add QTY" @bind-Value="rotorShipping.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Plastic Sleeves" @bind-Value="rotorProductionData.PlasticSleaves" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+
+                    </MudItem>
+
+                    <MudItem xs="4">
+                        <MudTextField Label="Add QTY" @bind-Value="rotorProductionData.AddQty" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
 
                     <MudItem xs="4">
-                        <MudTextField Label="Saddle Part Number" @bind-Value="rotorShipping.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Saddle Part Number" @bind-Value="rotorProductionData.SaddlePartNumber" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
 
                     <MudItem xs="6">
-                        <MudTextField Label="Rotor Categorize" @bind-Value="rotorShipping.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Rotor Categorize" @bind-Value="rotorProductionData.RotorCategorization" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Sub-Module" @bind-Value="rotorShipping.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Sub-Module" @bind-Value="rotorProductionData.ComponentType" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
 
                     <MudItem xs="4">
-                        <MudTextField Label="Sales Order" @bind-Value="@rotorShipping.SalesOrderNumber" Variant="Variant.Outlined" />
+                        <MudTextField Label="Sales Order" @bind-Value="@rotorProductionData.SalesOrderNumber" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
                     <MudItem xs="4">
-                        <MudTextField Label="Job Order" @bind-Value="@rotorShipping.WorkOrder" Variant="Variant.Outlined" />
+                        <MudTextField Label="Job Order" @bind-Value="@rotorProductionData.WorkOrder" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="4">
-                        <MudTextField Label="Mat#" @bind-Value="@rotorShipping.MatNumber" Variant="Variant.Outlined" />
+                        <MudTextField Label="Mat#" @bind-Value="@rotorProductionData.MatNumber" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Target Date" @bind-Value="rotorShipping.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Target Date" @bind-Value="rotorProductionData.TargetDate" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Customer Priority" @bind-Value="rotorShipping.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Customer Priority" @bind-Value="rotorProductionData.CustomerImportance" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Customer Instructions" @bind-Value="rotorShipping.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Customer Instructions" @bind-Value="rotorProductionData.CustomerInstructions" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
                     <MudItem xs="6">
-                        <MudTextField Label="Work Center" @bind-Value="rotorShipping.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
+                        <MudTextField Label="Work Center" @bind-Value="rotorProductionData.Workcenters" FullWidth="true" Variant="Variant.Outlined" ReadOnly />
                     </MudItem>
 
 
@@ -285,6 +285,41 @@
     [Parameter] public RotorShipping rotorShipping { get; set; }
    // public IncomingImages? serialImages;
     public List<IncomingImages>? serialImages = new();
+
+    private RotorProductionData? rotorProductionData;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            HttpClient = _httpClient.CreateClient("ITS.ServerAPI");
+
+            var swResponse = await HttpClient.GetAsync($"{ApiConstants.GetISPDataBySLno}/{rotorShipping.SerialNumber}");
+
+            if (swResponse.IsSuccessStatusCode)
+            {
+                var swDataJson = await swResponse.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(swDataJson))
+                {
+                    var SWDataList = JsonSerializer.Deserialize<List<RotorProductionData>>(swDataJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    rotorProductionData = SWDataList?.FirstOrDefault();
+
+                }
+            }
+            else
+            {
+                Console.WriteLine($"API call failed: {swResponse.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching sales clearance data: {ex.Message}");
+        }
+    }
    
     private async Task PreviewImg()
     {
@@ -330,4 +365,3 @@
     }
 
 }
- *@
